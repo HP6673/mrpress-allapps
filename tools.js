@@ -7,10 +7,10 @@
  *    1. Build your tool and save it in the /tools/ folder
  *    2. Copy the template block below and paste it into TOOLS
  *    3. Fill in the 5 fields — that's it!
- *       The homepage card, category filter & search all update
+ *       The homepage card, category filter & search update
  *       automatically. No changes to index.html ever needed.
  *
- *  TEMPLATE (copy this block):
+ *  TEMPLATE:
  *  ─────────────────────────────────────────────────────────
  *  {
  *    name:        "",
@@ -50,6 +50,47 @@ const TOOLS = [
     category:    "Calculator",
     url:         "tools/tip-calculator.html"
   },
+  {
+    name:        "BMI Calculator",
+    description: "Calculate your Body Mass Index in metric or imperial with a visual scale.",
+    icon:        "⚖️",
+    category:    "Calculator",
+    url:         "tools/bmi-calculator.html"
+  },
+
+  // ── Finance ────────────────────────────────────────────────
+  {
+    name:        "Currency Converter",
+    description: "Live exchange rates for 160+ currencies with popular pair shortcuts.",
+    icon:        "💱",
+    category:    "Finance",
+    url:         "tools/currency-converter.html"
+  },
+  {
+    name:        "Loan Calculator",
+    description: "Calculate monthly payments, total interest, and a full amortization schedule.",
+    icon:        "🏦",
+    category:    "Finance",
+    url:         "tools/loan-calculator.html"
+  },
+
+  // ── Design ─────────────────────────────────────────────────
+  {
+    name:        "Color Picker",
+    description: "Pick any color and get HEX, RGB, and HSL values instantly. Includes shades and tints.",
+    icon:        "🎨",
+    category:    "Design",
+    url:         "tools/color-picker.html"
+  },
+
+  // ── Business ───────────────────────────────────────────────
+  {
+    name:        "Invoice Generator",
+    description: "Create a professional invoice or receipt in seconds. Print or save as PDF.",
+    icon:        "📄",
+    category:    "Business",
+    url:         "tools/invoice-generator.html"
+  },
 
   // ── Security ───────────────────────────────────────────────
   {
@@ -77,7 +118,7 @@ const TOOLS = [
   },
   {
     name:        "Timer",
-    description: "Countdown timer and stopwatch with lap tracking and presets.",
+    description: "Countdown timer and stopwatch with lap tracking, presets, and looping alarm.",
     icon:        "⏱️",
     category:    "Utility",
     url:         "tools/timer.html"
