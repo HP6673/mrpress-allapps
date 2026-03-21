@@ -19,7 +19,7 @@
     .eyebrow { font-size:.73rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:.6rem; }
     h1 { font-family:'DM Serif Display',serif; font-size:2.8rem; letter-spacing:-.025em; margin-bottom:.5rem; }
     .subtitle { color:var(--muted); font-size:.95rem; margin-bottom:2rem; line-height:1.6; }
-    .layout { display:grid; grid-template-columns:1fr auto; gap:1.5rem; align-items:start; }
+    .layout { display:grid; grid-template-columns:1fr 260px; gap:1.5rem; align-items:start; }
     .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.6rem; margin-bottom:1rem; }
     .card-title { font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:1rem; }
     textarea { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:.8rem 1rem; font-family:'DM Sans',sans-serif; font-size:.95rem; color:var(--ink); resize:vertical; min-height:110px; outline:none; transition:border-color .2s; line-height:1.6; }
@@ -29,9 +29,9 @@
     .opt-btn { background:var(--bg); border:1.5px solid var(--border); border-radius:8px; padding:.4rem .9rem; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:500; color:var(--muted); cursor:pointer; transition:all .15s; }
     .opt-btn:hover { border-color:var(--ink); color:var(--ink); }
     .opt-btn.active { background:var(--ink); border-color:var(--ink); color:#fff; }
-    .qr-panel { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.4rem; display:flex; flex-direction:column; align-items:center; gap:1rem; min-width:220px; }
-    #qrCanvas { border-radius:6px; display:block; }
-    .placeholder-box { width:200px; height:200px; border:1.5px dashed var(--border); border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:.85rem; text-align:center; padding:1rem; }
+    .qr-panel { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.4rem; display:flex; flex-direction:column; align-items:center; gap:1rem; width:260px; flex-shrink:0; }
+    #qrCanvas { border-radius:6px; display:block; width:100% !important; height:auto !important; max-width:220px; }
+    .placeholder-box { width:220px; height:220px; border:1.5px dashed var(--border); border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:.85rem; text-align:center; padding:1rem; }
     .dl-btn { width:100%; background:var(--ink); color:#fff; border:none; border-radius:6px; padding:.65rem; font-family:'DM Sans',sans-serif; font-size:.85rem; font-weight:500; cursor:pointer; transition:opacity .2s; }
     .dl-btn:hover { opacity:.75; }
     .dl-btn:disabled { opacity:.3; cursor:not-allowed; }
