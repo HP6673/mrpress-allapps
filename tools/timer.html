@@ -56,6 +56,9 @@
     .ctrl-btn.primary:hover { opacity:.8; }
     .ctrl-btn.secondary { background:transparent; border:1.5px solid var(--border); color:var(--muted); }
     .ctrl-btn.secondary:hover { border-color:var(--ink); color:var(--ink); }
+    .stop-alarm-btn { width:100%; margin-top:.75rem; padding:1rem; background:#b03030; color:#fff; border:none; border-radius:8px; font-family:'DM Serif Display',serif; font-size:1.2rem; cursor:pointer; transition:opacity .2s; animation:pulse 0.8s ease-in-out infinite; }
+    .stop-alarm-btn:hover { opacity:.85; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.75} }
 
     /* Laps */
     .laps-card { background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-top:1rem; display:none; }
@@ -110,6 +113,10 @@
     <button class="ctrl-btn primary" id="startBtn" onclick="startStop()">Start</button>
     <button class="ctrl-btn secondary" id="lapResetBtn" onclick="lapReset()">Reset</button>
   </div>
+
+  <button class="stop-alarm-btn" id="stopAlarmBtn" onclick="stopAlarm()" style="display:none">
+    🔔 Stop Alarm
+  </button>
 
   <div class="laps-card" id="lapsCard">
     <div id="lapsList"></div>
@@ -210,7 +217,7 @@
         document.getElementById('statusLabel').textContent = 'Done!';
         document.getElementById('timeDisplay').classList.add('done');
         document.getElementById('startBtn').textContent = 'Restart';
-        try { new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAA==').play(); } catch(e){}
+        startAlarm();
       }
     } else {
       elapsed += delta;
@@ -245,6 +252,77 @@
     return pad(m)+':'+pad(s);
   }
   function pad(n){ return String(n).padStart(2,'0'); }
+
+  // ── Alarm ──────────────────────────────────────────────────
+  let alarmCtx = null;
+  let alarmLoop = null;
+
+  function startAlarm() {
+    stopAlarm();
+    try {
+      alarmCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch(e) { return; }
+
+    // Pattern: two sharp beeps, short pause, repeat
+    const pattern = [
+      { freq: 1046, start: 0.00, dur: 0.12 },
+      { freq: 1046, start: 0.18, dur: 0.12 },
+      { freq: 1396, start: 0.36, dur: 0.22 },
+    ];
+    const cycleLen = 0.9; // seconds per cycle
+
+    function scheduleBeeps(offset) {
+      pattern.forEach(({ freq, start, dur }) => {
+        const osc  = alarmCtx.createOscillator();
+        const gain = alarmCtx.createGain();
+        osc.connect(gain);
+        gain.connect(alarmCtx.destination);
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(freq, alarmCtx.currentTime + offset + start);
+        gain.gain.setValueAtTime(0, alarmCtx.currentTime + offset + start);
+        gain.gain.linearRampToValueAtTime(0.25, alarmCtx.currentTime + offset + start + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, alarmCtx.currentTime + offset + start + dur);
+        osc.start(alarmCtx.currentTime + offset + start);
+        osc.stop(alarmCtx.currentTime + offset + start + dur + 0.02);
+      });
+    }
+
+    // Schedule ahead in chunks so it loops seamlessly
+    let scheduled = 0;
+    const LOOKAHEAD = 3.0; // seconds to schedule ahead
+    scheduleBeeps(0);
+    scheduled += cycleLen;
+
+    alarmLoop = setInterval(() => {
+      if (!alarmCtx) return;
+      while (scheduled < alarmCtx.currentTime + LOOKAHEAD) {
+        scheduleBeeps(scheduled - alarmCtx.currentTime);
+        scheduled += cycleLen;
+      }
+    }, 250);
+
+    // Show the stop alarm button
+    document.getElementById('stopAlarmBtn').style.display = 'block';
+  }
+
+  function stopAlarm() {
+    clearInterval(alarmLoop);
+    alarmLoop = null;
+    if (alarmCtx) {
+      try { alarmCtx.close(); } catch(e) {}
+      alarmCtx = null;
+    }
+    document.getElementById('stopAlarmBtn').style.display = 'none';
+  }
+
+  // Also stop alarm when user resets or restarts
+  const _origStopTimer = stopTimer;
+  function stopTimer() {
+    running = false;
+    clearInterval(interval);
+    document.getElementById('startBtn').textContent = 'Start';
+    stopAlarm();
+  }
 
   onInputChange();
 </script>
