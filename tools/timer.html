@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timer — All Apps by MrPress</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#f7f6f2; --ink:#111; --muted:#888; --border:#e5e3dc; --card:#fff; --red:#b03030; }
+    body { background:var(--bg); color:var(--ink); font-family:'DM Sans',sans-serif; font-weight:300; min-height:100vh; display:flex; flex-direction:column; }
+    header { display:flex; align-items:center; justify-content:space-between; padding:1.6rem 4rem; border-bottom:1px solid var(--border); }
+    .logo { font-family:'DM Serif Display',serif; font-size:1.3rem; letter-spacing:-.02em; text-decoration:none; color:var(--ink); }
+    .logo span { color:var(--muted); }
+    .back-link { font-size:.85rem; color:var(--muted); text-decoration:none; transition:color .2s; }
+    .back-link:hover { color:var(--ink); }
+    main { flex:1; padding:3.5rem 4rem 5rem; max-width:680px; margin:0 auto; width:100%; }
+    .eyebrow { font-size:.73rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:.6rem; }
+    h1 { font-family:'DM Serif Display',serif; font-size:2.8rem; letter-spacing:-.025em; margin-bottom:.5rem; }
+    .subtitle { color:var(--muted); font-size:.95rem; margin-bottom:2rem; line-height:1.6; }
+
+    /* Mode tabs */
+    .mode-tabs { display:flex; gap:.5rem; margin-bottom:1.5rem; }
+    .mode-btn { flex:1; background:transparent; border:1.5px solid var(--border); border-radius:8px; padding:.55rem; font-family:'DM Sans',sans-serif; font-size:.88rem; font-weight:500; color:var(--muted); cursor:pointer; transition:all .15s; }
+    .mode-btn.active { background:var(--ink); border-color:var(--ink); color:#fff; }
+
+    /* Display */
+    .display-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:2.5rem 2rem; text-align:center; margin-bottom:1rem; }
+    .time-display { font-family:'DM Serif Display',serif; font-size:5rem; letter-spacing:-.02em; line-height:1; margin-bottom:.5rem; transition:color .3s; }
+    .time-display.done { color:var(--red); }
+    .time-ms { font-size:1.8rem; color:var(--muted); }
+    .status-label { font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:.75rem; }
+
+    /* Progress ring */
+    .ring-wrap { position:relative; display:inline-block; margin-bottom:1rem; }
+    svg.ring { transform:rotate(-90deg); }
+    #progressCircle { transition:stroke-dashoffset .5s linear; }
+
+    /* Countdown inputs */
+    .countdown-inputs { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.75rem; margin-bottom:1rem; }
+    .ci-group { display:flex; flex-direction:column; align-items:center; gap:.4rem; }
+    .ci-group label { font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+    .ci-group input { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:.6rem; font-family:'DM Serif Display',serif; font-size:2rem; text-align:center; color:var(--ink); outline:none; transition:border-color .2s; }
+    .ci-group input:focus { border-color:var(--ink); }
+
+    /* Preset buttons */
+    .presets { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1rem; }
+    .preset-btn { background:var(--bg); border:1px solid var(--border); border-radius:99px; padding:.3rem .85rem; font-family:'DM Sans',sans-serif; font-size:.78rem; color:var(--muted); cursor:pointer; transition:all .15s; }
+    .preset-btn:hover { border-color:var(--ink); color:var(--ink); }
+
+    /* Control buttons */
+    .controls { display:flex; gap:.75rem; }
+    .ctrl-btn { flex:1; padding:.85rem; border-radius:8px; font-family:'DM Serif Display',serif; font-size:1.1rem; cursor:pointer; transition:all .2s; border:none; }
+    .ctrl-btn.primary { background:var(--ink); color:#fff; }
+    .ctrl-btn.primary:hover { opacity:.8; }
+    .ctrl-btn.secondary { background:transparent; border:1.5px solid var(--border); color:var(--muted); }
+    .ctrl-btn.secondary:hover { border-color:var(--ink); color:var(--ink); }
+
+    /* Laps */
+    .laps-card { background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-top:1rem; display:none; }
+    .laps-card.visible { display:block; }
+    .lap-row { display:flex; justify-content:space-between; padding:.7rem 1.2rem; border-bottom:1px solid var(--border); font-size:.88rem; }
+    .lap-row:last-child { border-bottom:none; }
+    .lap-num { color:var(--muted); }
+
+    footer { border-top:1px solid var(--border); padding:1.5rem 4rem; font-size:.8rem; color:var(--muted); }
+    @media(max-width:700px){ header,main,footer{padding-left:1.5rem;padding-right:1.5rem;} main{padding-top:2.5rem;} h1{font-size:2rem;} .time-display{font-size:3.5rem;} }
+  </style>
+</head>
+<body>
+<header>
+  <a class="logo" href="../index.html">All Apps <span>by MrPress</span></a>
+  <a class="back-link" href="../index.html">← All tools</a>
+</header>
+<main>
+  <p class="eyebrow">⏱ Utility</p>
+  <h1>Timer</h1>
+  <p class="subtitle">Countdown timer and stopwatch in one. Set presets or enter a custom time.</p>
+
+  <div class="mode-tabs">
+    <button class="mode-btn active" onclick="setMode('countdown')">Countdown</button>
+    <button class="mode-btn" onclick="setMode('stopwatch')">Stopwatch</button>
+  </div>
+
+  <!-- Countdown UI -->
+  <div id="countdownUI">
+    <div class="presets">
+      <button class="preset-btn" onclick="setPreset(1,0,0)">1 min</button>
+      <button class="preset-btn" onclick="setPreset(3,0,0)">3 min</button>
+      <button class="preset-btn" onclick="setPreset(5,0,0)">5 min</button>
+      <button class="preset-btn" onclick="setPreset(10,0,0)">10 min</button>
+      <button class="preset-btn" onclick="setPreset(15,0,0)">15 min</button>
+      <button class="preset-btn" onclick="setPreset(30,0,0)">30 min</button>
+      <button class="preset-btn" onclick="setPreset(60,0,0)">1 hr</button>
+    </div>
+    <div class="countdown-inputs">
+      <div class="ci-group"><label>Hours</label><input type="number" id="ih" value="0" min="0" max="99" oninput="onInputChange()" /></div>
+      <div class="ci-group"><label>Minutes</label><input type="number" id="im" value="5" min="0" max="59" oninput="onInputChange()" /></div>
+      <div class="ci-group"><label>Seconds</label><input type="number" id="is" value="0" min="0" max="59" oninput="onInputChange()" /></div>
+    </div>
+  </div>
+
+  <div class="display-card">
+    <div class="time-display" id="timeDisplay">05:00</div>
+    <div class="status-label" id="statusLabel">Ready</div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn primary" id="startBtn" onclick="startStop()">Start</button>
+    <button class="ctrl-btn secondary" id="lapResetBtn" onclick="lapReset()">Reset</button>
+  </div>
+
+  <div class="laps-card" id="lapsCard">
+    <div id="lapsList"></div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let mode = 'countdown';
+  let running = false;
+  let interval = null;
+  let remaining = 0;     // ms for countdown
+  let elapsed   = 0;     // ms for stopwatch
+  let totalMs   = 0;     // original countdown ms
+  let lastTick  = 0;
+  let laps      = [];
+
+  function setMode(m) {
+    mode = m;
+    stopTimer();
+    document.querySelectorAll('.mode-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&m==='countdown')||(i===1&&m==='stopwatch')));
+    document.getElementById('countdownUI').style.display = m === 'countdown' ? 'block' : 'none';
+    document.getElementById('lapResetBtn').textContent = m === 'stopwatch' ? 'Lap' : 'Reset';
+    document.getElementById('lapsCard').classList.remove('visible');
+    laps = [];
+    if (m === 'countdown') { onInputChange(); }
+    else { elapsed = 0; renderStopwatch(); document.getElementById('statusLabel').textContent = 'Ready'; }
+  }
+
+  function setPreset(m, s, h) {
+    document.getElementById('ih').value = h;
+    document.getElementById('im').value = m;
+    document.getElementById('is').value = s;
+    stopTimer(); onInputChange();
+  }
+
+  function onInputChange() {
+    stopTimer();
+    const h = parseInt(document.getElementById('ih').value)||0;
+    const m = parseInt(document.getElementById('im').value)||0;
+    const s = parseInt(document.getElementById('is').value)||0;
+    totalMs = (h*3600+m*60+s)*1000;
+    remaining = totalMs;
+    renderCountdown();
+    document.getElementById('statusLabel').textContent = 'Ready';
+    document.getElementById('timeDisplay').classList.remove('done');
+  }
+
+  function startStop() {
+    if (running) { pauseTimer(); return; }
+    if (mode === 'countdown' && remaining <= 0) { onInputChange(); }
+    running = true;
+    lastTick = performance.now();
+    document.getElementById('startBtn').textContent = 'Pause';
+    document.getElementById('statusLabel').textContent = 'Running';
+    document.getElementById('timeDisplay').classList.remove('done');
+    interval = setInterval(tick, 50);
+  }
+
+  function pauseTimer() {
+    running = false;
+    clearInterval(interval);
+    document.getElementById('startBtn').textContent = 'Resume';
+    document.getElementById('statusLabel').textContent = 'Paused';
+  }
+
+  function stopTimer() {
+    running = false;
+    clearInterval(interval);
+    document.getElementById('startBtn').textContent = 'Start';
+  }
+
+  function lapReset() {
+    if (mode === 'stopwatch') {
+      if (running) {
+        laps.push(elapsed);
+        renderLaps();
+      } else {
+        elapsed = 0; laps = [];
+        renderStopwatch();
+        document.getElementById('lapsCard').classList.remove('visible');
+        document.getElementById('statusLabel').textContent = 'Ready';
+        document.getElementById('startBtn').textContent = 'Start';
+      }
+    } else {
+      stopTimer(); onInputChange();
+    }
+  }
+
+  function tick() {
+    const now  = performance.now();
+    const delta = now - lastTick;
+    lastTick = now;
+    if (mode === 'countdown') {
+      remaining = Math.max(0, remaining - delta);
+      renderCountdown();
+      if (remaining <= 0) {
+        stopTimer();
+        document.getElementById('statusLabel').textContent = 'Done!';
+        document.getElementById('timeDisplay').classList.add('done');
+        document.getElementById('startBtn').textContent = 'Restart';
+        try { new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAA==').play(); } catch(e){}
+      }
+    } else {
+      elapsed += delta;
+      renderStopwatch();
+    }
+  }
+
+  function renderCountdown() {
+    document.getElementById('timeDisplay').textContent = fmtTime(remaining);
+  }
+
+  function renderStopwatch() {
+    document.getElementById('timeDisplay').textContent = fmtTime(elapsed);
+  }
+
+  function renderLaps() {
+    const card = document.getElementById('lapsCard');
+    const list = document.getElementById('lapsList');
+    card.classList.add('visible');
+    list.innerHTML = [...laps].reverse().map((t,i) => {
+      const n = laps.length - i;
+      const split = i === 0 ? t : t - laps[laps.length-i-2];
+      return `<div class="lap-row"><span class="lap-num">Lap ${n}</span><span>${fmtTime(split)}</span><span style="color:var(--muted)">${fmtTime(t)}</span></div>`;
+    }).join('');
+  }
+
+  function fmtTime(ms) {
+    const h  = Math.floor(ms/3600000);
+    const m  = Math.floor((ms%3600000)/60000);
+    const s  = Math.floor((ms%60000)/1000);
+    if (h > 0) return pad(h)+':'+pad(m)+':'+pad(s);
+    return pad(m)+':'+pad(s);
+  }
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  onInputChange();
+</script>
+<script src="../ad.js"></script>
+</body>
+</html>
