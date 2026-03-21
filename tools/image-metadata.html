@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Metadata — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:860px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .dropzone{border:1.5px dashed var(--border);border-radius:12px;padding:3rem 2rem;text-align:center;background:var(--card);cursor:pointer;transition:all .2s;position:relative;margin-bottom:1.5rem}
+    .dropzone:hover,.dropzone.drag-over{border-color:var(--ink);background:#faf9f5}
+    .dropzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .drop-icon{font-size:2.2rem;display:block;margin-bottom:.75rem}
+    .drop-title{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:.3rem}
+    .drop-sub{font-size:.85rem;color:var(--muted)}
+    .panel{display:none}
+    .panel.visible{display:block}
+    .layout{display:grid;grid-template-columns:240px 1fr;gap:1.5rem;align-items:start}
+    .thumb-box{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .thumb-label{padding:.6rem 1rem;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
+    .thumb-wrap{display:flex;align-items:center;justify-content:center;padding:1rem;background:repeating-conic-gradient(#ddd 0% 25%,#f0f0f0 0% 50%) 0 0/16px 16px;min-height:160px}
+    #thumb{max-width:100%;max-height:180px;object-fit:contain;display:block}
+    .meta-section{margin-bottom:1rem}
+    .section-head{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:.5rem 0;border-bottom:1px solid var(--border);margin-bottom:.1rem;display:flex;justify-content:space-between;align-items:center}
+    .meta-table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+    .meta-table tr:not(:last-child) td{border-bottom:1px solid var(--border)}
+    .meta-table td{padding:.55rem 1rem;font-size:.85rem;vertical-align:top}
+    .meta-table td:first-child{color:var(--muted);width:42%;white-space:nowrap;font-size:.8rem}
+    .meta-table td:last-child{word-break:break-all;font-family:'DM Sans',monospace;font-size:.82rem}
+    .empty-tag{font-size:.78rem;color:var(--muted);font-style:italic;padding:.6rem 0}
+    .copy-btn{font-size:.7rem;background:transparent;border:1px solid var(--border);border-radius:4px;padding:.15rem .5rem;color:var(--muted);cursor:pointer;transition:all .2s}
+    .copy-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .action-row{display:flex;gap:.75rem;margin-top:1.5rem}
+    .btn{padding:.85rem 1.5rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.88rem;cursor:pointer;transition:all .2s;border:none}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
+    .btn-secondary:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:760px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.layout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🔍 Image</p>
+  <h1>Image Metadata</h1>
+  <p class="subtitle">View EXIF data, camera settings, GPS coordinates, and file information embedded in any image.</p>
+
+  <div class="dropzone" id="dz">
+    <input type="file" id="fileInput" accept="image/*" />
+    <span class="drop-icon">📂</span>
+    <p class="drop-title">Drop an image here</p>
+    <p class="drop-sub">JPEG, TIFF, PNG, HEIC — EXIF data extracted instantly</p>
+  </div>
+
+  <div class="panel" id="panel">
+    <div class="layout">
+      <div>
+        <div class="thumb-box">
+          <div class="thumb-label">Image</div>
+          <div class="thumb-wrap"><img id="thumb" src="" alt="" /></div>
+        </div>
+      </div>
+      <div id="metaOutput"></div>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="copyAll()">📋 Copy all metadata</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↩ New image</button>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/full.umd.cjs"></script>
+<script>
+  const dz=document.getElementById('dz');
+  document.getElementById('fileInput').addEventListener('change',e=>{if(e.target.files[0])loadFile(e.target.files[0])});
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over')});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0])});
+
+  let allMetaText='';
+
+  async function loadFile(file) {
+    const url=URL.createObjectURL(file);
+    document.getElementById('thumb').src=url;
+
+    // Basic file info
+    const img=new Image();
+    img.onload=async()=>{
+      const basicInfo={
+        'File name':file.name,
+        'File size':fmtBytes(file.size),
+        'File type':file.type||'Unknown',
+        'Dimensions':`${img.naturalWidth} × ${img.naturalHeight} px`,
+        'Megapixels':(img.naturalWidth*img.naturalHeight/1e6).toFixed(2)+' MP',
+        'Last modified':new Date(file.lastModified).toLocaleString(),
+      };
+
+      let exif={};
+      try { exif=await exifr.parse(file,{tiff:true,exif:true,gps:true,iptc:true,xmp:true,icc:false,jfif:true,ihdr:true}) || {}; } catch(e){}
+
+      renderMeta(basicInfo, exif);
+      dz.style.display='none';
+      document.getElementById('panel').classList.add('visible');
+    };
+    img.src=url;
+  }
+
+  function renderMeta(basic, exif) {
+    const out=document.getElementById('metaOutput');
+    out.innerHTML='';
+    allMetaText='';
+
+    function section(title, data) {
+      if(!data||!Object.keys(data).length) return;
+      const entries=Object.entries(data).filter(([,v])=>v!==undefined&&v!==null&&v!=='');
+      if(!entries.length) return;
+      const div=document.createElement('div');div.className='meta-section';
+      div.innerHTML=`<div class="section-head"><span>${title}</span></div>`;
+      const table=document.createElement('table');table.className='meta-table';
+      entries.forEach(([k,v])=>{
+        const val=formatVal(k,v);
+        allMetaText+=`${k}: ${val}\n`;
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${formatKey(k)}</td><td>${val}</td>`;
+        table.appendChild(tr);
+      });
+      div.appendChild(table);
+      out.appendChild(div);
+    }
+
+    // Categorise EXIF keys
+    const cameraKeys=['Make','Model','LensModel','LensMake','Software','HostComputer'];
+    const shootKeys=['ExposureTime','FNumber','ISO','ISOSpeedRatings','ShutterSpeedValue','ApertureValue','ExposureProgram','ExposureMode','MeteringMode','Flash','FocalLength','FocalLengthIn35mmFilm','WhiteBalance','DigitalZoomRatio','SceneCaptureType','Contrast','Saturation','Sharpness'];
+    const dateKeys=['DateTimeOriginal','DateTime','DateTimeDigitized','CreateDate','ModifyDate'];
+    const gpsKeys=['GPSLatitude','GPSLongitude','GPSAltitude','GPSSpeed','GPSImgDirection','GPSLatitudeRef','GPSLongitudeRef','GPSAltitudeRef','latitude','longitude'];
+    const imageKeys=['ImageWidth','ImageHeight','ColorSpace','Orientation','ResolutionUnit','XResolution','YResolution','BitsPerSample','Compression','PhotometricInterpretation','SamplesPerPixel'];
+    const iptcKeys=['ObjectName','Caption','Keywords','CopyrightNotice','Credit','Source','City','Country'];
+
+    const camera={}, shoot={}, dates={}, gps={}, image={}, iptc={}, other={};
+    Object.entries(exif).forEach(([k,v])=>{
+      if(cameraKeys.includes(k)) camera[k]=v;
+      else if(shootKeys.includes(k)) shoot[k]=v;
+      else if(dateKeys.includes(k)) dates[k]=v;
+      else if(gpsKeys.includes(k)) gps[k]=v;
+      else if(imageKeys.includes(k)) image[k]=v;
+      else if(iptcKeys.includes(k)) iptc[k]=v;
+      else other[k]=v;
+    });
+
+    section('File info', basic);
+    section('Camera', camera);
+    section('Shooting settings', shoot);
+    section('Date & time', dates);
+    section('GPS & location', Object.keys(gps).length?gps:null);
+    section('Image properties', image);
+    section('IPTC / copyright', iptc);
+    if(Object.keys(other).length>0&&Object.keys(other).length<40) section('Other EXIF data', other);
+
+    if(!out.children.length){
+      out.innerHTML='<p style="color:var(--muted);font-size:.9rem;padding:.5rem 0">No EXIF metadata found in this image. The file may have had metadata stripped, or be a format that doesn\'t embed EXIF (e.g. PNG).</p>';
+    }
+
+    // GPS map link
+    if(gps.latitude!==undefined&&gps.longitude!==undefined){
+      const mapDiv=document.createElement('div');mapDiv.className='meta-section';
+      mapDiv.innerHTML=`<div class="section-head">GPS map</div>
+        <div style="margin-top:.5rem"><a href="https://maps.google.com/?q=${gps.latitude},${gps.longitude}" target="_blank" rel="noopener" style="font-size:.85rem;color:var(--ink);text-decoration:underline">📍 Open in Google Maps (${gps.latitude.toFixed(5)}, ${gps.longitude.toFixed(5)})</a></div>`;
+      out.insertBefore(mapDiv, out.children[4]||null);
+    }
+  }
+
+  function formatKey(k){return k.replace(/([A-Z])/g,' $1').trim().replace(/^./,c=>c.toUpperCase());}
+
+  function formatVal(k,v){
+    if(v instanceof Date) return v.toLocaleString();
+    if(typeof v==='number'){
+      if(k==='FNumber') return 'f/'+v.toFixed(1);
+      if(k==='ExposureTime') return v<1?'1/'+Math.round(1/v)+'s':v+'s';
+      if(k==='FocalLength'||k==='FocalLengthIn35mmFilm') return v+'mm';
+      if(k==='GPSAltitude') return v.toFixed(1)+'m';
+      if(k==='GPSSpeed') return v.toFixed(1)+' km/h';
+      if(k==='XResolution'||k==='YResolution') return v+' ppi';
+      return String(Math.round(v*1000)/1000);
+    }
+    if(Array.isArray(v)) return v.join(', ');
+    return String(v);
+  }
+
+  function fmtBytes(b){if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(1)+' KB';return (b/1048576).toFixed(2)+' MB';}
+
+  function copyAll(){
+    if(!allMetaText)return;
+    navigator.clipboard.writeText(allMetaText).then(()=>{
+      const btn=document.querySelector('.btn-primary');btn.textContent='✓ Copied!';setTimeout(()=>btn.textContent='📋 Copy all metadata',1500);
+    });
+  }
+
+  function resetAll(){dz.style.display='';document.getElementById('panel').classList.remove('visible');document.getElementById('fileInput').value='';document.getElementById('metaOutput').innerHTML='';allMetaText='';}
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

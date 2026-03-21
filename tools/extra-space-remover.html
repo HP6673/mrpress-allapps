@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Extra Space Remover — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a;--green-bg:#edf7f1}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:860px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .layout{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem}
+    .panel-box{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+    .panel-head{padding:.7rem 1rem;border-bottom:1px solid var(--border);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+    .char-count{font-size:.75rem;color:var(--muted)}
+    textarea{flex:1;width:100%;background:transparent;border:none;padding:1rem;font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--ink);resize:none;outline:none;line-height:1.7;min-height:220px}
+    textarea::placeholder{color:var(--muted)}
+    .output-area{flex:1;padding:1rem;font-size:.95rem;line-height:1.7;color:var(--ink);min-height:220px;white-space:pre-wrap;word-break:break-word;position:relative}
+    .output-area.placeholder{color:var(--muted)}
+    .options-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.3rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+    .options-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.5rem}
+    .option-check{display:flex;align-items:flex-start;gap:.6rem;padding:.55rem .7rem;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .15s}
+    .option-check:hover{border-color:var(--muted)}
+    .option-check input{margin-top:.2rem;accent-color:var(--ink);cursor:pointer;flex-shrink:0}
+    .option-check .opt-label{font-size:.83rem;line-height:1.4}
+    .option-check .opt-desc{font-size:.72rem;color:var(--muted);display:block;margin-top:.1rem}
+    .stats-bar{background:var(--green-bg);border:1px solid #b2dfc6;border-radius:8px;padding:.75rem 1.1rem;font-size:.85rem;color:var(--green);margin-bottom:1rem;display:none;display:flex;gap:1.5rem;flex-wrap:wrap}
+    .stat-item{display:flex;align-items:center;gap:.4rem}
+    .action-row{display:flex;gap:.75rem}
+    .btn{flex:1;padding:.9rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:all .2s;border:none;text-align:center}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-secondary{flex:0;padding:.9rem 1.3rem;background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .btn-secondary:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:760px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.layout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">␣ Text</p>
+  <h1>Extra Space Remover</h1>
+  <p class="subtitle">Clean up messy text — remove double spaces, trim lines, strip blank lines, fix tabs, and more.</p>
+
+  <div class="options-card">
+    <p class="card-title">Cleaning options</p>
+    <div class="options-grid">
+      <label class="option-check"><input type="checkbox" id="optDouble" checked /><span><span class="opt-label">Double spaces</span><span class="opt-desc">Replace 2+ spaces with 1</span></span></label>
+      <label class="option-check"><input type="checkbox" id="optTrim" checked /><span><span class="opt-label">Trim line edges</span><span class="opt-desc">Remove leading/trailing spaces per line</span></span></label>
+      <label class="option-check"><input type="checkbox" id="optBlankLines" checked /><span><span class="opt-label">Extra blank lines</span><span class="opt-desc">Collapse 2+ blank lines into 1</span></span></label>
+      <label class="option-check"><input type="checkbox" id="optTabs" /><span><span class="opt-label">Tabs → spaces</span><span class="opt-desc">Replace tab characters with spaces</span></span></label>
+      <label class="option-check"><input type="checkbox" id="optNbsp" checked /><span><span class="opt-label">Non-breaking spaces</span><span class="opt-desc">Replace &amp;nbsp; (\u00a0) with regular spaces</span></span></label>
+      <label class="option-check"><input type="checkbox" id="optAllBlank" /><span><span class="opt-label">All blank lines</span><span class="opt-desc">Remove every empty line</span></span></label>
+      <label class="option-check"><input type="checkbox" id="optTrimDoc" /><span><span class="opt-label">Trim document edges</span><span class="opt-desc">Remove leading/trailing whitespace from whole text</span></span></label>
+      <label class="option-check"><input type="checkbox" id="optUnicode" /><span><span class="opt-label">Unicode whitespace</span><span class="opt-desc">Remove zero-width, thin spaces, and similar</span></span></label>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="panel-box">
+      <div class="panel-head"><span>Input</span><span class="char-count" id="inputStats">0 chars</span></div>
+      <textarea id="input" placeholder="Paste your text here…" oninput="updateStats();clean()"></textarea>
+    </div>
+    <div class="panel-box">
+      <div class="panel-head"><span>Cleaned</span><span class="char-count" id="outputStats"></span></div>
+      <div class="output-area placeholder" id="output">Cleaned text will appear here.</div>
+    </div>
+  </div>
+
+  <div class="stats-bar" id="statsBar">
+    <span class="stat-item">✓ Removed <strong id="statChars">0</strong> characters</span>
+    <span class="stat-item">Lines: <strong id="statLines">0</strong></span>
+  </div>
+
+  <div class="action-row">
+    <button class="btn btn-primary" onclick="clean()">␣ Clean text</button>
+    <button class="btn-secondary" onclick="copyOutput()">Copy</button>
+    <button class="btn-secondary" onclick="clearAll()">Clear</button>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  // Auto-clean on option change
+  document.querySelectorAll('.option-check input').forEach(cb=>cb.addEventListener('change',clean));
+
+  function updateStats(){
+    const t=document.getElementById('input').value;
+    document.getElementById('inputStats').textContent=t.length+' chars';
+  }
+
+  function clean(){
+    let text=document.getElementById('input').value;
+    const origLen=text.length;
+    if(!text.trim()){
+      document.getElementById('output').textContent='Cleaned text will appear here.';
+      document.getElementById('output').classList.add('placeholder');
+      document.getElementById('statsBar').style.display='none';
+      document.getElementById('outputStats').textContent='';
+      return;
+    }
+
+    if(document.getElementById('optNbsp').checked)   text=text.replace(/\u00a0/g,' ');
+    if(document.getElementById('optUnicode').checked) text=text.replace(/[\u200b\u200c\u200d\u2060\uFEFF\u2009\u200a\u202f\u205f\u3000]/g,'');
+    if(document.getElementById('optTabs').checked)    text=text.replace(/\t/g,'    ');
+    if(document.getElementById('optDouble').checked)  text=text.replace(/ {2,}/g,' ');
+    if(document.getElementById('optTrim').checked)    text=text.split('\n').map(l=>l.replace(/^\s+|\s+$/g,'')).join('\n');
+    if(document.getElementById('optAllBlank').checked) text=text.split('\n').filter(l=>l.trim()!=='').join('\n');
+    else if(document.getElementById('optBlankLines').checked) text=text.replace(/\n{3,}/g,'\n\n');
+    if(document.getElementById('optTrimDoc').checked) text=text.trim();
+
+    const out=document.getElementById('output');
+    out.textContent=text;
+    out.classList.remove('placeholder');
+
+    const removed=origLen-text.length;
+    const lines=text.split('\n').length;
+    document.getElementById('outputStats').textContent=text.length+' chars';
+    document.getElementById('statChars').textContent=removed>=0?removed:0;
+    document.getElementById('statLines').textContent=lines;
+    document.getElementById('statsBar').style.display='flex';
+  }
+
+  function copyOutput(){
+    const text=document.getElementById('output').textContent;
+    if(text==='Cleaned text will appear here.')return;
+    navigator.clipboard.writeText(text).then(()=>{
+      const btn=document.querySelectorAll('.btn-secondary')[0];
+      btn.textContent='✓ Copied';setTimeout(()=>btn.textContent='Copy',1400);
+    });
+  }
+
+  function clearAll(){
+    document.getElementById('input').value='';
+    document.getElementById('output').textContent='Cleaned text will appear here.';
+    document.getElementById('output').classList.add('placeholder');
+    document.getElementById('inputStats').textContent='0 chars';
+    document.getElementById('outputStats').textContent='';
+    document.getElementById('statsBar').style.display='none';
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>
