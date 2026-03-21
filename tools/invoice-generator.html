@@ -151,23 +151,59 @@
 
   function fmt(n){return'$'+parseFloat(n||0).toFixed(2);}
 
-  function renderItemsTable(){
+  // Build the table from scratch — only called when rows are added/removed
+  function buildItemsTable(){
     const body=document.getElementById('itemsBody');
-    body.innerHTML=items.map((item,i)=>`
-      <tr>
-        <td><input class="item-input" value="${item.desc}" placeholder="Item description" oninput="items[${i}].desc=this.value;render()" /></td>
-        <td><input class="item-input" type="number" value="${item.qty}" min="0" step="1" style="width:50px" oninput="items[${i}].qty=parseFloat(this.value)||0;render()" /></td>
-        <td><input class="item-input" type="number" value="${item.rate}" min="0" step="0.01" style="width:70px" oninput="items[${i}].rate=parseFloat(this.value)||0;render()" /></td>
-        <td>${fmt(item.qty*item.rate)}</td>
-        <td><button class="remove-btn" onclick="removeItem(${i})">✕</button></td>
-      </tr>`).join('');
+    body.innerHTML='';
+    items.forEach((item,i)=>{
+      const tr=document.createElement('tr');
+      tr.dataset.idx=i;
+
+      // Description
+      const tdDesc=document.createElement('td');
+      const inDesc=document.createElement('input');
+      inDesc.className='item-input';inDesc.placeholder='Item description';inDesc.value=item.desc;
+      inDesc.addEventListener('input',function(){items[i].desc=this.value;updateRowAmount(i);updatePreview();});
+      tdDesc.appendChild(inDesc);tr.appendChild(tdDesc);
+
+      // Qty
+      const tdQty=document.createElement('td');
+      const inQty=document.createElement('input');
+      inQty.className='item-input';inQty.type='number';inQty.min='0';inQty.step='1';inQty.style.width='50px';inQty.value=item.qty;
+      inQty.addEventListener('input',function(){items[i].qty=parseFloat(this.value)||0;updateRowAmount(i);updatePreview();});
+      tdQty.appendChild(inQty);tr.appendChild(tdQty);
+
+      // Rate
+      const tdRate=document.createElement('td');
+      const inRate=document.createElement('input');
+      inRate.className='item-input';inRate.type='number';inRate.min='0';inRate.step='0.01';inRate.style.width='70px';inRate.value=item.rate;
+      inRate.addEventListener('input',function(){items[i].rate=parseFloat(this.value)||0;updateRowAmount(i);updatePreview();});
+      tdRate.appendChild(inRate);tr.appendChild(tdRate);
+
+      // Amount
+      const tdAmt=document.createElement('td');
+      tdAmt.id='amt-'+i;tdAmt.textContent=fmt(item.qty*item.rate);
+      tr.appendChild(tdAmt);
+
+      // Remove
+      const tdRm=document.createElement('td');
+      const rmBtn=document.createElement('button');
+      rmBtn.className='remove-btn';rmBtn.textContent='✕';
+      rmBtn.addEventListener('click',()=>removeItem(i));
+      tdRm.appendChild(rmBtn);tr.appendChild(tdRm);
+
+      body.appendChild(tr);
+    });
   }
 
-  function addItem(){items.push({desc:'',qty:1,rate:0});renderItemsTable();render();}
-  function removeItem(i){if(items.length>1)items.splice(i,1);renderItemsTable();render();}
+  // Just update the amount cell for one row — no DOM rebuild
+  function updateRowAmount(i){
+    const cell=document.getElementById('amt-'+i);
+    if(cell) cell.textContent=fmt(items[i].qty*items[i].rate);
+    updateTotals();
+  }
 
-  function render(){
-    renderItemsTable();
+  function updateTotals(){
     const sub=items.reduce((s,it)=>s+it.qty*it.rate,0);
     const taxRate=parseFloat(document.getElementById('taxRate').value)||0;
     const tax=sub*taxRate/100;
@@ -175,7 +211,11 @@
     document.getElementById('subtotalDisp').textContent=fmt(sub);
     document.getElementById('taxDisp').textContent=fmt(tax);
     document.getElementById('totalDisp').textContent=fmt(total);
-    // Preview
+    return{sub,tax,total};
+  }
+
+  function updatePreview(){
+    const{sub,tax,total}=updateTotals();
     document.getElementById('p-num').textContent='#'+document.getElementById('invNum').value;
     document.getElementById('p-date').textContent=document.getElementById('invDate').value?'Date: '+document.getElementById('invDate').value:'';
     document.getElementById('p-due').textContent=document.getElementById('dueDate').value?'Due: '+document.getElementById('dueDate').value:'';
@@ -192,18 +232,28 @@
     pn.style.display=notes?'block':'none';pn.textContent=notes;
   }
 
+  function addItem(){items.push({desc:'',qty:1,rate:0});buildItemsTable();updatePreview();}
+  function removeItem(i){if(items.length>1){items.splice(i,1);buildItemsTable();updatePreview();}}
+
+  // Wire up all non-item fields to updatePreview
+  ['invNum','invDate','dueDate','fromName','fromAddr','toName','toAddr','notes'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',updatePreview);
+  });
+  document.getElementById('taxRate').addEventListener('input',updatePreview);
+
   function resetForm(){
     items=[{desc:'',qty:1,rate:0}];
-    ['invNum','fromName','fromAddr','toName','toAddr','notes'].forEach(id=>document.getElementById(id).value=id==='invNum'?'INV-001':'');
+    document.getElementById('invNum').value='INV-001';
+    ['fromName','fromAddr','toName','toAddr','notes'].forEach(id=>document.getElementById(id).value='');
     ['invDate','dueDate'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('taxRate').value=0;
-    render();
+    buildItemsTable();updatePreview();
   }
 
-  // Set today's date
-  const today=new Date().toISOString().split('T')[0];
-  document.getElementById('invDate').value=today;
-  render();
+  // Init
+  document.getElementById('invDate').value=new Date().toISOString().split('T')[0];
+  buildItemsTable();
+  updatePreview();
 </script>
 <script src="../ad.js"></script>
 </body>
