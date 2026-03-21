@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volume Changer — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a;--green-bg:#edf7f1}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:760px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .dropzone{border:1.5px dashed var(--border);border-radius:12px;padding:2.5rem 2rem;text-align:center;background:var(--card);cursor:pointer;transition:all .2s;position:relative;margin-bottom:1rem}
+    .dropzone:hover,.dropzone.drag-over{border-color:var(--ink);background:#faf9f5}
+    .dropzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .drop-icon{font-size:2rem;display:block;margin-bottom:.6rem}
+    .drop-title{font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:.3rem}
+    .drop-sub{font-size:.82rem;color:var(--muted)}
+    .panel{display:none}.panel.visible{display:block}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+
+    /* File info */
+    .file-info{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+    .file-icon-big{font-size:2.5rem;flex-shrink:0}
+    .file-details{flex:1}
+    .file-name{font-weight:500;font-size:.95rem;word-break:break-all}
+    .file-meta{font-size:.78rem;color:var(--muted);margin-top:.2rem}
+
+    /* Player */
+    #mediaEl{width:100%;border-radius:8px;margin-bottom:1rem;background:#000;max-height:240px}
+    audio#mediaEl{height:48px;background:transparent}
+
+    /* Volume controls */
+    .vol-hero{text-align:center;padding:1rem 0 .5rem}
+    .vol-big{font-family:'DM Serif Display',serif;font-size:5rem;letter-spacing:-.03em;line-height:1}
+    .vol-unit{font-size:.85rem;color:var(--muted);margin-top:.2rem}
+    .vol-slider-wrap{padding:.5rem 1rem 1rem}
+    input[type="range"].vol-slider{width:100%;height:8px;accent-color:var(--ink);cursor:pointer}
+    .preset-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem;justify-content:center}
+    .preset-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:99px;padding:.3rem .9rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .preset-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .preset-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+
+    /* Output format */
+    .fmt-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem}
+    .fmt-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:.4rem .85rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .fmt-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .fmt-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+
+    .progress-bar{height:4px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:1rem;display:none}
+    .progress-fill{height:100%;background:var(--ink);border-radius:99px;transition:width .15s;width:0%}
+    .success-row{background:var(--green-bg);border:1px solid #b2dfc6;border-radius:8px;padding:.9rem 1.2rem;font-size:.88rem;color:var(--green);margin-bottom:1rem;display:none}
+    .note{font-size:.78rem;color:var(--muted);line-height:1.6;padding:.75rem;background:var(--bg);border-radius:6px;border:1px solid var(--border);margin-bottom:1rem}
+    .action-row{display:flex;gap:.75rem}
+    .btn{flex:1;padding:.9rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:all .2s;border:none;text-align:center}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-primary:disabled{opacity:.35;cursor:not-allowed}
+    .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
+    .btn-secondary:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🔊 Media</p>
+  <h1>Volume Changer</h1>
+  <p class="subtitle">Upload any audio or video file, adjust its volume, and download the result — all in your browser.</p>
+
+  <div class="dropzone" id="dz">
+    <input type="file" id="fileInput" accept="audio/*,video/*" />
+    <span class="drop-icon">📂</span>
+    <p class="drop-title">Drop an audio or video file here</p>
+    <p class="drop-sub">MP3, WAV, MP4, M4A, OGG, WebM and more</p>
+  </div>
+
+  <div class="panel" id="panel">
+    <div class="card">
+      <div class="file-info">
+        <div class="file-icon-big" id="fileIconBig">🎵</div>
+        <div class="file-details">
+          <div class="file-name" id="fileName"></div>
+          <div class="file-meta" id="fileMeta"></div>
+        </div>
+      </div>
+      <div id="mediaWrap"></div>
+    </div>
+
+    <div class="card">
+      <p class="card-title">Volume adjustment</p>
+      <div class="vol-hero">
+        <div class="vol-big" id="volDisplay">100</div>
+        <div class="vol-unit">% of original</div>
+      </div>
+      <div class="vol-slider-wrap">
+        <input type="range" class="vol-slider" id="volSlider" min="0" max="300" value="100" oninput="onVolSlider(this.value)" />
+      </div>
+      <div class="preset-row" id="presetRow">
+        <button class="preset-btn" onclick="setVol(25)">25%</button>
+        <button class="preset-btn" onclick="setVol(50)">50%</button>
+        <button class="preset-btn" onclick="setVol(75)">75%</button>
+        <button class="preset-btn active" onclick="setVol(100)">100% Original</button>
+        <button class="preset-btn" onclick="setVol(150)">150%</button>
+        <button class="preset-btn" onclick="setVol(200)">200%</button>
+        <button class="preset-btn" onclick="setVol(300)">300%</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-title">Output format</p>
+      <div class="fmt-row" id="fmtRow">
+        <button class="fmt-btn active" data-fmt="audio/wav" data-ext="wav">WAV</button>
+        <button class="fmt-btn" data-fmt="audio/webm" data-ext="webm">WebM</button>
+        <button class="fmt-btn" data-fmt="audio/ogg" data-ext="ogg">OGG</button>
+      </div>
+      <p class="note">⚠️ Browser-based audio processing re-encodes the file. WAV preserves the best quality but produces larger files. For MP4/video files, the audio track is extracted and adjusted — the video stream cannot be preserved in the browser without a server.</p>
+    </div>
+
+    <div class="progress-bar" id="pb"><div class="progress-fill" id="pf"></div></div>
+    <div class="success-row" id="successRow"></div>
+    <div class="action-row">
+      <button class="btn btn-primary" id="processBtn" onclick="process()">🔊 Apply & Download</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↩ New file</button>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let srcFile = null, volPct = 100, outFmt = 'audio/wav', outExt = 'wav', fileName = 'output';
+  let audioCtx = null;
+
+  const dz = document.getElementById('dz');
+  document.getElementById('fileInput').addEventListener('change', e => { if (e.target.files[0]) loadFile(e.target.files[0]); });
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+
+  document.getElementById('fmtRow').addEventListener('click', e => {
+    const b = e.target.closest('.fmt-btn'); if (!b) return;
+    document.querySelectorAll('.fmt-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); outFmt = b.dataset.fmt; outExt = b.dataset.ext;
+  });
+
+  function loadFile(file) {
+    srcFile = file;
+    fileName = file.name.replace(/\.[^.]+$/, '');
+    const isVideo = file.type.startsWith('video/');
+    document.getElementById('fileIconBig').textContent = isVideo ? '🎬' : '🎵';
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileMeta').textContent = fmtBytes(file.size) + ' · ' + (file.type || 'unknown type');
+
+    const wrap = document.getElementById('mediaWrap');
+    wrap.innerHTML = '';
+    const el = document.createElement(isVideo ? 'video' : 'audio');
+    el.id = 'mediaEl'; el.controls = true; el.src = URL.createObjectURL(file);
+    wrap.appendChild(el);
+
+    dz.style.display = 'none';
+    document.getElementById('panel').classList.add('visible');
+    document.getElementById('successRow').style.display = 'none';
+  }
+
+  function fmtBytes(b) { if (b < 1048576) return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(1)+' MB'; }
+
+  function onVolSlider(v) {
+    volPct = parseInt(v);
+    document.getElementById('volDisplay').textContent = volPct;
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    const match = document.querySelector(`.preset-btn[onclick="setVol(${volPct})"]`);
+    if (match) match.classList.add('active');
+    // Update live preview if playing
+    const el = document.getElementById('mediaEl');
+    if (el) el.volume = Math.min(1, volPct / 100);
+  }
+
+  function setVol(v) {
+    volPct = v;
+    document.getElementById('volSlider').value = v;
+    document.getElementById('volDisplay').textContent = v;
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    const el = document.getElementById('mediaEl');
+    if (el) el.volume = Math.min(1, v / 100);
+  }
+
+  async function process() {
+    if (!srcFile) return;
+    const btn = document.getElementById('processBtn');
+    btn.disabled = true; btn.textContent = 'Processing…';
+    const pb = document.getElementById('pb'); pb.style.display = 'block';
+    const pf = document.getElementById('pf'); pf.style.width = '0%';
+
+    try {
+      const arrayBuf = await srcFile.arrayBuffer();
+      pf.style.width = '20%';
+
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const audioBuf = await audioCtx.decodeAudioData(arrayBuf);
+      pf.style.width = '50%';
+
+      const channels = audioBuf.numberOfChannels;
+      const length = audioBuf.length;
+      const sampleRate = audioBuf.sampleRate;
+      const gain = volPct / 100;
+
+      // Create offline context to render with gain
+      const offlineCtx = new OfflineAudioContext(channels, length, sampleRate);
+      const src = offlineCtx.createBufferSource();
+      src.buffer = audioBuf;
+      const gainNode = offlineCtx.createGain();
+      gainNode.gain.value = gain;
+      src.connect(gainNode);
+      gainNode.connect(offlineCtx.destination);
+      src.start(0);
+
+      pf.style.width = '65%';
+      const rendered = await offlineCtx.startRendering();
+      pf.style.width = '80%';
+
+      // Encode to WAV (or let the browser handle webm/ogg via MediaRecorder)
+      if (outFmt === 'audio/wav') {
+        const wavBlob = audioBufferToWav(rendered);
+        pf.style.width = '100%';
+        downloadBlob(wavBlob, fileName + '-vol' + volPct + '.' + outExt);
+      } else {
+        // Use MediaRecorder to encode to webm/ogg
+        const dest = audioCtx.createMediaStreamDestination();
+        const tempCtx = new AudioContext({ sampleRate });
+        const tempSrc = tempCtx.createBufferSource();
+        tempSrc.buffer = rendered;
+        tempSrc.connect(tempCtx.destination);
+
+        const streamDest = tempCtx.createMediaStreamDestination();
+        const gainNode2 = tempCtx.createGain();
+        gainNode2.gain.value = 1;
+        tempSrc.connect(gainNode2);
+        gainNode2.connect(streamDest);
+
+        const recorder = new MediaRecorder(streamDest.stream, { mimeType: outFmt });
+        const chunks = [];
+        recorder.ondataavailable = e => chunks.push(e.data);
+        recorder.onstop = () => {
+          pf.style.width = '100%';
+          const blob = new Blob(chunks, { type: outFmt });
+          downloadBlob(blob, fileName + '-vol' + volPct + '.' + outExt);
+          tempCtx.close();
+          btn.disabled = false; btn.textContent = '🔊 Apply & Download';
+          setTimeout(() => pb.style.display = 'none', 800);
+        };
+        recorder.start();
+        tempSrc.start(0);
+        tempSrc.onended = () => recorder.stop();
+        return;
+      }
+
+      document.getElementById('successRow').style.display = 'block';
+      document.getElementById('successRow').textContent = `✓ Volume set to ${volPct}% — file downloaded.`;
+    } catch (err) {
+      alert('Processing failed: ' + err.message);
+    }
+    btn.disabled = false; btn.textContent = '🔊 Apply & Download';
+    setTimeout(() => pb.style.display = 'none', 800);
+  }
+
+  function downloadBlob(blob, name) {
+    const a = document.createElement('a'); a.download = name; a.href = URL.createObjectURL(blob); a.click();
+    document.getElementById('successRow').style.display = 'block';
+    document.getElementById('successRow').textContent = `✓ Volume set to ${volPct}% — file downloaded.`;
+  }
+
+  // AudioBuffer → WAV Blob
+  function audioBufferToWav(buf) {
+    const ch = buf.numberOfChannels, sr = buf.sampleRate, len = buf.length;
+    const bytesPerSample = 2, blockAlign = ch * bytesPerSample;
+    const byteLen = 44 + len * blockAlign;
+    const ab = new ArrayBuffer(byteLen);
+    const view = new DataView(ab);
+    function w(o, s) { for (let i = 0; i < s.length; i++) view.setUint8(o + i, s.charCodeAt(i)); }
+    function u16(o, v) { view.setUint16(o, v, true); }
+    function u32(o, v) { view.setUint32(o, v, true); }
+    w(0,'RIFF'); u32(4, byteLen-8); w(8,'WAVE');
+    w(12,'fmt '); u32(16,16); u16(20,1); u16(22,ch);
+    u32(24,sr); u32(28,sr*blockAlign); u16(32,blockAlign); u16(34,16);
+    w(36,'data'); u32(40, len*blockAlign);
+    let off = 44;
+    for (let i = 0; i < len; i++) {
+      for (let c = 0; c < ch; c++) {
+        const s = Math.max(-1, Math.min(1, buf.getChannelData(c)[i]));
+        view.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+        off += 2;
+      }
+    }
+    return new Blob([ab], { type: 'audio/wav' });
+  }
+
+  function resetAll() {
+    srcFile = null;
+    dz.style.display = '';
+    document.getElementById('panel').classList.remove('visible');
+    document.getElementById('fileInput').value = '';
+    document.getElementById('mediaWrap').innerHTML = '';
+    document.getElementById('volSlider').value = 100;
+    onVolSlider(100);
+    document.getElementById('successRow').style.display = 'none';
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>
