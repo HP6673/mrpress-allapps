@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GIF to ZIP — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a;--green-bg:#edf7f1}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:720px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .dropzone{border:1.5px dashed var(--border);border-radius:12px;padding:3rem 2rem;text-align:center;background:var(--card);cursor:pointer;transition:border-color .2s,background .2s;position:relative}
+    .dropzone:hover,.dropzone.drag-over{border-color:var(--ink);background:#faf9f5}
+    .dropzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .drop-icon{font-size:2.2rem;display:block;margin-bottom:.75rem}
+    .drop-title{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:.3rem}
+    .drop-sub{font-size:.85rem;color:var(--muted)}
+    .panel{display:none;margin-top:1.5rem}
+    .panel.visible{display:block}
+    .info-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+    .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+    .stat-cell{background:var(--card);padding:1rem;text-align:center}
+    .stat-val{font-family:'DM Serif Display',serif;font-size:1.8rem;letter-spacing:-.02em}
+    .stat-label{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+    .controls-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .opt-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+    .opt-row label{font-size:.88rem}
+    .fmt-tabs{display:flex;gap:.4rem}
+    .fmt-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:.4rem .85rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .fmt-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .fmt-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .toggle{position:relative;width:40px;height:22px}
+    .toggle input{opacity:0;width:0;height:0;position:absolute}
+    .toggle-track{position:absolute;inset:0;background:var(--border);border-radius:99px;cursor:pointer;transition:background .2s}
+    .toggle input:checked+.toggle-track{background:var(--ink)}
+    .toggle-thumb{position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s;pointer-events:none}
+    .toggle input:checked~.toggle-thumb{transform:translateX(18px)}
+    .frames-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:.4rem;margin-bottom:1rem;max-height:200px;overflow-y:auto;padding:.5rem;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+    .frame-thumb{width:100%;aspect-ratio:1;object-fit:contain;border-radius:4px;background:#fff;border:1px solid var(--border)}
+    .progress-bar{height:4px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:1rem;display:none}
+    .progress-fill{height:100%;background:var(--ink);border-radius:99px;transition:width .15s;width:0%}
+    .success-row{background:var(--green-bg);border:1px solid #b2dfc6;border-radius:8px;padding:.9rem 1.2rem;font-size:.88rem;color:var(--green);margin-bottom:1rem;display:none}
+    .action-row{display:flex;gap:.75rem}
+    .btn{flex:1;padding:.85rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:all .2s;border:none;text-align:center}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-primary:disabled{opacity:.4;cursor:not-allowed}
+    .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
+    .btn-secondary:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">📦 GIF</p>
+  <h1>GIF to ZIP</h1>
+  <p class="subtitle">Extract every frame from a GIF as individual PNG or JPG images, bundled into a ZIP file.</p>
+
+  <div class="dropzone" id="dropzone">
+    <input type="file" id="fileInput" accept=".gif,image/gif" />
+    <span class="drop-icon">📂</span>
+    <p class="drop-title">Drop a GIF here</p>
+    <p class="drop-sub">or click to browse — GIF files only</p>
+  </div>
+
+  <div class="panel" id="panel">
+    <div class="stats-grid">
+      <div class="stat-cell"><div class="stat-val" id="statFrames">—</div><div class="stat-label">Frames</div></div>
+      <div class="stat-cell"><div class="stat-val" id="statSize">—</div><div class="stat-label">Dimensions</div></div>
+      <div class="stat-cell"><div class="stat-val" id="statFile">—</div><div class="stat-label">File size</div></div>
+    </div>
+
+    <div class="controls-card">
+      <p class="card-title">Export options</p>
+      <div class="opt-row">
+        <label>Image format</label>
+        <div class="fmt-tabs">
+          <button class="fmt-btn active" data-fmt="png">PNG</button>
+          <button class="fmt-btn" data-fmt="jpg">JPG</button>
+        </div>
+      </div>
+      <div class="opt-row">
+        <label>Composite frames (recommended)</label>
+        <label class="toggle">
+          <input type="checkbox" id="composite" checked />
+          <span class="toggle-track"></span>
+          <span class="toggle-thumb"></span>
+        </label>
+      </div>
+    </div>
+
+    <p class="card-title" style="margin-bottom:.6rem">Frame preview</p>
+    <div class="frames-preview" id="framesPreview"></div>
+
+    <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="success-row" id="successRow"></div>
+
+    <div class="action-row">
+      <button class="btn btn-primary" id="exportBtn" onclick="exportZip()">📦 Export ZIP</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↩ New GIF</button>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script src="https://cdn.jsdelivr.net/npm/gifuct-js@2.1.2/dist/gifuct-js.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script>
+  let gifFrames = [];
+  let gifW = 0, gifH = 0;
+  let fileName = 'frames';
+  let exportFmt = 'png';
+
+  document.querySelectorAll('.fmt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      exportFmt = btn.dataset.fmt;
+    });
+  });
+
+  const dropzone = document.getElementById('dropzone');
+  document.getElementById('fileInput').addEventListener('change', e => { if(e.target.files[0]) loadFile(e.target.files[0]); });
+  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+  dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) loadFile(f); });
+
+  function loadFile(file) {
+    if (!file.name.toLowerCase().endsWith('.gif') && file.type !== 'image/gif') { alert('Please upload a GIF file.'); return; }
+    fileName = file.name.replace(/\.gif$/i, '');
+    document.getElementById('statFile').textContent = (file.size/1024).toFixed(1)+'KB';
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const gif = gifuct.parseGIF(e.target.result);
+        gifFrames = gifuct.decompressFrames(gif, true);
+        gifW = gifFrames[0].dims.width;
+        gifH = gifFrames[0].dims.height;
+        document.getElementById('statFrames').textContent = gifFrames.length;
+        document.getElementById('statSize').textContent = gifW+'×'+gifH;
+
+        // Build composite previews
+        const previewContainer = document.getElementById('framesPreview');
+        previewContainer.innerHTML = '';
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = gifW; tempCanvas.height = gifH;
+        const ctx = tempCanvas.getContext('2d');
+        let composite = new Uint8ClampedArray(gifW * gifH * 4);
+
+        gifFrames.forEach((frame, i) => {
+          if (frame.disposalType === 2) composite = new Uint8ClampedArray(gifW * gifH * 4);
+          const { dims, patch } = frame;
+          for (let j = 0; j < patch.length; j += 4) {
+            if (patch[j+3] > 0) {
+              const px = Math.floor(j/4);
+              const fx = (px % dims.width) + dims.left;
+              const fy = Math.floor(px / dims.width) + dims.top;
+              const idx = (fy * gifW + fx) * 4;
+              composite[idx]=patch[j]; composite[idx+1]=patch[j+1]; composite[idx+2]=patch[j+2]; composite[idx+3]=patch[j+3];
+            }
+          }
+          ctx.putImageData(new ImageData(new Uint8ClampedArray(composite), gifW, gifH), 0, 0);
+          const img = document.createElement('img');
+          img.className = 'frame-thumb';
+          img.src = tempCanvas.toDataURL('image/png');
+          img.title = 'Frame ' + (i+1);
+          previewContainer.appendChild(img);
+        });
+
+        dropzone.style.display = 'none';
+        document.getElementById('panel').classList.add('visible');
+      } catch(err) {
+        alert('Could not parse GIF: ' + err.message);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  async function exportZip() {
+    if (!gifFrames.length) return;
+    const btn = document.getElementById('exportBtn');
+    btn.disabled = true; btn.textContent = 'Exporting…';
+    const bar = document.getElementById('progressBar');
+    const fill = document.getElementById('progressFill');
+    bar.style.display = 'block'; fill.style.width = '0%';
+
+    const zip = new JSZip();
+    const useComposite = document.getElementById('composite').checked;
+    const mimeType = exportFmt === 'jpg' ? 'image/jpeg' : 'image/png';
+    const ext = exportFmt;
+
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = gifW; tempCanvas.height = gifH;
+    const ctx = tempCanvas.getContext('2d');
+    let composite = new Uint8ClampedArray(gifW * gifH * 4);
+    const padLen = String(gifFrames.length).length;
+
+    for (let i = 0; i < gifFrames.length; i++) {
+      const frame = gifFrames[i];
+      if (frame.disposalType === 2) composite = new Uint8ClampedArray(gifW * gifH * 4);
+      const { dims, patch } = frame;
+
+      if (useComposite) {
+        for (let j = 0; j < patch.length; j += 4) {
+          if (patch[j+3] > 0) {
+            const px = Math.floor(j/4);
+            const fx = (px % dims.width) + dims.left;
+            const fy = Math.floor(px / dims.width) + dims.top;
+            const idx = (fy * gifW + fx) * 4;
+            composite[idx]=patch[j]; composite[idx+1]=patch[j+1]; composite[idx+2]=patch[j+2]; composite[idx+3]=patch[j+3];
+          }
+        }
+        ctx.putImageData(new ImageData(new Uint8ClampedArray(composite), gifW, gifH), 0, 0);
+      } else {
+        ctx.clearRect(0, 0, gifW, gifH);
+        const patchCanvas = document.createElement('canvas');
+        patchCanvas.width = dims.width; patchCanvas.height = dims.height;
+        patchCanvas.getContext('2d').putImageData(new ImageData(patch, dims.width, dims.height), 0, 0);
+        ctx.drawImage(patchCanvas, dims.left, dims.top);
+      }
+
+      const dataUrl = tempCanvas.toDataURL(mimeType, 0.92);
+      const base64 = dataUrl.split(',')[1];
+      const padded = String(i+1).padStart(padLen, '0');
+      zip.file(`${fileName}_frame_${padded}.${ext}`, base64, { base64: true });
+      fill.style.width = Math.round((i+1) / gifFrames.length * 100) + '%';
+      if (i % 5 === 0) await new Promise(r => setTimeout(r, 0)); // yield to browser
+    }
+
+    const blob = await zip.generateAsync({ type: 'blob' }, meta => {
+      fill.style.width = meta.percent.toFixed(0) + '%';
+    });
+
+    const a = document.createElement('a');
+    a.download = fileName + '-frames.zip';
+    a.href = URL.createObjectURL(blob);
+    a.click();
+
+    document.getElementById('successRow').style.display = 'block';
+    document.getElementById('successRow').textContent = `✓ ${gifFrames.length} frames exported as ${ext.toUpperCase()} images in ${fileName}-frames.zip`;
+    btn.disabled = false; btn.textContent = '📦 Export ZIP';
+    setTimeout(() => { bar.style.display = 'none'; }, 800);
+  }
+
+  function resetAll() {
+    gifFrames = []; gifW = 0; gifH = 0;
+    dropzone.style.display = '';
+    document.getElementById('panel').classList.remove('visible');
+    document.getElementById('fileInput').value = '';
+    document.getElementById('successRow').style.display = 'none';
+    document.getElementById('framesPreview').innerHTML = '';
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>
