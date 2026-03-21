@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Factor Calculator — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a;--green-bg:#edf7f1}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:700px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .input-big{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.4rem;font-family:'DM Serif Display',serif;font-size:3rem;color:var(--ink);outline:none;transition:border-color .2s;text-align:center;letter-spacing:-.02em;margin-bottom:1rem}
+    .input-big:focus{border-color:var(--ink)}
+    .input-big::placeholder{color:var(--border)}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+    /* Factor pairs */
+    .pairs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.5rem;margin-bottom:.5rem}
+    .pair-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.65rem 1rem;display:flex;align-items:center;justify-content:space-between;font-size:.9rem}
+    .pair-nums{font-weight:500}
+    .pair-eq{font-size:.72rem;color:var(--muted)}
+    /* All factors */
+    .factors-wrap{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.5rem}
+    .factor-pill{background:var(--green-bg);color:var(--green);border:1px solid #b2dfc6;border-radius:99px;padding:.25rem .8rem;font-size:.88rem;font-weight:500}
+    .factor-pill.prime-factor{background:var(--ink);color:#fff;border-color:var(--ink)}
+    /* Prime factorization */
+    .prime-expr{font-family:'DM Serif Display',serif;font-size:1.8rem;letter-spacing:-.01em;color:var(--ink);margin-bottom:.4rem;word-break:break-all}
+    .prime-sub{font-size:.82rem;color:var(--muted)}
+    /* Stats row */
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+    .stat{background:var(--card);padding:.9rem;text-align:center}
+    .stat-val{font-family:'DM Serif Display',serif;font-size:1.6rem;letter-spacing:-.02em}
+    .stat-label{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+    /* GCF / LCM */
+    .gcf-row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.75rem}
+    .gcf-input{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.55rem .9rem;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--ink);outline:none;width:110px;text-align:center}
+    .gcf-input:focus{border-color:var(--ink)}
+    .gcf-label{font-size:.82rem;color:var(--muted)}
+    .gcf-result{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;font-size:.9rem;margin-top:.5rem}
+    .gcf-result strong{font-weight:500;color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.input-big{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">✖ Math</p>
+  <h1>Factor Calculator</h1>
+  <p class="subtitle">Find all factors, factor pairs, and the prime factorization of any number. Also calculates GCF and LCM.</p>
+
+  <input type="number" class="input-big" id="numInput" placeholder="Enter a number" min="1" max="999999999" oninput="factorize()" />
+
+  <div id="results" style="display:none">
+    <div class="stats-row">
+      <div class="stat"><div class="stat-val" id="statCount">0</div><div class="stat-label">Factors</div></div>
+      <div class="stat"><div class="stat-val" id="statPrime">—</div><div class="stat-label">Prime?</div></div>
+      <div class="stat"><div class="stat-val" id="statPairs">0</div><div class="stat-label">Factor pairs</div></div>
+    </div>
+
+    <div class="card">
+      <p class="card-title">All factors</p>
+      <div class="factors-wrap" id="allFactors"></div>
+      <p style="font-size:.72rem;color:var(--muted);margin-top:.4rem">Highlighted in dark = prime factors</p>
+    </div>
+
+    <div class="card">
+      <p class="card-title">Factor pairs</p>
+      <div class="pairs-grid" id="pairsGrid"></div>
+    </div>
+
+    <div class="card">
+      <p class="card-title">Prime factorization</p>
+      <div class="prime-expr" id="primeExpr"></div>
+      <div class="prime-sub" id="primeSub"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">GCF & LCM of two numbers</p>
+    <div class="gcf-row">
+      <input type="number" class="gcf-input" id="gcfA" placeholder="12" oninput="calcGcfLcm()" />
+      <span class="gcf-label">and</span>
+      <input type="number" class="gcf-input" id="gcfB" placeholder="18" oninput="calcGcfLcm()" />
+    </div>
+    <div class="gcf-result" id="gcfResult" style="display:none"></div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  function isPrime(n){if(n<2)return false;if(n===2)return true;if(n%2===0)return false;for(let i=3;i<=Math.sqrt(n);i+=2)if(n%i===0)return false;return true;}
+
+  function getFactors(n){
+    const f=[];
+    for(let i=1;i<=Math.sqrt(n);i++){if(n%i===0){f.push(i);if(i!==n/i)f.push(n/i);}}
+    return f.sort((a,b)=>a-b);
+  }
+
+  function primeFactorization(n){
+    const factors=[];let d=2;
+    while(d*d<=n){while(n%d===0){factors.push(d);n=Math.floor(n/d);}d++;}
+    if(n>1)factors.push(n);
+    return factors;
+  }
+
+  function factorize(){
+    const raw=document.getElementById('numInput').value;
+    const res=document.getElementById('results');
+    if(!raw||parseInt(raw)<1){res.style.display='none';return;}
+    const n=parseInt(raw);
+    if(n>999999999||n<1){res.style.display='none';return;}
+    res.style.display='block';
+
+    const factors=getFactors(n);
+    const pairs=[];
+    for(let i=0;i<factors.length;i++){const a=factors[i],b=n/a;if(a<=b)pairs.push([a,b]);}
+    const primeFact=primeFactorization(n);
+    const primes=new Set(primeFact);
+    const prime=isPrime(n);
+
+    document.getElementById('statCount').textContent=factors.length;
+    document.getElementById('statPrime').textContent=prime?'Yes':'No';
+    document.getElementById('statPairs').textContent=pairs.length;
+
+    // All factors
+    document.getElementById('allFactors').innerHTML=factors.map(f=>
+      `<span class="${primes.has(f)&&f!==1?'factor-pill prime-factor':'factor-pill'}">${f}</span>`
+    ).join('');
+
+    // Pairs
+    document.getElementById('pairsGrid').innerHTML=pairs.map(([a,b])=>
+      `<div class="pair-item"><span class="pair-nums">${a} × ${b}</span><span class="pair-eq">= ${n}</span></div>`
+    ).join('');
+
+    // Prime factorization
+    if(prime){
+      document.getElementById('primeExpr').textContent=n+' is prime';
+      document.getElementById('primeSub').textContent='A prime number has no factors other than 1 and itself.';
+    } else if(n===1){
+      document.getElementById('primeExpr').textContent='1';
+      document.getElementById('primeSub').textContent='1 is neither prime nor composite.';
+    } else {
+      // Group repeated factors: 2²×3
+      const grouped={};primeFact.forEach(p=>grouped[p]=(grouped[p]||0)+1);
+      const expr=Object.entries(grouped).map(([p,e])=>e>1?`${p}${toSup(e)}`:p).join(' × ');
+      document.getElementById('primeExpr').textContent=expr;
+      document.getElementById('primeSub').textContent=primeFact.join(' × ')+' = '+n;
+    }
+  }
+
+  function toSup(n){return String(n).split('').map(d=>['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹'][parseInt(d)]).join('');}
+
+  function gcd(a,b){while(b){[a,b]=[b,a%b];}return a;}
+  function lcm(a,b){return a/gcd(a,b)*b;}
+
+  function calcGcfLcm(){
+    const a=parseInt(document.getElementById('gcfA').value);
+    const b=parseInt(document.getElementById('gcfB').value);
+    const res=document.getElementById('gcfResult');
+    if(!a||!b||a<1||b<1){res.style.display='none';return;}
+    const g=gcd(a,b),l=lcm(a,b);
+    res.style.display='block';
+    res.innerHTML=`GCF of ${a} and ${b}: <strong>${g}</strong>&nbsp;&nbsp;·&nbsp;&nbsp;LCM of ${a} and ${b}: <strong>${l}</strong>`;
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prime Number Checker — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a;--green-bg:#edf7f1;--red:#b03030;--red-bg:#fdf0f0}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:680px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .input-big{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.4rem;font-family:'DM Serif Display',serif;font-size:3rem;color:var(--ink);outline:none;transition:border-color .2s;text-align:center;letter-spacing:-.02em;margin-bottom:1rem}
+    .input-big:focus{border-color:var(--ink)}
+    .input-big::placeholder{color:var(--border)}
+    .result-card{border-radius:10px;padding:2rem;text-align:center;margin-bottom:1rem;transition:all .3s}
+    .result-card.prime{background:var(--green-bg);border:1px solid #b2dfc6}
+    .result-card.not-prime{background:var(--red-bg);border:1px solid #f5c1c1}
+    .result-card.empty{background:var(--card);border:1px solid var(--border)}
+    .result-icon{font-size:2.5rem;margin-bottom:.5rem}
+    .result-text{font-family:'DM Serif Display',serif;font-size:2rem;letter-spacing:-.02em}
+    .result-sub{font-size:.9rem;color:var(--muted);margin-top:.5rem;line-height:1.6}
+    .result-card.prime .result-text{color:var(--green)}
+    .result-card.not-prime .result-text{color:var(--red)}
+    /* Nearby primes */
+    .nearby-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.3rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem}
+    .nearby-row{display:flex;gap:.4rem;flex-wrap:wrap}
+    .nearby-pill{background:var(--green-bg);color:var(--green);border:1px solid #b2dfc6;border-radius:99px;padding:.25rem .8rem;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .15s}
+    .nearby-pill:hover{background:var(--green);color:#fff}
+    /* Range checker */
+    .range-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.3rem;margin-bottom:1rem}
+    .range-row{display:flex;gap:.5rem;align-items:center;margin-bottom:.75rem;flex-wrap:wrap}
+    .range-row label{font-size:.82rem;color:var(--muted)}
+    .range-input{width:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.5rem .75rem;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--ink);outline:none;text-align:center}
+    .range-input:focus{border-color:var(--ink)}
+    .range-btn{background:var(--ink);color:#fff;border:none;border-radius:6px;padding:.5rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:opacity .2s}
+    .range-btn:hover{opacity:.8}
+    .range-results{display:flex;gap:.35rem;flex-wrap:wrap}
+    .range-pill{background:var(--green-bg);color:var(--green);border:1px solid #b2dfc6;border-radius:5px;padding:.2rem .55rem;font-size:.8rem;font-weight:500}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.input-big{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🔢 Math</p>
+  <h1>Prime Number Checker</h1>
+  <p class="subtitle">Check if a number is prime, find nearby primes, or list all primes in a range.</p>
+
+  <input type="number" class="input-big" id="numInput" placeholder="Enter a number" min="2" oninput="check()" />
+
+  <div class="result-card empty" id="resultCard">
+    <div class="result-icon">🔢</div>
+    <div class="result-text">Enter a number above</div>
+    <div class="result-sub" id="resultSub">We'll check if it's prime and show nearby primes.</div>
+  </div>
+
+  <div class="nearby-card" id="nearbyCard" style="display:none">
+    <p class="card-title">Nearby primes</p>
+    <div class="nearby-row" id="nearbyRow"></div>
+  </div>
+
+  <div class="range-card">
+    <p class="card-title">Find all primes in a range</p>
+    <div class="range-row">
+      <label>From</label>
+      <input type="number" class="range-input" id="rangeFrom" value="1" min="1" />
+      <label>to</label>
+      <input type="number" class="range-input" id="rangeTo" value="100" />
+      <button class="range-btn" onclick="calcRange()">Find</button>
+    </div>
+    <div class="range-results" id="rangeResults"></div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  function isPrime(n){
+    n=Math.floor(n);
+    if(n<2)return false;
+    if(n===2)return true;
+    if(n%2===0)return false;
+    for(let i=3;i<=Math.sqrt(n);i+=2)if(n%i===0)return false;
+    return true;
+  }
+
+  function check(){
+    const raw=document.getElementById('numInput').value;
+    const card=document.getElementById('resultCard');
+    const sub=document.getElementById('resultSub');
+    const nearby=document.getElementById('nearbyCard');
+
+    if(!raw.trim()){
+      card.className='result-card empty';
+      card.querySelector('.result-icon').textContent='🔢';
+      card.querySelector('.result-text').textContent='Enter a number above';
+      sub.textContent='We\'ll check if it\'s prime and show nearby primes.';
+      nearby.style.display='none';return;
+    }
+
+    const n=parseInt(raw);
+    if(isNaN(n)||n<1){
+      card.className='result-card empty';
+      card.querySelector('.result-text').textContent='Enter a positive integer';
+      sub.textContent='';nearby.style.display='none';return;
+    }
+
+    const prime=isPrime(n);
+    card.className='result-card '+(prime?'prime':'not-prime');
+    card.querySelector('.result-icon').textContent=prime?'✅':'❌';
+    card.querySelector('.result-text').textContent=n.toLocaleString()+' is '+(prime?'':'not ')+'prime';
+
+    if(prime){
+      // Find its position
+      let pos=0,i=2;
+      while(i<=n){if(isPrime(i))pos++;i++;}
+      sub.textContent=`It is the ${pos}th prime number.`;
+    } else if(n<2){
+      sub.textContent='Numbers less than 2 are not prime by definition.';
+    } else {
+      // Find smallest factor
+      let factor=2;
+      while(factor<=n){if(n%factor===0)break;factor++;}
+      sub.textContent=`Smallest factor: ${factor} (${n} = ${factor} × ${n/factor})`;
+    }
+
+    // Nearby primes
+    const primes=[];
+    let lo=Math.max(2,n-1),hi=n+1;
+    while(primes.length<10){
+      if(isPrime(lo)&&lo!==n)primes.unshift(lo);
+      lo--;if(lo<2)break;
+    }
+    const after=[];let h2=n+1;
+    while(after.length<5){if(isPrime(h2)&&h2!==n)after.push(h2);h2++;if(h2>n+1000)break;}
+    const all=[...primes,...after];
+    document.getElementById('nearbyRow').innerHTML=all.map(p=>`<span class="nearby-pill" onclick="document.getElementById('numInput').value=${p};check()">${p}</span>`).join('');
+    nearby.style.display='block';
+  }
+
+  function calcRange(){
+    const from=Math.max(2,parseInt(document.getElementById('rangeFrom').value)||2);
+    const to=Math.min(10000,parseInt(document.getElementById('rangeTo').value)||100);
+    if(from>to){document.getElementById('rangeResults').textContent='Start must be less than end.';return;}
+    const primes=[];
+    for(let i=from;i<=to;i++)if(isPrime(i))primes.push(i);
+    const res=document.getElementById('rangeResults');
+    if(!primes.length){res.innerHTML='<span style="color:var(--muted);font-size:.85rem">No primes in this range.</span>';return;}
+    res.innerHTML=primes.map(p=>`<span class="range-pill">${p}</span>`).join('');
+  }
+
+  calcRange();
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

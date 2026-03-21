@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Speed Tests — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:760px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .mode-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:2rem}
+    .mode-tab{background:var(--card);padding:.9rem .5rem;text-align:center;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;color:var(--muted);transition:background .15s;line-height:1.3}
+    .mode-tab .tab-icon{font-size:1.2rem;display:block;margin-bottom:.2rem}
+    .mode-tab.active{background:var(--ink);color:#fff}
+    .section{display:none}.section.visible{display:block}
+
+    /* Shared test arena */
+    .arena{border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;cursor:pointer;transition:background .2s,transform .1s;user-select:none;-webkit-tap-highlight-color:transparent;margin-bottom:1.2rem;padding:2rem;text-align:center;position:relative;overflow:hidden}
+    .arena:active{transform:scale(.985)}
+    .arena-label{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem;opacity:.7}
+    .arena-big{font-family:'DM Serif Display',serif;font-size:4rem;letter-spacing:-.03em;line-height:1;margin-bottom:.5rem}
+    .arena-sub{font-size:.9rem;opacity:.7;line-height:1.5}
+
+    /* Reaction states */
+    .arena.wait{background:#e5e3dc;color:var(--ink)}
+    .arena.ready{background:#1d9e75;color:#fff}
+    .arena.go{background:#e24b4a;color:#fff}
+    .arena.done{background:var(--ink);color:#fff}
+    .arena.toosoon{background:#f59e0b;color:#fff}
+
+    /* CPS */
+    .arena.cps-idle{background:var(--card);border:2px solid var(--border);color:var(--ink)}
+    .arena.cps-active{background:var(--ink);color:#fff}
+    .arena.cps-done{background:var(--card);border:2px solid var(--border);color:var(--ink)}
+    .progress-wrap{height:6px;background:rgba(255,255,255,.25);border-radius:99px;overflow:hidden;width:100%;margin-top:1rem}
+    .progress-fill{height:100%;background:#fff;border-radius:99px;transition:width .1s linear;width:0%}
+    .progress-wrap.dark{background:var(--border)}
+    .progress-fill.dark{background:var(--ink)}
+
+    /* Stats */
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.5rem;margin-bottom:1rem}
+    .stat-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.9rem;text-align:center}
+    .stat-val{font-family:'DM Serif Display',serif;font-size:1.6rem;letter-spacing:-.02em}
+    .stat-label{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+
+    .reset-btn{background:transparent;border:1.5px solid var(--border);border-radius:8px;padding:.6rem 1.4rem;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--muted);cursor:pointer;transition:all .2s;display:block;margin:0 auto}
+    .reset-btn:hover{border-color:var(--ink);color:var(--ink)}
+
+    /* Time select */
+    .time-row{display:flex;align-items:center;gap:.5rem;justify-content:center;margin-bottom:1rem;flex-wrap:wrap}
+    .time-row label{font-size:.82rem;color:var(--muted)}
+    .t-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:99px;padding:.3rem .85rem;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .t-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .t-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.arena-big{font-size:2.8rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">⚡ Fun</p>
+  <h1>Speed Tests</h1>
+  <p class="subtitle">Test your reaction time, mouse click speed (CPS), and spacebar click speed.</p>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="setMode('reaction')"><span class="tab-icon">⚡</span>Reaction Time</button>
+    <button class="mode-tab" onclick="setMode('cps')"><span class="tab-icon">🖱️</span>Click Speed (CPS)</button>
+    <button class="mode-tab" onclick="setMode('spacebar')"><span class="tab-icon">␣</span>Spacebar CPS</button>
+  </div>
+
+  <!-- ── REACTION TIME ── -->
+  <div class="section visible" id="secReaction">
+    <div class="arena wait" id="reactionArena" onclick="reactionClick()">
+      <div class="arena-label">Reaction Time Test</div>
+      <div class="arena-big" id="reactionBig">Click to start</div>
+      <div class="arena-sub" id="reactionSub">Wait for the red flash, then click as fast as you can</div>
+    </div>
+    <div class="stats-grid" id="reactionStats" style="display:none">
+      <div class="stat-box"><div class="stat-val" id="rLast">—</div><div class="stat-label">Last (ms)</div></div>
+      <div class="stat-box"><div class="stat-val" id="rBest">—</div><div class="stat-label">Best (ms)</div></div>
+      <div class="stat-box"><div class="stat-val" id="rAvg">—</div><div class="stat-label">Average (ms)</div></div>
+      <div class="stat-box"><div class="stat-val" id="rCount">0</div><div class="stat-label">Attempts</div></div>
+    </div>
+    <button class="reset-btn" onclick="resetReaction()">Reset</button>
+  </div>
+
+  <!-- ── CPS ── -->
+  <div class="section" id="secCps">
+    <div class="time-row">
+      <label>Duration</label>
+      <button class="t-btn active" data-cps-t="5" onclick="setCpsTime(this,5)">5s</button>
+      <button class="t-btn" data-cps-t="10" onclick="setCpsTime(this,10)">10s</button>
+      <button class="t-btn" data-cps-t="15" onclick="setCpsTime(this,15)">15s</button>
+      <button class="t-btn" data-cps-t="30" onclick="setCpsTime(this,30)">30s</button>
+      <button class="t-btn" data-cps-t="60" onclick="setCpsTime(this,60)">60s</button>
+    </div>
+    <div class="arena cps-idle" id="cpsArena" onclick="cpsClick()">
+      <div class="arena-label">Click Speed Test</div>
+      <div class="arena-big" id="cpsBig">Click to start</div>
+      <div class="arena-sub" id="cpsSub">Click as fast as you can</div>
+      <div class="progress-wrap dark" id="cpsProgressWrap" style="display:none"><div class="progress-fill dark" id="cpsProgress"></div></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-val" id="cpsVal">—</div><div class="stat-label">CPS</div></div>
+      <div class="stat-box"><div class="stat-val" id="cpsTotalClicks">0</div><div class="stat-label">Total clicks</div></div>
+      <div class="stat-box"><div class="stat-val" id="cpsBest">—</div><div class="stat-label">Best CPS</div></div>
+    </div>
+    <button class="reset-btn" onclick="resetCps()">Reset</button>
+  </div>
+
+  <!-- ── SPACEBAR ── -->
+  <div class="section" id="secSpacebar">
+    <div class="time-row">
+      <label>Duration</label>
+      <button class="t-btn active" data-sp-t="5" onclick="setSpTime(this,5)">5s</button>
+      <button class="t-btn" data-sp-t="10" onclick="setSpTime(this,10)">10s</button>
+      <button class="t-btn" data-sp-t="15" onclick="setSpTime(this,15)">15s</button>
+      <button class="t-btn" data-sp-t="30" onclick="setSpTime(this,30)">30s</button>
+    </div>
+    <div class="arena cps-idle" id="spArena" tabindex="0" onclick="spClick()" onkeydown="if(event.key===' '){event.preventDefault();spClick()}">
+      <div class="arena-label">Spacebar Speed Test</div>
+      <div class="arena-big" id="spBig">Click or press Space</div>
+      <div class="arena-sub" id="spSub">Hit the spacebar as fast as you can</div>
+      <div class="progress-wrap dark" id="spProgressWrap" style="display:none"><div class="progress-fill dark" id="spProgress"></div></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-val" id="spVal">—</div><div class="stat-label">Hits/sec</div></div>
+      <div class="stat-box"><div class="stat-val" id="spTotal">0</div><div class="stat-label">Total hits</div></div>
+      <div class="stat-box"><div class="stat-val" id="spBest">—</div><div class="stat-label">Best</div></div>
+    </div>
+    <button class="reset-btn" onclick="resetSp()">Reset</button>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  function setMode(m){
+    ['reaction','cps','spacebar'].forEach(s=>{
+      document.getElementById('sec'+s.charAt(0).toUpperCase()+s.slice(1)).classList.toggle('visible',s===m);
+    });
+    document.querySelectorAll('.mode-tab').forEach((t,i)=>t.classList.toggle('active',['reaction','cps','spacebar'][i]===m));
+    if(m==='spacebar')document.getElementById('spArena').focus();
+  }
+
+  // ══ REACTION TIME ══════════════════════════════════════════
+  let rState='idle', rTimer=null, rStart=0, rResults=[], rBest=Infinity;
+
+  function reactionClick(){
+    const arena=document.getElementById('reactionArena');
+    if(rState==='idle'||rState==='done'||rState==='result'){
+      rState='waiting';
+      arena.className='arena wait';
+      document.getElementById('reactionBig').textContent='Wait...';
+      document.getElementById('reactionSub').textContent='Click when it turns red';
+      const delay=1000+Math.random()*4000;
+      rTimer=setTimeout(()=>{
+        rState='go';
+        arena.className='arena go';
+        document.getElementById('reactionBig').textContent='CLICK NOW!';
+        document.getElementById('reactionSub').textContent='';
+        rStart=performance.now();
+      },delay);
+    } else if(rState==='waiting'){
+      clearTimeout(rTimer);
+      rState='toosoon';
+      arena.className='arena toosoon';
+      document.getElementById('reactionBig').textContent='Too soon!';
+      document.getElementById('reactionSub').textContent='Wait for red before clicking. Click to try again.';
+      setTimeout(()=>{rState='idle';arena.className='arena wait';document.getElementById('reactionBig').textContent='Click to start';document.getElementById('reactionSub').textContent='Wait for the red flash, then click as fast as you can';},1500);
+    } else if(rState==='go'){
+      const ms=Math.round(performance.now()-rStart);
+      rResults.push(ms);rBest=Math.min(rBest,ms);
+      const avg=Math.round(rResults.reduce((a,b)=>a+b,0)/rResults.length);
+      rState='done';
+      arena.className='arena done';
+      document.getElementById('reactionBig').textContent=ms+' ms';
+      document.getElementById('reactionSub').textContent=grade(ms)+' · Click to try again';
+      document.getElementById('reactionStats').style.display='grid';
+      document.getElementById('rLast').textContent=ms;
+      document.getElementById('rBest').textContent=rBest;
+      document.getElementById('rAvg').textContent=avg;
+      document.getElementById('rCount').textContent=rResults.length;
+    }
+  }
+
+  function grade(ms){if(ms<150)return'🚀 Lightning fast';if(ms<200)return'⚡ Excellent';if(ms<250)return'✅ Good';if(ms<350)return'Average';return'Keep practicing';}
+  function resetReaction(){rState='idle';rResults=[];rBest=Infinity;clearTimeout(rTimer);const a=document.getElementById('reactionArena');a.className='arena wait';document.getElementById('reactionBig').textContent='Click to start';document.getElementById('reactionSub').textContent='Wait for the red flash, then click as fast as you can';document.getElementById('reactionStats').style.display='none';}
+
+  // ══ CPS ══════════════════════════════════════════════════
+  let cpsDuration=5, cpsRunning=false, cpsClicks=0, cpsStart=0, cpsTimer=null, cpsBestVal=0;
+
+  function setCpsTime(btn,t){document.querySelectorAll('[data-cps-t]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');cpsDuration=t;resetCps();}
+
+  function cpsClick(){
+    if(!cpsRunning){
+      cpsRunning=true;cpsClicks=1;cpsStart=Date.now();
+      document.getElementById('cpsArena').className='arena cps-active';
+      document.getElementById('cpsBig').textContent='1';
+      document.getElementById('cpsSub').textContent='Keep clicking!';
+      document.getElementById('cpsProgressWrap').style.display='block';
+      document.getElementById('cpsTotalClicks').textContent=1;
+      cpsTimer=setInterval(()=>{
+        const elapsed=(Date.now()-cpsStart)/1000;
+        const cps=(cpsClicks/elapsed).toFixed(1);
+        document.getElementById('cpsVal').textContent=cps;
+        document.getElementById('cpsProgress').style.width=(elapsed/cpsDuration*100)+'%';
+        if(elapsed>=cpsDuration){clearInterval(cpsTimer);endCps();}
+      },100);
+    } else {
+      cpsClicks++;
+      document.getElementById('cpsBig').textContent=cpsClicks;
+      document.getElementById('cpsTotalClicks').textContent=cpsClicks;
+    }
+  }
+
+  function endCps(){
+    cpsRunning=false;
+    const cps=(cpsClicks/cpsDuration).toFixed(2);
+    if(parseFloat(cps)>cpsBestVal)cpsBestVal=parseFloat(cps);
+    document.getElementById('cpsArena').className='arena cps-done';
+    document.getElementById('cpsBig').textContent=cps+' CPS';
+    document.getElementById('cpsSub').textContent='Click to start again';
+    document.getElementById('cpsVal').textContent=cps;
+    document.getElementById('cpsBest').textContent=cpsBestVal.toFixed(2);
+  }
+
+  function resetCps(){clearInterval(cpsTimer);cpsRunning=false;cpsClicks=0;document.getElementById('cpsArena').className='arena cps-idle';document.getElementById('cpsBig').textContent='Click to start';document.getElementById('cpsSub').textContent='Click as fast as you can';document.getElementById('cpsProgressWrap').style.display='none';document.getElementById('cpsProgress').style.width='0%';document.getElementById('cpsVal').textContent='—';document.getElementById('cpsTotalClicks').textContent='0';}
+
+  // ══ SPACEBAR ══════════════════════════════════════════════
+  let spDuration=5, spRunning=false, spHits=0, spStart=0, spTimer=null, spBestVal=0;
+
+  function setSpTime(btn,t){document.querySelectorAll('[data-sp-t]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');spDuration=t;resetSp();}
+
+  function spClick(){
+    if(!spRunning){
+      spRunning=true;spHits=1;spStart=Date.now();
+      document.getElementById('spArena').className='arena cps-active';
+      document.getElementById('spBig').textContent='1';
+      document.getElementById('spSub').textContent='Keep going!';
+      document.getElementById('spProgressWrap').style.display='block';
+      document.getElementById('spTotal').textContent=1;
+      spTimer=setInterval(()=>{
+        const elapsed=(Date.now()-spStart)/1000;
+        const cps=(spHits/elapsed).toFixed(1);
+        document.getElementById('spVal').textContent=cps;
+        document.getElementById('spProgress').style.width=(elapsed/spDuration*100)+'%';
+        if(elapsed>=spDuration){clearInterval(spTimer);endSp();}
+      },100);
+    } else {
+      spHits++;
+      document.getElementById('spBig').textContent=spHits;
+      document.getElementById('spTotal').textContent=spHits;
+    }
+  }
+
+  function endSp(){
+    spRunning=false;
+    const cps=(spHits/spDuration).toFixed(2);
+    if(parseFloat(cps)>spBestVal)spBestVal=parseFloat(cps);
+    document.getElementById('spArena').className='arena cps-done';
+    document.getElementById('spBig').textContent=cps+' hits/s';
+    document.getElementById('spSub').textContent='Click or press Space to try again';
+    document.getElementById('spVal').textContent=cps;
+    document.getElementById('spBest').textContent=spBestVal.toFixed(2);
+  }
+
+  function resetSp(){clearInterval(spTimer);spRunning=false;spHits=0;document.getElementById('spArena').className='arena cps-idle';document.getElementById('spBig').textContent='Click or press Space';document.getElementById('spSub').textContent='Hit the spacebar as fast as you can';document.getElementById('spProgressWrap').style.display='none';document.getElementById('spProgress').style.width='0%';document.getElementById('spVal').textContent='—';document.getElementById('spTotal').textContent='0';}
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

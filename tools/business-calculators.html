@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Calculators — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a;--green-bg:#edf7f1;--red:#b03030;--red-bg:#fdf0f0}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:800px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .mode-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:2rem}
+    .mode-tab{background:var(--card);padding:.9rem .5rem;text-align:center;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;color:var(--muted);transition:background .15s;line-height:1.3}
+    .mode-tab .tab-icon{font-size:1.2rem;display:block;margin-bottom:.2rem}
+    .mode-tab.active{background:var(--ink);color:#fff}
+    .section{display:none}.section.visible{display:block}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+    .fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem}
+    .field{display:flex;flex-direction:column;gap:.4rem}
+    .field label{font-size:.82rem;color:var(--muted)}
+    .field-wrap{position:relative}
+    .field-pre,.field-suf{position:absolute;top:50%;transform:translateY(-50%);font-size:.9rem;color:var(--muted);pointer-events:none}
+    .field-pre{left:.9rem}
+    .field-suf{right:.9rem}
+    input[type="number"]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.65rem 2.2rem .65rem 2rem;font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--ink);outline:none;transition:border-color .2s}
+    input.no-pre{padding-left:1rem}
+    input.no-suf{padding-right:1rem}
+    input:focus{border-color:var(--ink)}
+    /* Result */
+    .result-hero{background:var(--ink);color:#fff;border-radius:10px;padding:1.8rem;text-align:center;margin-bottom:1rem}
+    .result-hero.good{background:var(--green)}
+    .result-hero.bad{background:var(--red)}
+    .res-big{font-family:'DM Serif Display',serif;font-size:4rem;letter-spacing:-.03em;line-height:1}
+    .res-label{font-size:.8rem;color:rgba(255,255,255,.6);letter-spacing:.1em;text-transform:uppercase;margin-top:.4rem}
+    .res-verdict{font-size:.95rem;color:rgba(255,255,255,.8);margin-top:.6rem}
+    /* breakdown */
+    .breakdown{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.5rem;margin-bottom:1rem}
+    .breakdown-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.9rem;text-align:center}
+    .breakdown-val{font-family:'DM Serif Display',serif;font-size:1.4rem;letter-spacing:-.02em}
+    .breakdown-label{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+    /* Bar */
+    .bar-wrap{margin-bottom:1rem}
+    .bar-label-row{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-bottom:.4rem}
+    .bar{height:10px;border-radius:99px;background:var(--border);overflow:hidden}
+    .bar-fill{height:100%;border-radius:99px;transition:width .5s}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.fields-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">💼 Finance</p>
+  <h1>Business Calculators</h1>
+  <p class="subtitle">ROI, break-even point, and profit margin — three essential business calculators in one place.</p>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="setMode('roi')"><span class="tab-icon">📈</span>ROI</button>
+    <button class="mode-tab" onclick="setMode('breakeven')"><span class="tab-icon">⚖️</span>Break-Even</button>
+    <button class="mode-tab" onclick="setMode('margin')"><span class="tab-icon">💰</span>Profit Margin</button>
+  </div>
+
+  <!-- ROI -->
+  <div class="section visible" id="secRoi">
+    <div class="card">
+      <p class="card-title">Investment details</p>
+      <div class="fields-grid">
+        <div class="field"><label>Initial investment</label><div class="field-wrap"><span class="field-pre">$</span><input type="number" id="roiCost" class="no-suf" placeholder="10000" oninput="calcRoi()" /></div></div>
+        <div class="field"><label>Final value / return</label><div class="field-wrap"><span class="field-pre">$</span><input type="number" id="roiReturn" class="no-suf" placeholder="15000" oninput="calcRoi()" /></div></div>
+        <div class="field"><label>Time period (optional)</label><div class="field-wrap"><input type="number" id="roiYears" class="no-pre" placeholder="2" min="0" oninput="calcRoi()" /><span class="field-suf">yrs</span></div></div>
+      </div>
+    </div>
+    <div class="result-hero" id="roiResult" style="display:none">
+      <div class="res-big" id="roiBig">—</div>
+      <div class="res-label">Return on Investment</div>
+      <div class="res-verdict" id="roiVerdict"></div>
+    </div>
+    <div class="breakdown" id="roiBreakdown" style="display:none"></div>
+  </div>
+
+  <!-- BREAK-EVEN -->
+  <div class="section" id="secBreakeven">
+    <div class="card">
+      <p class="card-title">Cost & pricing</p>
+      <div class="fields-grid">
+        <div class="field"><label>Fixed costs</label><div class="field-wrap"><span class="field-pre">$</span><input type="number" id="beFixed" class="no-suf" placeholder="5000" oninput="calcBe()" /></div></div>
+        <div class="field"><label>Variable cost per unit</label><div class="field-wrap"><span class="field-pre">$</span><input type="number" id="beVar" class="no-suf" placeholder="20" oninput="calcBe()" /></div></div>
+        <div class="field"><label>Selling price per unit</label><div class="field-wrap"><span class="field-pre">$</span><input type="number" id="bePrice" class="no-suf" placeholder="50" oninput="calcBe()" /></div></div>
+        <div class="field"><label>Expected units sold</label><div class="field-wrap"><input type="number" id="beUnits" class="no-pre no-suf" placeholder="300" oninput="calcBe()" /></div></div>
+      </div>
+    </div>
+    <div class="result-hero" id="beResult" style="display:none">
+      <div class="res-big" id="beBig">—</div>
+      <div class="res-label">Break-Even Point (units)</div>
+      <div class="res-verdict" id="beVerdict"></div>
+    </div>
+    <div class="breakdown" id="beBreakdown" style="display:none"></div>
+    <div id="beBarWrap" style="display:none" class="card">
+      <div class="bar-wrap">
+        <div class="bar-label-row"><span>0 units</span><span id="beBarLabel"></span></div>
+        <div class="bar"><div class="bar-fill" id="beBar" style="background:#1d9e75"></div></div>
+        <div class="bar-label-row" style="margin-top:.3rem"><span style="font-size:.72rem">Break-even</span><span id="beBarRight" style="font-size:.72rem"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFIT MARGIN -->
+  <div class="section" id="secMargin">
+    <div class="card">
+      <p class="card-title">Revenue & costs</p>
+      <div class="fields-grid">
+        <div class="field"><label>Revenue (sales)</label><div class="field-wrap"><span class="field-pre">$</span><input type="number" id="pmRev" class="no-suf" placeholder="100000" oninput="calcMargin()" /></div></div>
+        <div class="field"><label>Cost of goods sold (COGS)</label><div class="field-wrap"><span class="field-pre">$</span><input type="number" id="pmCogs" class="no-suf" placeholder="60000" oninput="calcMargin()" /></div></div>
+        <div class="field"><label>Operating expenses</label><div class="field-wrap"><span class="field-pre">$</span><input type="number" id="pmOps" class="no-suf" placeholder="20000" oninput="calcMargin()" /></div></div>
+        <div class="field"><label>Tax rate (optional)</label><div class="field-wrap"><input type="number" id="pmTax" class="no-pre" placeholder="21" min="0" max="100" oninput="calcMargin()" /><span class="field-suf">%</span></div></div>
+      </div>
+    </div>
+    <div class="result-hero" id="marginResult" style="display:none">
+      <div class="res-big" id="marginBig">—</div>
+      <div class="res-label">Net Profit Margin</div>
+      <div class="res-verdict" id="marginVerdict"></div>
+    </div>
+    <div class="breakdown" id="marginBreakdown" style="display:none"></div>
+    <div id="marginBarWrap" style="display:none" class="card">
+      <div class="bar-wrap">
+        <div class="bar-label-row"><span>Gross margin</span><span id="grossPct"></span></div>
+        <div class="bar"><div class="bar-fill" id="grossBar" style="background:#1d9e75;width:0%"></div></div>
+      </div>
+      <div class="bar-wrap" style="margin-top:.75rem">
+        <div class="bar-label-row"><span>Operating margin</span><span id="opPct"></span></div>
+        <div class="bar"><div class="bar-fill" id="opBar" style="background:#378add;width:0%"></div></div>
+      </div>
+      <div class="bar-wrap" style="margin-top:.75rem">
+        <div class="bar-label-row"><span>Net margin</span><span id="netPct"></span></div>
+        <div class="bar"><div class="bar-fill" id="netBar" style="background:#534ab7;width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  function setMode(m){
+    ['roi','breakeven','margin'].forEach(s=>{document.getElementById('sec'+s.charAt(0).toUpperCase()+s.slice(1)).classList.toggle('visible',s===m);});
+    document.querySelectorAll('.mode-tab').forEach((t,i)=>t.classList.toggle('active',['roi','breakeven','margin'][i]===m));
+  }
+  function fmt(n){return'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function pct(n){return(n>=0?'+':'')+n.toFixed(2)+'%';}
+
+  // ── ROI ──
+  function calcRoi(){
+    const cost=parseFloat(document.getElementById('roiCost').value);
+    const ret=parseFloat(document.getElementById('roiReturn').value);
+    const years=parseFloat(document.getElementById('roiYears').value);
+    const res=document.getElementById('roiResult');
+    const bd=document.getElementById('roiBreakdown');
+    if(!cost||!ret){res.style.display='none';bd.style.display='none';return;}
+    const gain=ret-cost;
+    const roi=gain/cost*100;
+    const annualRoi=years>0?((Math.pow(ret/cost,1/years)-1)*100):null;
+    res.style.display='block';bd.style.display='grid';
+    res.className='result-hero'+(roi>=0?' good':' bad');
+    document.getElementById('roiBig').textContent=pct(roi);
+    document.getElementById('roiVerdict').textContent=roi>=0?`You gained ${fmt(gain)} on a ${fmt(cost)} investment.`:`You lost ${fmt(Math.abs(gain))} on a ${fmt(cost)} investment.`;
+    bd.innerHTML=`
+      <div class="breakdown-item"><div class="breakdown-val">${fmt(gain)}</div><div class="breakdown-label">Net gain/loss</div></div>
+      <div class="breakdown-item"><div class="breakdown-val">${fmt(cost)}</div><div class="breakdown-label">Initial invest</div></div>
+      <div class="breakdown-item"><div class="breakdown-val">${fmt(ret)}</div><div class="breakdown-label">Final value</div></div>
+      ${annualRoi!==null?`<div class="breakdown-item"><div class="breakdown-val">${annualRoi.toFixed(2)}%</div><div class="breakdown-label">Annual ROI</div></div>`:''}`;
+  }
+
+  // ── BREAK-EVEN ──
+  function calcBe(){
+    const fixed=parseFloat(document.getElementById('beFixed').value);
+    const varCost=parseFloat(document.getElementById('beVar').value);
+    const price=parseFloat(document.getElementById('bePrice').value);
+    const units=parseFloat(document.getElementById('beUnits').value);
+    const res=document.getElementById('beResult');
+    const bd=document.getElementById('beBreakdown');
+    if(!fixed||!varCost||!price||price<=varCost){res.style.display='none';bd.style.display='none';document.getElementById('beBarWrap').style.display='none';if(price<=varCost&&price&&varCost){res.style.display='block';res.className='result-hero bad';document.getElementById('beBig').textContent='∞';document.getElementById('beVerdict').textContent='Selling price must be higher than variable cost.';}return;}
+    const contrib=price-varCost;
+    const bep=Math.ceil(fixed/contrib);
+    const bepRev=bep*price;
+    const margin=contrib/price*100;
+    res.style.display='block';bd.style.display='grid';
+    document.getElementById('beBarWrap').style.display='block';
+    const profit=units?(units-bep)*contrib:null;
+    res.className='result-hero'+(units&&units>=bep?' good':units?' bad':'');
+    document.getElementById('beBig').textContent=bep.toLocaleString()+' units';
+    document.getElementById('beVerdict').textContent=units?(units>=bep?`You sell ${units} units — ${units-bep} above break-even. Profit: ${fmt((units-bep)*contrib)}.`:`You sell ${units} units — ${bep-units} short of break-even. Loss: ${fmt((bep-units)*contrib)}.`):`At ${fmt(price)}/unit with ${fmt(varCost)} variable cost.`;
+    bd.innerHTML=`
+      <div class="breakdown-item"><div class="breakdown-val">${fmt(bepRev)}</div><div class="breakdown-label">Break-even revenue</div></div>
+      <div class="breakdown-item"><div class="breakdown-val">${fmt(contrib)}</div><div class="breakdown-label">Contribution/unit</div></div>
+      <div class="breakdown-item"><div class="breakdown-val">${margin.toFixed(1)}%</div><div class="breakdown-label">Margin per unit</div></div>`;
+    if(units){
+      const pct=Math.min(100,units/bep*100);
+      document.getElementById('beBar').style.width=pct+'%';
+      document.getElementById('beBar').style.background=units>=bep?'#1d9e75':'#e24b4a';
+      document.getElementById('beBarLabel').textContent=bep+' units (break-even)';
+      document.getElementById('beBarRight').textContent=units+' units sold';
+    }
+  }
+
+  // ── PROFIT MARGIN ──
+  function calcMargin(){
+    const rev=parseFloat(document.getElementById('pmRev').value);
+    const cogs=parseFloat(document.getElementById('pmCogs').value);
+    const ops=parseFloat(document.getElementById('pmOps').value)||0;
+    const tax=parseFloat(document.getElementById('pmTax').value)||0;
+    const res=document.getElementById('marginResult');
+    const bd=document.getElementById('marginBreakdown');
+    if(!rev||!cogs){res.style.display='none';bd.style.display='none';document.getElementById('marginBarWrap').style.display='none';return;}
+    const gross=rev-cogs;
+    const operating=gross-ops;
+    const net=operating*(1-tax/100);
+    const grossPct=gross/rev*100;
+    const opPct=operating/rev*100;
+    const netPct=net/rev*100;
+    res.style.display='block';bd.style.display='grid';document.getElementById('marginBarWrap').style.display='block';
+    res.className='result-hero'+(netPct>0?' good':' bad');
+    document.getElementById('marginBig').textContent=netPct.toFixed(2)+'%';
+    document.getElementById('marginVerdict').textContent=`Net profit: ${fmt(net)} on ${fmt(rev)} revenue.`;
+    bd.innerHTML=`
+      <div class="breakdown-item"><div class="breakdown-val">${fmt(gross)}</div><div class="breakdown-label">Gross profit</div></div>
+      <div class="breakdown-item"><div class="breakdown-val">${fmt(operating)}</div><div class="breakdown-label">Operating profit</div></div>
+      <div class="breakdown-item"><div class="breakdown-val">${fmt(net)}</div><div class="breakdown-label">Net profit</div></div>
+      <div class="breakdown-item"><div class="breakdown-val">${fmt(cogs+ops)}</div><div class="breakdown-label">Total costs</div></div>`;
+    document.getElementById('grossPct').textContent=grossPct.toFixed(1)+'%';
+    document.getElementById('opPct').textContent=opPct.toFixed(1)+'%';
+    document.getElementById('netPct').textContent=netPct.toFixed(1)+'%';
+    document.getElementById('grossBar').style.width=Math.max(0,grossPct)+'%';
+    document.getElementById('opBar').style.width=Math.max(0,opPct)+'%';
+    document.getElementById('netBar').style.width=Math.max(0,netPct)+'%';
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>
