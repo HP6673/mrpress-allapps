@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Rotator — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:800px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .dropzone{border:1.5px dashed var(--border);border-radius:12px;padding:3rem 2rem;text-align:center;background:var(--card);cursor:pointer;transition:border-color .2s,background .2s;position:relative}
+    .dropzone:hover,.dropzone.drag-over{border-color:var(--ink);background:#faf9f5}
+    .dropzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .drop-icon{font-size:2.2rem;display:block;margin-bottom:.75rem}
+    .drop-title{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:.3rem}
+    .drop-sub{font-size:.85rem;color:var(--muted)}
+    .panel{display:none;margin-top:1.5rem}
+    .panel.visible{display:block}
+    .preview-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;min-height:260px;background:repeating-conic-gradient(#ddd 0% 25%,#f0f0f0 0% 50%) 0 0/16px 16px}
+    #preview{max-width:100%;max-height:400px;object-fit:contain;border-radius:4px;display:block;transition:transform .3s}
+    .controls-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+    .rotate-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:1rem}
+    .rot-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:.75rem .5rem;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s;text-align:center}
+    .rot-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .rot-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .flip-row{display:flex;gap:.6rem;margin-bottom:1rem}
+    .flip-btn{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:.65rem;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .flip-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .flip-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .angle-row{display:flex;align-items:center;gap:.75rem}
+    .angle-row label{font-size:.82rem;color:var(--muted);white-space:nowrap}
+    input[type="range"]{flex:1;accent-color:var(--ink)}
+    input[type="number"]{width:68px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.45rem .6rem;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--ink);outline:none;text-align:center}
+    .meta{font-size:.8rem;color:var(--muted);margin-bottom:.5rem}
+    .action-row{display:flex;gap:.75rem;margin-top:1rem}
+    .btn{flex:1;padding:.85rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:all .2s;border:none;text-align:center}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
+    .btn-secondary:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.rotate-btns{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🔄 Image</p>
+  <h1>Image Rotator</h1>
+  <p class="subtitle">Rotate or flip any image. Use the preset buttons or dial in an exact angle. Download instantly.</p>
+
+  <div class="dropzone" id="dropzone">
+    <input type="file" id="fileInput" accept="image/*" />
+    <span class="drop-icon">📂</span>
+    <p class="drop-title">Drop an image here</p>
+    <p class="drop-sub">or click to browse</p>
+  </div>
+
+  <div class="panel" id="panel">
+    <p class="meta" id="meta"></p>
+    <div class="preview-box"><img id="preview" src="" alt="Preview" /></div>
+
+    <div class="controls-card">
+      <p class="card-title">Rotate</p>
+      <div class="rotate-btns">
+        <button class="rot-btn" onclick="setPreset(90)">↻ 90°</button>
+        <button class="rot-btn" onclick="setPreset(180)">↺ 180°</button>
+        <button class="rot-btn" onclick="setPreset(270)">↻ 270°</button>
+        <button class="rot-btn" onclick="setPreset(0)">Reset</button>
+      </div>
+      <div class="angle-row" style="margin-bottom:1rem">
+        <label>Custom angle</label>
+        <input type="range" id="angleSlider" min="0" max="360" value="0" oninput="syncAngle(this.value,'slider')" />
+        <input type="number" id="angleNum" min="0" max="360" value="0" oninput="syncAngle(this.value,'num')" />
+        <span style="font-size:.82rem;color:var(--muted)">°</span>
+      </div>
+      <p class="card-title">Flip</p>
+      <div class="flip-row">
+        <button class="flip-btn" id="flipH" onclick="toggleFlip('h')">↔ Flip Horizontal</button>
+        <button class="flip-btn" id="flipV" onclick="toggleFlip('v')">↕ Flip Vertical</button>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="downloadImage()">⬇ Download</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↩ New image</button>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<canvas id="canvas" style="display:none"></canvas>
+<script>
+  let img = new Image();
+  let angle = 0, flipH = false, flipV = false;
+  let fileName = 'rotated.png';
+
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+
+  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+  dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('drag-over'); const f = e.dataTransfer.files[0]; if (f && f.type.startsWith('image/')) loadFile(f); });
+  fileInput.addEventListener('change', () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
+
+  function loadFile(file) {
+    fileName = file.name.replace(/\.[^.]+$/, '') + '-rotated.png';
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      document.getElementById('meta').textContent = `${img.naturalWidth} × ${img.naturalHeight}px  ·  ${(file.size/1024).toFixed(1)} KB`;
+      dropzone.style.display = 'none';
+      document.getElementById('panel').classList.add('visible');
+      renderPreview();
+    };
+    img.src = url;
+  }
+
+  function renderPreview() {
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const rad = angle * Math.PI / 180;
+    const sin = Math.abs(Math.sin(rad)), cos = Math.abs(Math.cos(rad));
+    canvas.width  = Math.round(img.naturalWidth * cos + img.naturalHeight * sin);
+    canvas.height = Math.round(img.naturalWidth * sin + img.naturalHeight * cos);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate(rad);
+    ctx.scale(flipH ? -1 : 1, flipV ? -1 : 1);
+    ctx.drawImage(img, -img.naturalWidth / 2, -img.naturalHeight / 2);
+    ctx.restore();
+    document.getElementById('preview').src = canvas.toDataURL('image/png');
+  }
+
+  function setPreset(deg) {
+    angle = deg;
+    document.getElementById('angleSlider').value = deg;
+    document.getElementById('angleNum').value = deg;
+    document.querySelectorAll('.rot-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    renderPreview();
+  }
+
+  function syncAngle(val, src) {
+    angle = ((parseInt(val) || 0) % 361 + 360) % 360;
+    if (src !== 'slider') document.getElementById('angleSlider').value = angle;
+    if (src !== 'num')    document.getElementById('angleNum').value = angle;
+    document.querySelectorAll('.rot-btn').forEach(b => b.classList.remove('active'));
+    renderPreview();
+  }
+
+  function toggleFlip(axis) {
+    if (axis === 'h') { flipH = !flipH; document.getElementById('flipH').classList.toggle('active', flipH); }
+    else              { flipV = !flipV; document.getElementById('flipV').classList.toggle('active', flipV); }
+    renderPreview();
+  }
+
+  function downloadImage() {
+    const a = document.createElement('a');
+    a.download = fileName;
+    a.href = document.getElementById('canvas').toDataURL('image/png');
+    a.click();
+  }
+
+  function resetAll() {
+    angle = 0; flipH = false; flipV = false;
+    document.getElementById('angleSlider').value = 0;
+    document.getElementById('angleNum').value = 0;
+    document.querySelectorAll('.rot-btn,.flip-btn').forEach(b => b.classList.remove('active'));
+    dropzone.style.display = '';
+    document.getElementById('panel').classList.remove('visible');
+    fileInput.value = '';
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

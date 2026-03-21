@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Quality — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a;--green-bg:#edf7f1}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:900px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .dropzone{border:1.5px dashed var(--border);border-radius:12px;padding:3rem 2rem;text-align:center;background:var(--card);cursor:pointer;transition:border-color .2s,background .2s;position:relative}
+    .dropzone:hover,.dropzone.drag-over{border-color:var(--ink);background:#faf9f5}
+    .dropzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .drop-icon{font-size:2.2rem;display:block;margin-bottom:.75rem}
+    .drop-title{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:.3rem}
+    .drop-sub{font-size:.85rem;color:var(--muted)}
+    .panel{display:none;margin-top:1.5rem}
+    .panel.visible{display:block}
+    .preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+    .preview-box{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .preview-label{padding:.6rem 1rem;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);display:flex;justify-content:space-between}
+    .preview-img-wrap{display:flex;align-items:center;justify-content:center;padding:1rem;min-height:180px;background:repeating-conic-gradient(#ddd 0% 25%,#f0f0f0 0% 50%) 0 0/16px 16px}
+    .preview-img-wrap img{max-width:100%;max-height:220px;object-fit:contain;display:block}
+    .preview-meta{padding:.6rem 1rem;font-size:.8rem;color:var(--muted);border-top:1px solid var(--border)}
+    .controls-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+    .quality-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem}
+    .quality-row label{font-size:.85rem;color:var(--muted);white-space:nowrap}
+    input[type="range"]{flex:1;accent-color:var(--ink)}
+    .quality-val{font-family:'DM Serif Display',serif;font-size:1.8rem;letter-spacing:-.02em;min-width:52px;text-align:right}
+    .format-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
+    .fmt-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:.45rem 1rem;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .fmt-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .fmt-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .size-bar{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.4rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;font-size:.85rem}
+    .saving-badge{background:var(--green-bg);color:var(--green);border-radius:99px;padding:.2rem .75rem;font-size:.78rem;font-weight:500}
+    .action-row{display:flex;gap:.75rem}
+    .btn{flex:1;padding:.85rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:all .2s;border:none;text-align:center}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
+    .btn-secondary:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.preview-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🗜️ Image</p>
+  <h1>Image Quality</h1>
+  <p class="subtitle">Compress or adjust the quality of any image. See a live before/after comparison and download the result.</p>
+
+  <div class="dropzone" id="dropzone">
+    <input type="file" id="fileInput" accept="image/*" />
+    <span class="drop-icon">📂</span>
+    <p class="drop-title">Drop an image here</p>
+    <p class="drop-sub">or click to browse — JPG, PNG, WebP supported</p>
+  </div>
+
+  <div class="panel" id="panel">
+    <div class="preview-grid">
+      <div class="preview-box">
+        <div class="preview-label">Original<span id="origBadge"></span></div>
+        <div class="preview-img-wrap"><img id="origImg" src="" alt="Original" /></div>
+        <div class="preview-meta" id="origMeta"></div>
+      </div>
+      <div class="preview-box">
+        <div class="preview-label">Output<span id="outBadge"></span></div>
+        <div class="preview-img-wrap"><img id="outImg" src="" alt="Output" /></div>
+        <div class="preview-meta" id="outMeta"></div>
+      </div>
+    </div>
+
+    <div class="controls-card">
+      <p class="card-title">Quality</p>
+      <div class="quality-row">
+        <label>Quality</label>
+        <input type="range" id="qualitySlider" min="1" max="100" value="80" oninput="onQuality(this.value)" />
+        <span class="quality-val" id="qualityVal">80%</span>
+      </div>
+      <p class="card-title">Output format</p>
+      <div class="format-row">
+        <button class="fmt-btn active" data-fmt="image/jpeg" data-ext="jpg">JPG</button>
+        <button class="fmt-btn" data-fmt="image/webp" data-ext="webp">WebP</button>
+        <button class="fmt-btn" data-fmt="image/png"  data-ext="png">PNG (lossless)</button>
+      </div>
+    </div>
+
+    <div class="size-bar">
+      <span id="sizeCompare">—</span>
+      <span class="saving-badge" id="savingBadge"></span>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="downloadOutput()">⬇ Download</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↩ New image</button>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<canvas id="canvas" style="display:none"></canvas>
+<script>
+  let origImg = new Image();
+  let origSize = 0, outBlob = null, outExt = 'jpg';
+  let fmt = 'image/jpeg', quality = 0.80;
+  let fileName = 'output';
+  let debounceTimer;
+
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+
+  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+  dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('drag-over'); const f = e.dataTransfer.files[0]; if (f && f.type.startsWith('image/')) loadFile(f); });
+  fileInput.addEventListener('change', () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
+
+  document.querySelectorAll('.fmt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      fmt = btn.dataset.fmt;
+      outExt = btn.dataset.ext;
+      process();
+    });
+  });
+
+  function loadFile(file) {
+    origSize = file.size;
+    fileName = file.name.replace(/\.[^.]+$/, '');
+    const ext = file.name.split('.').pop().toUpperCase();
+    document.getElementById('origBadge').textContent = ext;
+    document.getElementById('origMeta').textContent = `${fmtBytes(file.size)}`;
+    const url = URL.createObjectURL(file);
+    origImg.onload = () => {
+      document.getElementById('origImg').src = url;
+      document.getElementById('origBadge').textContent = `${ext}  ·  ${origImg.naturalWidth}×${origImg.naturalHeight}`;
+      dropzone.style.display = 'none';
+      document.getElementById('panel').classList.add('visible');
+      process();
+    };
+    origImg.src = url;
+  }
+
+  function onQuality(val) {
+    quality = parseInt(val) / 100;
+    document.getElementById('qualityVal').textContent = val + '%';
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(process, 120);
+  }
+
+  function process() {
+    const canvas = document.getElementById('canvas');
+    canvas.width = origImg.naturalWidth;
+    canvas.height = origImg.naturalHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (fmt === 'image/jpeg') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+    ctx.drawImage(origImg, 0, 0);
+    const q = fmt === 'image/png' ? undefined : quality;
+    canvas.toBlob(blob => {
+      if (!blob) return;
+      outBlob = blob;
+      const url = URL.createObjectURL(blob);
+      const outImg = document.getElementById('outImg');
+      outImg.src = url;
+      document.getElementById('outBadge').textContent = `${outExt.toUpperCase()}  ·  ${origImg.naturalWidth}×${origImg.naturalHeight}`;
+      document.getElementById('outMeta').textContent = fmtBytes(blob.size);
+      const saving = origSize - blob.size;
+      const pct = Math.round(saving / origSize * 100);
+      document.getElementById('sizeCompare').textContent = `${fmtBytes(origSize)} → ${fmtBytes(blob.size)}`;
+      const badge = document.getElementById('savingBadge');
+      if (saving > 0) { badge.textContent = `${pct}% smaller`; badge.style.background = '#edf7f1'; badge.style.color = '#1a7a4a'; }
+      else { badge.textContent = `${Math.abs(pct)}% larger`; badge.style.background = '#fdf0f0'; badge.style.color = '#b03030'; }
+    }, fmt, q);
+  }
+
+  function downloadOutput() {
+    if (!outBlob) return;
+    const a = document.createElement('a');
+    a.download = `${fileName}-q${Math.round(quality*100)}.${outExt}`;
+    a.href = URL.createObjectURL(outBlob);
+    a.click();
+  }
+
+  function resetAll() {
+    dropzone.style.display = '';
+    document.getElementById('panel').classList.remove('visible');
+    fileInput.value = '';
+    document.getElementById('qualitySlider').value = 80;
+    document.getElementById('qualityVal').textContent = '80%';
+    quality = 0.80;
+  }
+
+  function fmtBytes(b) { if (b < 1024) return b + ' B'; if (b < 1048576) return (b/1024).toFixed(1) + ' KB'; return (b/1048576).toFixed(2) + ' MB'; }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>
