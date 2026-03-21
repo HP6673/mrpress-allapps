@@ -101,6 +101,27 @@
       category:    "Image",
       url:         "tools/image-converter.html"
     },
+    {
+      name:        "Image Rotator",
+      description: "Rotate or flip any image by any angle. Download instantly.",
+      icon:        "🔄",
+      category:    "Image",
+      url:         "tools/image-rotator.html"
+    },
+    {
+      name:        "Image Quality",
+      description: "Compress images and adjust quality. Live before/after comparison with file size savings.",
+      icon:        "🗜️",
+      category:    "Image",
+      url:         "tools/image-quality.html"
+    },
+    {
+      name:        "Image Grayscaler",
+      description: "Convert images to grayscale, sepia, cool/warm tint, or invert. Adjust brightness and contrast.",
+      icon:        "⬛",
+      category:    "Image",
+      url:         "tools/image-grayscaler.html"
+    },
 
     // ── Calculator ───────────────────────────────────────────
     {
@@ -185,14 +206,47 @@
     },
 
     // ── ADD MORE TOOLS BELOW ──────────────────────────────────
+    {
+      name:        "Image Border",
+      description: "Add a custom border around any image — choose size, colour, and corner radius.",
+      icon:        "🖼️",
+      category:    "Image",
+      url:         "tools/image-border.html"
+    },
+    {
+      name:        "GIF Speed Changer",
+      description: "Speed up or slow down any GIF. Preview and download instantly.",
+      icon:        "⚡",
+      category:    "GIF",
+      url:         "tools/gif-speed.html"
+    },
+    {
+      name:        "GIF to ZIP",
+      description: "Extract every frame from a GIF as PNG or JPG images, bundled into a ZIP file.",
+      icon:        "📦",
+      category:    "GIF",
+      url:         "tools/gif-to-zip.html"
+    },
+    {
+      name:        "Word Scrambler",
+      description: "Scramble letters, words, or sentences in multiple modes. Great for puzzles and games.",
+      icon:        "🔀",
+      category:    "Text",
+      url:         "tools/word-scrambler.html"
+    },
+
+    // ── ADD MORE TOOLS BELOW ──────────────────────────────────
 
   ];
+
+  // ── Sort tools alphabetically ──
+  TOOLS.sort((a, b) => a.name.localeCompare(b.name));
 
   // ── Set copyright year ──
   document.getElementById('year').textContent = new Date().getFullYear();
 
   // ── Build category filters ──
-  const cats = ['all', ...new Set(TOOLS.map(t => t.category))];
+  const cats = ['all', ...new Set(TOOLS.map(t => t.category)).keys()].sort((a,b) => a === 'all' ? -1 : b === 'all' ? 1 : a.localeCompare(b));
   const filterBar = document.getElementById('filterBar');
   cats.forEach(cat => {
     const btn = document.createElement('button');
