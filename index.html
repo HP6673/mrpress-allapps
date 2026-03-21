@@ -13,6 +13,9 @@
     header { display:flex; align-items:center; justify-content:space-between; padding:2rem 4rem; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--bg); z-index:10; }
     .logo { font-family:'DM Serif Display',serif; font-size:1.4rem; letter-spacing:-.02em; text-decoration:none; color:var(--ink); }
     .logo span { color:var(--muted); font-weight:300; }
+    .header-right { display:flex; align-items:center; gap:.75rem; }
+    .contact-btn { background:transparent; border:1px solid var(--border); border-radius:99px; padding:.45rem 1.1rem; font-family:'DM Sans',sans-serif; font-size:.82rem; color:var(--muted); text-decoration:none; transition:all .2s; white-space:nowrap; }
+    .contact-btn:hover { background:var(--ink); color:#fff; border-color:var(--ink); }
     #search { background:transparent; border:1px solid var(--border); border-radius:99px; padding:.5rem 1.2rem; font-family:'DM Sans',sans-serif; font-size:.85rem; color:var(--ink); width:220px; outline:none; transition:border-color .2s; }
     #search::placeholder { color:var(--muted); }
     #search:focus { border-color:var(--ink); }
@@ -268,6 +271,41 @@
       icon:        "📑",
       category:    "Document",
       url:         "tools/slides-to-pdf.html"
+    },
+    {
+      name:        "Merge / Split PDF",
+      description: "Combine multiple PDFs into one file, or split a PDF into separate pages or ranges.",
+      icon:        "📎",
+      category:    "Document",
+      url:         "tools/merge-split-pdf.html"
+    },
+    {
+      name:        "Save Website as PDF",
+      description: "Open any webpage and save it as a PDF using your browser's built-in print dialog.",
+      icon:        "🌐",
+      category:    "Document",
+      url:         "tools/website-to-pdf.html"
+    },
+    {
+      name:        "Watermark PDF",
+      description: "Add a custom text watermark to every page of a PDF. Set opacity, angle, colour, and position.",
+      icon:        "💧",
+      category:    "Document",
+      url:         "tools/watermark-pdf.html"
+    },
+    {
+      name:        "Image Metadata Viewer",
+      description: "View EXIF data, camera settings, GPS location, and file info embedded in any image.",
+      icon:        "🔍",
+      category:    "Image",
+      url:         "tools/image-metadata.html"
+    },
+    {
+      name:        "Extra Space Remover",
+      description: "Clean up messy text — remove double spaces, blank lines, trim edges, fix tabs, and more.",
+      icon:        "␣",
+      category:    "Text",
+      url:         "tools/extra-space-remover.html"
     },
 
     // ── ADD MORE TOOLS BELOW ──────────────────────────────────
