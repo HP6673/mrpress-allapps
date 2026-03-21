@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nickname Generator — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:720px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+    .input-row{display:flex;gap:.5rem;margin-bottom:.75rem}
+    .name-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--ink);outline:none;transition:border-color .2s}
+    .name-input:focus{border-color:var(--ink)}
+    .name-input::placeholder{color:var(--muted)}
+    .opts-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem}
+    .opt-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:99px;padding:.35rem .9rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .opt-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .opt-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .gen-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:.75rem 1.6rem;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+    .gen-btn:hover{opacity:.8}
+    /* Results */
+    .results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.5rem;margin-top:.5rem}
+    .nick-card{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:.85rem 1rem;display:flex;align-items:center;justify-content:space-between;transition:border-color .2s}
+    .nick-card:hover{border-color:var(--muted)}
+    .nick-name{font-family:'DM Serif Display',serif;font-size:1.1rem;letter-spacing:-.01em}
+    .nick-style{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.15rem}
+    .copy-mini{background:transparent;border:1px solid var(--border);border-radius:5px;padding:.2rem .6rem;font-family:'DM Sans',sans-serif;font-size:.72rem;color:var(--muted);cursor:pointer;transition:all .2s;flex-shrink:0}
+    .copy-mini:hover{border-color:var(--ink);color:var(--ink)}
+    .empty-state{text-align:center;color:var(--muted);font-size:.9rem;padding:2rem;grid-column:1/-1}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.input-row{flex-direction:column}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">😄 Utility</p>
+  <h1>Nickname Generator</h1>
+  <p class="subtitle">Enter a name or word and get creative nicknames — cute, funny, cool, gamer-style and more.</p>
+
+  <div class="card">
+    <p class="card-title">Generate nicknames</p>
+    <div class="input-row">
+      <input class="name-input" id="nameInput" type="text" placeholder="Enter a name or word…" oninput="generate()" />
+      <button class="gen-btn" onclick="generate()">✨ Generate</button>
+    </div>
+    <div class="opts-row" id="styleGroup">
+      <button class="opt-btn active" data-style="all">All styles</button>
+      <button class="opt-btn" data-style="cute">Cute</button>
+      <button class="opt-btn" data-style="cool">Cool</button>
+      <button class="opt-btn" data-style="funny">Funny</button>
+      <button class="opt-btn" data-style="gamer">Gamer</button>
+      <button class="opt-btn" data-style="short">Short</button>
+    </div>
+  </div>
+
+  <div class="results-grid" id="results">
+    <div class="empty-state">Enter a name above to generate nicknames</div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let activeStyle = 'all';
+
+  document.getElementById('styleGroup').addEventListener('click', e => {
+    const b = e.target.closest('.opt-btn'); if (!b) return;
+    document.querySelectorAll('.opt-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); activeStyle = b.dataset.style; generate();
+  });
+
+  function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(); }
+  function shuffle(arr) { return [...arr].sort(() => Math.random() - .5); }
+
+  function getNicknames(name) {
+    if (!name.trim()) return [];
+    const n = name.trim();
+    const lo = n.toLowerCase();
+    const up = n.toUpperCase();
+    const c = cap(n);
+    const first = c[0];
+    const results = [];
+
+    // ── Cute ──
+    const cuteSuf = ['ie','y','ey','sy','bear','boo','bean','bug','pie','babe','star','cake','pea','pup'];
+    const cuteBase = lo.length > 4 ? lo.slice(0,3) : lo.slice(0,2);
+    results.push({name: cuteBase + rand(cuteSuf), style:'Cute'});
+    results.push({name: c + 'ie', style:'Cute'});
+    results.push({name: 'little ' + c, style:'Cute'});
+    results.push({name: c + '-' + rand(['Bear','Bug','Boo','Bee','Bun']), style:'Cute'});
+    results.push({name: 'Lil ' + c, style:'Cute'});
+
+    // ── Cool ──
+    const coolPre = ['Dark','Shadow','Neon','Ghost','Storm','Iron','Steel','Blaze','Void','Volt'];
+    const coolSuf = ['X','Zero','Nova','Prime','Max','Rex','Ace','Edge','Flux','Core'];
+    results.push({name: rand(coolPre) + c, style:'Cool'});
+    results.push({name: c + rand(coolSuf), style:'Cool'});
+    results.push({name: up + '_' + Math.floor(Math.random()*99+1), style:'Cool'});
+    results.push({name: first + rand(['BLADE','WOLF','HAWK','STORM','BOLT']), style:'Cool'});
+    results.push({name: 'The ' + c, style:'Cool'});
+
+    // ── Funny ──
+    const funnyPre = ['Captain','Professor','Doctor','Lord','Master','Sir','Agent','King','Chief','Duke'];
+    const funnyAdjSuf = ['pants','face','brain','boots','socks','nose','head','fingers','feet'];
+    results.push({name: rand(funnyPre) + ' ' + c, style:'Funny'});
+    results.push({name: c + rand(funnyAdjSuf), style:'Funny'});
+    results.push({name: 'Snazzy ' + c, style:'Funny'});
+    results.push({name: c + ' McFly', style:'Funny'});
+    results.push({name: 'Mighty ' + c, style:'Funny'});
+    results.push({name: rand(['Wacky','Zesty','Spicy','Punchy','Saucy']) + ' ' + c, style:'Funny'});
+
+    // ── Gamer ──
+    const gPre = ['xX','i','o','Pro','Real','Og','The','Dark','Neo'];
+    const gSuf = ['_GG','_TV','_YT','420','360','99','_Pro','_OG','_OP'];
+    results.push({name: rand(gPre) + c + rand(gSuf), style:'Gamer'});
+    results.push({name: c + '_Gaming', style:'Gamer'});
+    results.push({name: 'xX_' + up + '_Xx', style:'Gamer'});
+    results.push({name: c + 'Plays', style:'Gamer'});
+    results.push({name: 'i' + c + 'GG', style:'Gamer'});
+
+    // ── Short ──
+    const consonants = lo.replace(/[aeiou]/g,'');
+    if (lo.length >= 4) results.push({name: cap(lo.slice(0,4)), style:'Short'});
+    if (consonants.length >= 2) results.push({name: cap(consonants.slice(0,3)), style:'Short'});
+    results.push({name: first + lo.slice(-1).toUpperCase(), style:'Short'});
+    if (lo.length > 2) results.push({name: cap(lo.slice(0,2) + lo.slice(-1)), style:'Short'});
+    results.push({name: lo.split('').filter(c=>'aeiou'.includes(c)).length > 0 ? cap(lo.replace(/[^aeiou]/gi,'').slice(0,3)||lo.slice(0,3)) : cap(lo.slice(0,3)), style:'Short'});
+
+    // Deduplicate and filter invalid
+    const seen = new Set();
+    return results.filter(r => {
+      const k = r.name.toLowerCase();
+      if (seen.has(k) || r.name.length < 2) return false;
+      seen.add(k); return true;
+    });
+  }
+
+  function generate() {
+    const name = document.getElementById('nameInput').value;
+    const all = getNicknames(name);
+    const filtered = activeStyle === 'all' ? shuffle(all) : shuffle(all.filter(r => r.style.toLowerCase() === activeStyle));
+    const grid = document.getElementById('results');
+
+    if (!name.trim()) {
+      grid.innerHTML = '<div class="empty-state">Enter a name above to generate nicknames</div>';
+      return;
+    }
+    if (!filtered.length) {
+      grid.innerHTML = '<div class="empty-state">No nicknames for this style — try another!</div>';
+      return;
+    }
+
+    grid.innerHTML = filtered.slice(0, 24).map(r => `
+      <div class="nick-card">
+        <div>
+          <div class="nick-name">${r.name}</div>
+          <div class="nick-style">${r.style}</div>
+        </div>
+        <button class="copy-mini" onclick="copyNick(this,'${r.name.replace(/'/g,"\\'")}')">Copy</button>
+      </div>`).join('');
+  }
+
+  function copyNick(btn, name) {
+    navigator.clipboard.writeText(name).then(() => {
+      btn.textContent = '✓'; setTimeout(() => btn.textContent = 'Copy', 1200);
+    });
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

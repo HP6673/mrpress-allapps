@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sales Tax Calculator — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:680px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+    .fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem}
+    .field{display:flex;flex-direction:column;gap:.4rem}
+    .field label{font-size:.82rem;color:var(--muted)}
+    .fw{position:relative}
+    .pre{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);font-size:.9rem;color:var(--muted);pointer-events:none}
+    .suf{position:absolute;right:.9rem;top:50%;transform:translateY(-50%);font-size:.9rem;color:var(--muted);pointer-events:none}
+    input[type="number"]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.65rem 1rem .65rem 2.2rem;font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--ink);outline:none;transition:border-color .2s}
+    input.sp{padding:.65rem 2.2rem .65rem 1rem}
+    input:focus{border-color:var(--ink)}
+    select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.65rem 1rem;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--ink);outline:none;cursor:pointer}
+    select:focus{border-color:var(--ink)}
+    .loc-row{display:flex;gap:.5rem}
+    .loc-row select{flex:1}
+    .detect-btn{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.65rem 1rem;font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .2s}
+    .detect-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .rate-note{font-size:.76rem;color:var(--muted);margin-top:.35rem}
+    .result-box{background:var(--ink);color:#fff;border-radius:10px;padding:2rem;margin-bottom:1rem;display:none}
+    .result-row{display:flex;justify-content:space-between;align-items:baseline;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.1)}
+    .result-row:last-child{border-bottom:none;padding-top:.9rem}
+    .rl{font-size:.85rem;color:rgba(255,255,255,.6)}
+    .rv{font-family:'DM Serif Display',serif;font-size:1.3rem}
+    .result-row.total .rl{font-size:.9rem;color:rgba(255,255,255,.8)}
+    .result-row.total .rv{font-size:2.2rem}
+    .state-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.3rem;max-height:300px;overflow-y:auto;padding:.2rem}
+    .si{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.45rem .65rem;display:flex;justify-content:space-between;font-size:.78rem;cursor:pointer;transition:all .15s}
+    .si:hover{border-color:var(--ink)}
+    .si.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+    .si .sr{color:var(--muted);font-size:.72rem}
+    .si.active .sr{color:rgba(255,255,255,.6)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.fields-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🧾 Finance</p>
+  <h1>Sales Tax Calculator</h1>
+  <p class="subtitle">Calculate sales tax for any US state. Rates include average combined state + local tax.</p>
+
+  <div class="card">
+    <p class="card-title">Amount & location</p>
+    <div class="fields-grid">
+      <div class="field">
+        <label>Purchase amount</label>
+        <div class="fw"><span class="pre">$</span><input type="number" id="amount" placeholder="0.00" min="0" step="0.01" oninput="calc()" /></div>
+      </div>
+      <div class="field">
+        <label>Custom rate (optional)</label>
+        <div class="fw"><input type="number" id="customRate" class="sp" placeholder="Use state rate" min="0" max="30" step="0.01" oninput="calc()" /><span class="suf">%</span></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>State</label>
+      <div class="loc-row">
+        <select id="stateSelect" onchange="onStateChange()"></select>
+        <button class="detect-btn" onclick="detectLocation()">📍 Detect</button>
+      </div>
+      <p class="rate-note" id="rateNote"></p>
+    </div>
+  </div>
+
+  <div class="result-box" id="resultBox">
+    <div class="result-row"><span class="rl">Subtotal</span><span class="rv" id="rSubtotal"></span></div>
+    <div class="result-row"><span class="rl">Tax rate</span><span class="rv" id="rRate"></span></div>
+    <div class="result-row"><span class="rl">Tax amount</span><span class="rv" id="rTax"></span></div>
+    <div class="result-row total"><span class="rl">Total</span><span class="rv" id="rTotal"></span></div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">All US state rates — click to select</p>
+    <div class="state-grid" id="stateGrid"></div>
+    <p style="font-size:.72rem;color:var(--muted);margin-top:.75rem">Average combined state + local rates. Actual rates vary by city/county. Source: Tax Foundation 2024.</p>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  const STATES=[
+    {n:'Alabama',a:'AL',r:9.29},{n:'Alaska',a:'AK',r:1.76},{n:'Arizona',a:'AZ',r:8.37},
+    {n:'Arkansas',a:'AR',r:9.47},{n:'California',a:'CA',r:8.86},{n:'Colorado',a:'CO',r:7.81},
+    {n:'Connecticut',a:'CT',r:6.35},{n:'Delaware',a:'DE',r:0},{n:'Florida',a:'FL',r:7.02},
+    {n:'Georgia',a:'GA',r:7.38},{n:'Hawaii',a:'HI',r:4.44},{n:'Idaho',a:'ID',r:6.03},
+    {n:'Illinois',a:'IL',r:8.86},{n:'Indiana',a:'IN',r:7.00},{n:'Iowa',a:'IA',r:6.94},
+    {n:'Kansas',a:'KS',r:8.69},{n:'Kentucky',a:'KY',r:6.00},{n:'Louisiana',a:'LA',r:9.56},
+    {n:'Maine',a:'ME',r:5.50},{n:'Maryland',a:'MD',r:6.00},{n:'Massachusetts',a:'MA',r:6.25},
+    {n:'Michigan',a:'MI',r:6.00},{n:'Minnesota',a:'MN',r:7.49},{n:'Mississippi',a:'MS',r:7.07},
+    {n:'Missouri',a:'MO',r:8.33},{n:'Montana',a:'MT',r:0},{n:'Nebraska',a:'NE',r:6.94},
+    {n:'Nevada',a:'NV',r:8.24},{n:'New Hampshire',a:'NH',r:0},{n:'New Jersey',a:'NJ',r:6.60},
+    {n:'New Mexico',a:'NM',r:7.83},{n:'New York',a:'NY',r:8.53},{n:'North Carolina',a:'NC',r:6.99},
+    {n:'North Dakota',a:'ND',r:6.96},{n:'Ohio',a:'OH',r:7.22},{n:'Oklahoma',a:'OK',r:8.99},
+    {n:'Oregon',a:'OR',r:0},{n:'Pennsylvania',a:'PA',r:6.34},{n:'Rhode Island',a:'RI',r:7.00},
+    {n:'South Carolina',a:'SC',r:7.44},{n:'South Dakota',a:'SD',r:6.40},{n:'Tennessee',a:'TN',r:9.55},
+    {n:'Texas',a:'TX',r:8.20},{n:'Utah',a:'UT',r:7.19},{n:'Vermont',a:'VT',r:6.24},
+    {n:'Virginia',a:'VA',r:5.75},{n:'Washington',a:'WA',r:9.38},{n:'West Virginia',a:'WV',r:6.57},
+    {n:'Wisconsin',a:'WI',r:5.43},{n:'Wyoming',a:'WY',r:5.46},{n:'Washington DC',a:'DC',r:6.00},
+  ];
+
+  const sel=document.getElementById('stateSelect');
+  sel.innerHTML='<option value="">— Select state —</option>';
+  STATES.forEach(s=>{const o=document.createElement('option');o.value=s.a;o.textContent=s.n+' ('+s.r+'%)';sel.appendChild(o);});
+
+  const grid=document.getElementById('stateGrid');
+  STATES.forEach(s=>{
+    const d=document.createElement('div');d.className='si';d.dataset.a=s.a;
+    d.innerHTML=`<span>${s.a}</span><span class="sr">${s.r}%</span>`;
+    d.onclick=()=>{sel.value=s.a;highlight(s.a);calc();};
+    grid.appendChild(d);
+  });
+
+  function highlight(a){document.querySelectorAll('.si').forEach(el=>el.classList.toggle('active',el.dataset.a===a));}
+  function onStateChange(){highlight(sel.value);calc();}
+
+  function fmt(n){return'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+  function calc(){
+    const amount=parseFloat(document.getElementById('amount').value);
+    const custom=parseFloat(document.getElementById('customRate').value);
+    const state=STATES.find(s=>s.a===sel.value);
+    const rate=!isNaN(custom)?custom:(state?state.r:null);
+    const note=document.getElementById('rateNote');
+    if(state&&isNaN(custom)) note.textContent=state.r===0?state.n+' has no state sales tax.':state.n+': '+state.r+'% avg combined (state + local).';
+    else if(!isNaN(custom)) note.textContent='Using custom rate.';
+    else note.textContent='';
+    if(!amount||isNaN(amount)||rate===null){document.getElementById('resultBox').style.display='none';return;}
+    const tax=amount*rate/100;
+    document.getElementById('resultBox').style.display='block';
+    document.getElementById('rSubtotal').textContent=fmt(amount);
+    document.getElementById('rRate').textContent=rate+'%';
+    document.getElementById('rTax').textContent=fmt(tax);
+    document.getElementById('rTotal').textContent=fmt(amount+tax);
+  }
+
+  function detectLocation(){
+    if(!navigator.geolocation){alert('Geolocation not supported.');return;}
+    const btn=document.querySelector('.detect-btn');btn.textContent='⏳';
+    navigator.geolocation.getCurrentPosition(pos=>{
+      fetch('https://nominatim.openstreetmap.org/reverse?lat='+pos.coords.latitude+'&lon='+pos.coords.longitude+'&format=json')
+        .then(r=>r.json()).then(data=>{
+          const code=(data.address?.['ISO3166-2-lvl4']||'').replace('US-','');
+          if(code&&STATES.find(s=>s.a===code)){sel.value=code;highlight(code);calc();}
+          else alert('Could not determine your state. Please select manually.');
+          btn.textContent='📍 Detect';
+        }).catch(()=>{btn.textContent='📍 Detect';alert('Location lookup failed.');});
+    },()=>{btn.textContent='📍 Detect';alert('Location access denied.');});
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>
