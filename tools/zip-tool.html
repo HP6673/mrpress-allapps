@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZIP Tool — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a;--green-bg:#edf7f1}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:760px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.5rem}
+    .mode-tab{background:var(--card);padding:1rem;text-align:center;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;color:var(--muted);transition:all .15s}
+    .mode-tab .tab-icon{font-size:1.3rem;display:block;margin-bottom:.25rem}
+    .mode-tab.active{background:var(--ink);color:#fff}
+    .section{display:none}
+    .section.visible{display:block}
+    .dropzone{border:1.5px dashed var(--border);border-radius:12px;padding:2.5rem 2rem;text-align:center;background:var(--card);cursor:pointer;transition:all .2s;position:relative;margin-bottom:1rem}
+    .dropzone:hover,.dropzone.drag-over{border-color:var(--ink);background:#faf9f5}
+    .dropzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .drop-icon{font-size:2rem;display:block;margin-bottom:.6rem}
+    .drop-title{font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:.3rem}
+    .drop-sub{font-size:.82rem;color:var(--muted)}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+    /* File list */
+    .file-list{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.75rem;max-height:260px;overflow-y:auto}
+    .file-item{display:flex;align-items:center;gap:.75rem;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:.55rem .85rem}
+    .file-icon{font-size:1rem;flex-shrink:0}
+    .file-name{flex:1;font-size:.84rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .file-size{font-size:.75rem;color:var(--muted);white-space:nowrap}
+    .file-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:0 .2rem;transition:color .15s}
+    .file-del:hover{color:#e24b4a}
+    .add-more{background:transparent;border:1px dashed var(--border);border-radius:7px;width:100%;padding:.55rem;font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--muted);cursor:pointer;transition:all .2s;position:relative}
+    .add-more:hover{border-color:var(--ink);color:var(--ink)}
+    .add-more input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    /* ZIP contents */
+    .zip-contents{display:flex;flex-direction:column;gap:.3rem;max-height:280px;overflow-y:auto;margin-bottom:.75rem}
+    .zip-entry{display:flex;align-items:center;gap:.6rem;padding:.45rem .75rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:.83rem}
+    .zip-entry-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .zip-entry-size{color:var(--muted);font-size:.75rem;white-space:nowrap}
+    .stats-row{display:flex;gap:1.5rem;font-size:.82rem;color:var(--muted);margin-bottom:.75rem}
+    .progress-bar{height:4px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:1rem;display:none}
+    .progress-fill{height:100%;background:var(--ink);border-radius:99px;transition:width .2s;width:0%}
+    .success-row{background:var(--green-bg);border:1px solid #b2dfc6;border-radius:8px;padding:.9rem 1.2rem;font-size:.88rem;color:var(--green);margin-bottom:1rem;display:none}
+    .action-row{display:flex;gap:.75rem}
+    .btn{flex:1;padding:.9rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:all .2s;border:none;text-align:center}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-primary:disabled{opacity:.35;cursor:not-allowed}
+    .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
+    .btn-secondary:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">📦 Utility</p>
+  <h1>ZIP Tool</h1>
+  <p class="subtitle">Compress files into a ZIP archive, or extract the contents of any ZIP file — all in your browser.</p>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="setMode('compress')"><span class="tab-icon">📁→📦</span>Compress to ZIP</button>
+    <button class="mode-tab" onclick="setMode('extract')"><span class="tab-icon">📦→📁</span>Extract ZIP</button>
+  </div>
+
+  <!-- COMPRESS -->
+  <div class="section visible" id="sectionCompress">
+    <div class="dropzone" id="dzCompress">
+      <input type="file" id="compressFiles" multiple />
+      <span class="drop-icon">📂</span>
+      <p class="drop-title">Drop files here to compress</p>
+      <p class="drop-sub">Any file type — add as many as you need</p>
+    </div>
+
+    <div id="compressListCard" style="display:none" class="card">
+      <p class="card-title">Files to compress <span id="compressCount" style="font-weight:300;text-transform:none;letter-spacing:0"></span></p>
+      <div class="file-list" id="compressList"></div>
+      <div class="add-more">+ Add more files<input type="file" id="addMoreFiles" multiple onchange="addMoreToCompress(this.files)" /></div>
+    </div>
+
+    <div class="progress-bar" id="pbCompress"><div class="progress-fill" id="pfCompress"></div></div>
+    <div class="success-row" id="successCompress"></div>
+    <div class="action-row">
+      <button class="btn btn-primary" id="btnCompress" onclick="compressFiles()" disabled>📦 Create ZIP</button>
+      <button class="btn btn-secondary" onclick="clearCompress()">Clear</button>
+    </div>
+  </div>
+
+  <!-- EXTRACT -->
+  <div class="section" id="sectionExtract">
+    <div class="dropzone" id="dzExtract">
+      <input type="file" id="extractFile" accept=".zip,application/zip" />
+      <span class="drop-icon">📂</span>
+      <p class="drop-title">Drop a ZIP file here</p>
+      <p class="drop-sub">or click to browse</p>
+    </div>
+
+    <div id="extractInfoCard" style="display:none" class="card">
+      <p class="card-title">ZIP contents</p>
+      <div class="stats-row"><span id="extractStats"></span></div>
+      <div class="zip-contents" id="zipContents"></div>
+    </div>
+
+    <div class="progress-bar" id="pbExtract"><div class="progress-fill" id="pfExtract"></div></div>
+    <div class="success-row" id="successExtract"></div>
+    <div class="action-row">
+      <button class="btn btn-primary" id="btnExtract" onclick="extractZip()" disabled>📁 Extract All</button>
+      <button class="btn btn-secondary" onclick="clearExtract()">Clear</button>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script>
+  function setMode(m) {
+    document.querySelectorAll('.mode-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&m==='compress')||(i===1&&m==='extract')));
+    document.getElementById('sectionCompress').classList.toggle('visible',m==='compress');
+    document.getElementById('sectionExtract').classList.toggle('visible',m==='extract');
+  }
+
+  function fmtBytes(b){if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'KB';return(b/1048576).toFixed(1)+'MB';}
+  function fileIcon(name){const e=name.split('.').pop().toLowerCase();if(['jpg','jpeg','png','gif','webp','svg'].includes(e))return'🖼️';if(['pdf'].includes(e))return'📄';if(['mp3','wav','ogg','flac'].includes(e))return'🎵';if(['mp4','mov','avi'].includes(e))return'🎬';if(['doc','docx'].includes(e))return'📝';if(['xls','xlsx'].includes(e))return'📊';if(['zip','rar','7z'].includes(e))return'📦';if(['js','ts','html','css','py','java','cpp'].includes(e))return'💻';return'📄';}
+
+  // ══ COMPRESS ══════════════════════════════════════════════
+  let compressItems = [];
+
+  const dzC=document.getElementById('dzCompress');
+  document.getElementById('compressFiles').addEventListener('change',e=>addToCompress(e.target.files));
+  dzC.addEventListener('dragover',e=>{e.preventDefault();dzC.classList.add('drag-over')});
+  dzC.addEventListener('dragleave',()=>dzC.classList.remove('drag-over'));
+  dzC.addEventListener('drop',e=>{e.preventDefault();dzC.classList.remove('drag-over');addToCompress(e.dataTransfer.files)});
+
+  function addToCompress(files) {
+    Array.from(files).forEach(f=>compressItems.push(f));
+    renderCompressList();
+  }
+  function addMoreToCompress(files){addToCompress(files);}
+
+  function renderCompressList() {
+    const list=document.getElementById('compressList');
+    const card=document.getElementById('compressListCard');
+    const total=compressItems.reduce((s,f)=>s+f.size,0);
+    document.getElementById('compressCount').textContent=`— ${compressItems.length} file${compressItems.length!==1?'s':''}, ${fmtBytes(total)}`;
+    card.style.display=compressItems.length?'block':'none';
+    document.getElementById('btnCompress').disabled=!compressItems.length;
+    list.innerHTML='';
+    compressItems.forEach((f,i)=>{
+      const div=document.createElement('div');div.className='file-item';
+      div.innerHTML=`<span class="file-icon">${fileIcon(f.name)}</span><span class="file-name">${f.name}</span><span class="file-size">${fmtBytes(f.size)}</span><button class="file-del" onclick="removeCompress(${i})">✕</button>`;
+      list.appendChild(div);
+    });
+  }
+
+  function removeCompress(i){compressItems.splice(i,1);renderCompressList();}
+  function clearCompress(){compressItems=[];renderCompressList();document.getElementById('successCompress').style.display='none';document.getElementById('compressFiles').value='';}
+
+  async function compressFiles() {
+    if(!compressItems.length)return;
+    const btn=document.getElementById('btnCompress');btn.disabled=true;btn.textContent='Compressing…';
+    const pb=document.getElementById('pbCompress');pb.style.display='block';
+    const pf=document.getElementById('pfCompress');pf.style.width='0%';
+    try {
+      const zip=new JSZip();
+      for(let i=0;i<compressItems.length;i++){
+        pf.style.width=Math.round(i/compressItems.length*80)+'%';
+        const f=compressItems[i];
+        zip.file(f.name,f);
+        await new Promise(r=>setTimeout(r,0));
+      }
+      const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}},meta=>{pf.style.width=(80+meta.percent*0.2).toFixed(0)+'%';});
+      const a=document.createElement('a');a.download='archive.zip';a.href=URL.createObjectURL(blob);a.click();
+      document.getElementById('successCompress').style.display='block';
+      document.getElementById('successCompress').textContent=`✓ ZIP created — ${compressItems.length} files, ${fmtBytes(blob.size)}`;
+    } catch(e){alert('Compression failed: '+e.message);}
+    btn.disabled=false;btn.textContent='📦 Create ZIP';
+    setTimeout(()=>pb.style.display='none',800);
+  }
+
+  // ══ EXTRACT ═══════════════════════════════════════════════
+  let extractZipData=null;
+
+  const dzE=document.getElementById('dzExtract');
+  document.getElementById('extractFile').addEventListener('change',e=>{if(e.target.files[0])loadZip(e.target.files[0])});
+  dzE.addEventListener('dragover',e=>{e.preventDefault();dzE.classList.add('drag-over')});
+  dzE.addEventListener('dragleave',()=>dzE.classList.remove('drag-over'));
+  dzE.addEventListener('drop',e=>{e.preventDefault();dzE.classList.remove('drag-over');if(e.dataTransfer.files[0])loadZip(e.dataTransfer.files[0])});
+
+  async function loadZip(file) {
+    try {
+      const ab=await file.arrayBuffer();
+      extractZipData=await JSZip.loadAsync(ab);
+      const entries=Object.values(extractZipData.files).filter(f=>!f.dir);
+      const totalSize=entries.reduce((s,f)=>s+(f._data?.uncompressedSize||0),0);
+      document.getElementById('extractStats').textContent=`${entries.length} files · ${fmtBytes(totalSize)} uncompressed`;
+      const cont=document.getElementById('zipContents');
+      cont.innerHTML='';
+      entries.slice(0,50).forEach(f=>{
+        const div=document.createElement('div');div.className='zip-entry';
+        const size=f._data?.uncompressedSize||0;
+        div.innerHTML=`<span>${fileIcon(f.name)}</span><span class="zip-entry-name">${f.name}</span><span class="zip-entry-size">${fmtBytes(size)}</span>`;
+        cont.appendChild(div);
+      });
+      if(entries.length>50){const p=document.createElement('p');p.style.cssText='font-size:.75rem;color:var(--muted);text-align:center;padding:.4rem';p.textContent=`… and ${entries.length-50} more files`;cont.appendChild(p);}
+      document.getElementById('extractInfoCard').style.display='block';
+      document.getElementById('btnExtract').disabled=false;
+    } catch(e){alert('Could not read ZIP: '+e.message);}
+  }
+
+  function clearExtract(){extractZipData=null;document.getElementById('extractInfoCard').style.display='none';document.getElementById('btnExtract').disabled=true;document.getElementById('successExtract').style.display='none';document.getElementById('extractFile').value='';}
+
+  async function extractZip() {
+    if(!extractZipData)return;
+    const btn=document.getElementById('btnExtract');btn.disabled=true;btn.textContent='Extracting…';
+    const pb=document.getElementById('pbExtract');pb.style.display='block';
+    const pf=document.getElementById('pfExtract');pf.style.width='0%';
+    try {
+      const entries=Object.values(extractZipData.files).filter(f=>!f.dir);
+      if(entries.length===1){
+        // Single file — download directly
+        const f=entries[0];
+        const blob=await f.async('blob');
+        const a=document.createElement('a');a.download=f.name.split('/').pop();a.href=URL.createObjectURL(blob);a.click();
+      } else {
+        // Multiple files — repack into downloadable zip preserving structure
+        const outZip=new JSZip();
+        for(let i=0;i<entries.length;i++){
+          pf.style.width=Math.round(i/entries.length*90)+'%';
+          const f=entries[i];
+          const data=await f.async('arraybuffer');
+          outZip.file(f.name,data);
+          await new Promise(r=>setTimeout(r,0));
+        }
+        pf.style.width='95%';
+        const blob=await outZip.generateAsync({type:'blob'});
+        const a=document.createElement('a');a.download='extracted.zip';a.href=URL.createObjectURL(blob);a.click();
+      }
+      pf.style.width='100%';
+      document.getElementById('successExtract').style.display='block';
+      document.getElementById('successExtract').textContent=`✓ ${entries.length} file${entries.length!==1?'s':''} extracted.`;
+    } catch(e){alert('Extraction failed: '+e.message);}
+    btn.disabled=false;btn.textContent='📁 Extract All';
+    setTimeout(()=>pb.style.display='none',800);
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

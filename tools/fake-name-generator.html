@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fake Name Generator — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:800px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+    .opts-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem}
+    .opt-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:.4rem .9rem;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .opt-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .opt-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .gen-btn{width:100%;background:var(--ink);color:#fff;border:none;border-radius:8px;padding:1rem;font-family:'DM Serif Display',serif;font-size:1.1rem;cursor:pointer;transition:opacity .2s;margin-bottom:1.5rem}
+    .gen-btn:hover{opacity:.8}
+    /* Identity card */
+    .id-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem}
+    .id-header{background:var(--ink);color:#fff;padding:1.4rem 1.6rem;display:flex;align-items:center;gap:1rem}
+    .id-avatar{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.4rem;flex-shrink:0}
+    .id-name{font-family:'DM Serif Display',serif;font-size:1.5rem;letter-spacing:-.01em}
+    .id-sub{font-size:.8rem;opacity:.65;margin-top:.2rem}
+    .id-fields{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+    .id-field{background:var(--card);padding:.9rem 1.1rem}
+    .id-field-label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem}
+    .id-field-value{font-size:.9rem;font-weight:400;word-break:break-word}
+    .id-actions{padding:1rem 1.2rem;display:flex;gap:.5rem;border-top:1px solid var(--border)}
+    .copy-all-btn{background:var(--ink);color:#fff;border:none;border-radius:6px;padding:.55rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:opacity .2s}
+    .copy-all-btn:hover{opacity:.8}
+    .batch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.5rem;margin-bottom:1rem}
+    .batch-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;display:flex;align-items:center;justify-content:space-between}
+    .batch-name{font-size:.88rem;font-weight:500}
+    .batch-meta{font-size:.75rem;color:var(--muted);margin-top:.1rem}
+    .copy-mini{background:transparent;border:1px solid var(--border);border-radius:5px;padding:.2rem .6rem;font-family:'DM Sans',sans-serif;font-size:.7rem;color:var(--muted);cursor:pointer;transition:all .2s;flex-shrink:0}
+    .copy-mini:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.id-fields{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🪪 Utility</p>
+  <h1>Fake Name Generator</h1>
+  <p class="subtitle">Generate realistic fake identities for testing, prototyping, and placeholder data. Nothing here is real.</p>
+
+  <div class="card">
+    <p class="card-title">Options</p>
+    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:.75rem">
+      <span style="font-size:.8rem;color:var(--muted)">Gender</span>
+      <div class="opts-row" id="genderGroup" style="margin:0">
+        <button class="opt-btn active" data-g="any">Any</button>
+        <button class="opt-btn" data-g="male">Male</button>
+        <button class="opt-btn" data-g="female">Female</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:.75rem">
+      <span style="font-size:.8rem;color:var(--muted)">Nationality</span>
+      <div class="opts-row" id="natGroup" style="margin:0">
+        <button class="opt-btn active" data-n="american">American</button>
+        <button class="opt-btn" data-n="british">British</button>
+        <button class="opt-btn" data-n="hispanic">Hispanic</button>
+        <button class="opt-btn" data-n="french">French</button>
+        <button class="opt-btn" data-n="german">German</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+      <span style="font-size:.8rem;color:var(--muted)">Mode</span>
+      <div class="opts-row" id="modeGroup" style="margin:0">
+        <button class="opt-btn active" data-m="single">Full profile</button>
+        <button class="opt-btn" data-m="batch">Batch (10 names)</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="gen-btn" onclick="generate()">🎲 Generate</button>
+
+  <div id="outputSingle"></div>
+  <div id="outputBatch" style="display:none"></div>
+</main>
+<footer>All Apps by MrPress — For testing & design purposes only. All data is fictional.</footer>
+<script>
+  const DATA = {
+    american: {
+      male:   ['James','John','Robert','Michael','William','David','Richard','Joseph','Thomas','Charles','Christopher','Daniel','Matthew','Anthony','Donald','Mark','Paul','Steven','Andrew','Kenneth'],
+      female: ['Mary','Patricia','Jennifer','Linda','Barbara','Elizabeth','Susan','Jessica','Sarah','Karen','Lisa','Nancy','Betty','Margaret','Sandra','Ashley','Emily','Dorothy','Helen','Donna'],
+      last:   ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Wilson','Taylor','Anderson','Thomas','Jackson','White','Harris','Martin','Thompson','Moore','Allen','Clark']
+    },
+    british: {
+      male:   ['Oliver','George','Harry','Jack','Noah','Charlie','Jacob','Alfie','Freddie','Oscar','William','James','Thomas','Liam','Ethan','Mason','Logan','Elijah','Sebastian','Henry'],
+      female: ['Olivia','Amelia','Isla','Ava','Emily','Isabella','Mia','Poppy','Ella','Lily','Grace','Evie','Daisy','Sophie','Chloe','Florence','Eva','Alice','Holly','Imogen'],
+      last:   ['Smith','Jones','Williams','Taylor','Brown','Davies','Evans','Wilson','Thomas','Johnson','Roberts','Walker','Wright','Thompson','White','Hughes','Edwards','Green','Lewis','Wood']
+    },
+    hispanic: {
+      male:   ['Carlos','Miguel','Jose','Luis','Juan','Antonio','Francisco','Manuel','Pedro','Alejandro','Diego','Fernando','Rafael','Javier','Sergio','Andres','Ricardo','Eduardo','Pablo','Jorge'],
+      female: ['Maria','Sofia','Isabella','Valentina','Camila','Gabriela','Daniela','Fernanda','Lucia','Paula','Andrea','Natalia','Ana','Laura','Elena','Monica','Patricia','Carmen','Rosa','Luz'],
+      last:   ['Garcia','Rodriguez','Martinez','Lopez','Gonzalez','Hernandez','Perez','Sanchez','Ramirez','Torres','Flores','Rivera','Gomez','Diaz','Morales','Reyes','Cruz','Ortiz','Gutierrez','Chavez']
+    },
+    french: {
+      male:   ['Louis','Thomas','Lucas','Hugo','Théo','Raphaël','Nathan','Mathis','Clément','Baptiste','Antoine','Julien','Pierre','Nicolas','Alexandre','Guillaume','Maxime','Florian','Romain','Adrien'],
+      female: ['Emma','Léa','Manon','Camille','Jade','Anaïs','Lucie','Clara','Pauline','Julie','Marine','Alice','Mathilde','Laura','Clémence','Sophie','Marie','Margot','Elisa','Charlotte'],
+      last:   ['Martin','Bernard','Thomas','Petit','Robert','Richard','Durand','Dubois','Moreau','Laurent','Simon','Michel','Lefebvre','Leroy','Roux','David','Bertrand','Morel','Fournier','Girard']
+    },
+    german: {
+      male:   ['Lukas','Jonas','Leon','Finn','Paul','Ben','Noah','Felix','Elias','Max','Julian','Tim','Nico','Moritz','Luca','Jan','Erik','Tobias','Simon','Fabian'],
+      female: ['Emma','Mia','Hannah','Lena','Lea','Anna','Laura','Julia','Sarah','Lisa','Sophie','Maria','Nina','Katharina','Jana','Alina','Sandra','Petra','Monika','Claudia'],
+      last:   ['Müller','Schmidt','Schneider','Fischer','Weber','Meyer','Wagner','Becker','Schulz','Hoffmann','Schäfer','Koch','Bauer','Richter','Klein','Wolf','Schröder','Neumann','Schwarz','Zimmermann']
+    }
+  };
+
+  const STREETS = ['Main St','Oak Ave','Maple Dr','Cedar Ln','Elm St','Park Blvd','Lake Rd','River Rd','Hill St','Forest Ave','Valley Dr','Summit Ave','Sunset Blvd','Willow Way','Birch Ct'];
+  const CITIES_US = ['New York','Los Angeles','Chicago','Houston','Phoenix','Philadelphia','San Antonio','San Diego','Dallas','Austin','Jacksonville','San Jose','Fort Worth','Columbus','Charlotte'];
+  const DOMAINS = ['gmail.com','yahoo.com','outlook.com','hotmail.com','icloud.com','proton.me','mail.com'];
+  const JOBS = ['Software Engineer','Marketing Manager','Data Analyst','Graphic Designer','Project Manager','Sales Representative','Teacher','Nurse','Accountant','Consultant','Writer','Photographer','Chef','Architect','Product Manager'];
+
+  let gender='any', nationality='american', mode='single';
+
+  document.getElementById('genderGroup').addEventListener('click',e=>{const b=e.target.closest('.opt-btn');if(!b)return;document.querySelectorAll('#genderGroup .opt-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');gender=b.dataset.g;});
+  document.getElementById('natGroup').addEventListener('click',e=>{const b=e.target.closest('.opt-btn');if(!b)return;document.querySelectorAll('#natGroup .opt-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');nationality=b.dataset.n;});
+  document.getElementById('modeGroup').addEventListener('click',e=>{const b=e.target.closest('.opt-btn');if(!b)return;document.querySelectorAll('#modeGroup .opt-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');mode=b.dataset.m;});
+
+  function rand(arr){return arr[Math.floor(Math.random()*arr.length)];}
+  function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+  function pad(n){return String(n).padStart(2,'0');}
+
+  function makePerson() {
+    const nat = DATA[nationality];
+    const g = gender==='any' ? (Math.random()>0.5?'male':'female') : gender;
+    const first = rand(nat[g]);
+    const last = rand(nat.last);
+    const year = randInt(1960,2002);
+    const month = randInt(1,12);
+    const day = randInt(1,28);
+    const dob = `${pad(month)}/${pad(day)}/${year}`;
+    const age = 2025-year;
+    const emailFirst = (first+'.'+last).toLowerCase().replace(/[^a-z.]/g,'').replace(/ü/g,'u').replace(/ö/g,'o').replace(/ä/g,'a').replace(/é|è|ê/g,'e').replace(/à|â/g,'a').replace(/î/g,'i');
+    const email = emailFirst+randInt(1,99)+'@'+rand(DOMAINS);
+    const phone = `(${randInt(200,999)}) ${randInt(200,999)}-${randInt(1000,9999)}`;
+    const address = `${randInt(100,9999)} ${rand(STREETS)}, ${rand(CITIES_US)}`;
+    const job = rand(JOBS);
+    const company = rand(['Acme Corp','Globex','Initech','Umbrella LLC','Stark Industries','Wayne Enterprises','Oscorp','Aperture Science','InGen','Massive Dynamic','Soylent Corp','Dunder Mifflin','Sterling Cooper','Weyland Corp']);
+    return {first,last,dob,age,email,phone,address,job,company,gender:g};
+  }
+
+  function generate() {
+    if (mode==='single') {
+      const p = makePerson();
+      const initials = p.first[0]+(p.last[0]||'');
+      document.getElementById('outputSingle').innerHTML = `
+        <div class="id-card">
+          <div class="id-header">
+            <div class="id-avatar">${initials}</div>
+            <div><div class="id-name">${p.first} ${p.last}</div><div class="id-sub">${p.job} · ${p.company}</div></div>
+          </div>
+          <div class="id-fields">
+            <div class="id-field"><div class="id-field-label">Date of birth</div><div class="id-field-value">${p.dob} (age ${p.age})</div></div>
+            <div class="id-field"><div class="id-field-label">Gender</div><div class="id-field-value">${p.gender.charAt(0).toUpperCase()+p.gender.slice(1)}</div></div>
+            <div class="id-field"><div class="id-field-label">Email</div><div class="id-field-value">${p.email}</div></div>
+            <div class="id-field"><div class="id-field-label">Phone</div><div class="id-field-value">${p.phone}</div></div>
+            <div class="id-field" style="grid-column:1/-1"><div class="id-field-label">Address</div><div class="id-field-value">${p.address}</div></div>
+          </div>
+          <div class="id-actions">
+            <button class="copy-all-btn" onclick="copyAll(${JSON.stringify(p).replace(/"/g,'&quot;')})">Copy all</button>
+          </div>
+        </div>`;
+      document.getElementById('outputBatch').style.display='none';
+    } else {
+      const people = Array.from({length:10},()=>makePerson());
+      document.getElementById('outputBatch').style.display='block';
+      document.getElementById('outputBatch').innerHTML = `
+        <div class="batch-grid">${people.map(p=>`
+          <div class="batch-item">
+            <div><div class="batch-name">${p.first} ${p.last}</div><div class="batch-meta">${p.email}</div></div>
+            <button class="copy-mini" onclick="navigator.clipboard.writeText('${p.first} ${p.last} | ${p.email} | ${p.phone}').then(()=>{this.textContent='✓';setTimeout(()=>this.textContent='Copy',1200)})">Copy</button>
+          </div>`).join('')}
+        </div>`;
+      document.getElementById('outputSingle').innerHTML='';
+    }
+  }
+
+  function copyAll(p) {
+    const text = `Name: ${p.first} ${p.last}\nDOB: ${p.dob} (age ${p.age})\nGender: ${p.gender}\nEmail: ${p.email}\nPhone: ${p.phone}\nAddress: ${p.address}\nJob: ${p.job}\nCompany: ${p.company}`;
+    navigator.clipboard.writeText(text).then(()=>{
+      const btn=document.querySelector('.copy-all-btn');btn.textContent='✓ Copied';setTimeout(()=>btn.textContent='Copy all',1500);
+    });
+  }
+
+  generate();
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

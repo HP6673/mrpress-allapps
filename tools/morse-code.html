@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Morse Code — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:800px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.5rem}
+    .mode-tab{background:var(--card);padding:.9rem;text-align:center;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;color:var(--muted);transition:background .15s}
+    .mode-tab.active{background:var(--ink);color:#fff}
+    .panel{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+    .panel-head{padding:.7rem 1rem;border-bottom:1px solid var(--border);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+    textarea{width:100%;background:transparent;border:none;padding:1rem;font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--ink);resize:none;outline:none;line-height:1.7;min-height:130px}
+    textarea::placeholder{color:var(--muted)}
+    textarea.mono{font-family:'DM Sans',monospace;letter-spacing:.08em}
+    .output-box{padding:1rem;font-family:'DM Sans',monospace;font-size:.95rem;line-height:1.8;letter-spacing:.08em;min-height:100px;white-space:pre-wrap;word-break:break-all;color:var(--ink)}
+    .output-box.placeholder{color:var(--muted);font-style:italic;letter-spacing:0;font-family:'DM Sans',sans-serif}
+    .action-row{display:flex;gap:.75rem;margin-bottom:1.5rem}
+    .btn{flex:1;padding:.9rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1.05rem;cursor:pointer;transition:all .2s;border:none;text-align:center}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-sm{flex:0;padding:.9rem 1.3rem;background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .btn-sm:hover{border-color:var(--ink);color:var(--ink)}
+    /* Audio */
+    .audio-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.3rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+    .audio-controls{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+    .play-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:.6rem 1.4rem;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:opacity .2s}
+    .play-btn:hover{opacity:.8}
+    .play-btn:disabled{opacity:.35;cursor:not-allowed}
+    .slider-wrap{display:flex;align-items:center;gap:.6rem;flex:1}
+    .slider-wrap label{font-size:.78rem;color:var(--muted);white-space:nowrap}
+    input[type="range"]{flex:1;accent-color:var(--ink)}
+    .slider-val{font-size:.8rem;font-weight:500;min-width:28px}
+    /* Reference */
+    .ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:.3rem}
+    .ref-item{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:.4rem .5rem;text-align:center}
+    .ref-char{font-size:.95rem;font-weight:500}
+    .ref-code{font-size:.7rem;color:var(--muted);font-family:monospace;letter-spacing:.05em;margin-top:.15rem}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">📡 Utility</p>
+  <h1>Morse Code</h1>
+  <p class="subtitle">Convert text to Morse code and back. Play it as audio with adjustable speed and pitch.</p>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tabToMorse" onclick="setMode('toMorse')">Text → Morse</button>
+    <button class="mode-tab" id="tabFromMorse" onclick="setMode('fromMorse')">Morse → Text</button>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head" id="inputLabel">Input text</div>
+    <textarea id="inputArea" placeholder="Type or paste text here…" oninput="convert()"></textarea>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head" id="outputLabel">Morse code</div>
+    <div class="output-box placeholder" id="outputBox">Your output will appear here.</div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn btn-primary" onclick="convert()">⚡ Convert</button>
+    <button class="btn-sm" onclick="copyOutput()">Copy</button>
+    <button class="btn-sm" onclick="clearAll()">Clear</button>
+  </div>
+
+  <div class="audio-card" id="audioCard">
+    <p class="card-title">Play as audio</p>
+    <div class="audio-controls">
+      <button class="play-btn" id="playBtn" onclick="playMorse()" disabled>▶ Play</button>
+      <button class="play-btn" style="background:var(--muted)" id="stopBtn" onclick="stopMorse()" disabled>■ Stop</button>
+      <div class="slider-wrap">
+        <label>Speed (WPM)</label>
+        <input type="range" id="wpmSlider" min="5" max="40" value="15" oninput="document.getElementById('wpmVal').textContent=this.value" />
+        <span class="slider-val" id="wpmVal">15</span>
+      </div>
+      <div class="slider-wrap">
+        <label>Pitch (Hz)</label>
+        <input type="range" id="pitchSlider" min="200" max="1000" value="600" step="50" oninput="document.getElementById('pitchVal').textContent=this.value" />
+        <span class="slider-val" id="pitchVal">600</span>
+      </div>
+    </div>
+  </div>
+
+  <details style="margin-bottom:1rem">
+    <summary style="cursor:pointer;font-size:.82rem;color:var(--muted);padding:.6rem 0;user-select:none">▸ Morse code reference</summary>
+    <div class="ref-grid" style="margin-top:.75rem" id="refGrid"></div>
+  </details>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  const MORSE = {
+    'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':'..-.','G':'--.','H':'....','I':'..','J':'.---','K':'-.-','L':'.-..','M':'--','N':'-.','O':'---','P':'.--.','Q':'--.-','R':'.-.','S':'...','T':'-','U':'..-','V':'...-','W':'.--','X':'-..-','Y':'-.--','Z':'--..',
+    '0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.',
+    '.':'.-.-.-',',':'--..--','?':'..--..','!':'-.-.--','/':'-..-.','@':'.--.-.','&':'.-...','=':'-...-'
+  };
+  const REVERSE = Object.fromEntries(Object.entries(MORSE).map(([k,v])=>[v,k]));
+
+  let mode = 'toMorse';
+  let audioCtx = null, playTimeout = null, playing = false;
+
+  // Build reference grid
+  const refGrid = document.getElementById('refGrid');
+  Object.entries(MORSE).forEach(([char,code])=>{
+    const d=document.createElement('div');d.className='ref-item';
+    d.innerHTML=`<div class="ref-char">${char}</div><div class="ref-code">${code}</div>`;
+    refGrid.appendChild(d);
+  });
+
+  function setMode(m) {
+    mode = m;
+    document.getElementById('tabToMorse').classList.toggle('active',m==='toMorse');
+    document.getElementById('tabFromMorse').classList.toggle('active',m==='fromMorse');
+    if (m==='toMorse') {
+      document.getElementById('inputLabel').textContent='Input text';
+      document.getElementById('outputLabel').textContent='Morse code';
+      document.getElementById('inputArea').placeholder='Type or paste text here…';
+      document.getElementById('inputArea').classList.remove('mono');
+      document.getElementById('audioCard').style.display='block';
+    } else {
+      document.getElementById('inputLabel').textContent='Morse code input';
+      document.getElementById('outputLabel').textContent='Decoded text';
+      document.getElementById('inputArea').placeholder='Enter Morse code (use space between letters, / between words)\ne.g. .... . .-.. .-.. --- / .-- --- .-. .-.. -..';
+      document.getElementById('inputArea').classList.add('mono');
+      document.getElementById('audioCard').style.display='none';
+    }
+    document.getElementById('inputArea').value='';
+    document.getElementById('outputBox').textContent='Your output will appear here.';
+    document.getElementById('outputBox').classList.add('placeholder');
+    document.getElementById('playBtn').disabled=true;
+  }
+
+  function convert() {
+    const input = document.getElementById('inputArea').value;
+    const out = document.getElementById('outputBox');
+    if (!input.trim()) { out.textContent='Your output will appear here.';out.classList.add('placeholder');document.getElementById('playBtn').disabled=true;return; }
+
+    let result;
+    if (mode==='toMorse') {
+      result = input.toUpperCase().split('').map(ch=>{
+        if (ch===' ') return '/';
+        return MORSE[ch] || '';
+      }).filter((s,i,arr)=>!(s===''&&arr[i-1]==='/')).join(' ').replace(/\/ \//g,'/').trim();
+    } else {
+      result = input.trim().split(' / ').map(word=>
+        word.split(' ').map(code=>REVERSE[code]||'?').join('')
+      ).join(' ');
+    }
+
+    out.textContent = result || '(no output)';
+    out.classList.remove('placeholder');
+    if (mode==='toMorse') document.getElementById('playBtn').disabled=!result;
+  }
+
+  function copyOutput() {
+    const text=document.getElementById('outputBox').textContent;
+    if(!text||text==='Your output will appear here.')return;
+    navigator.clipboard.writeText(text).then(()=>{
+      const btn=document.querySelectorAll('.btn-sm')[0];btn.textContent='✓ Copied';setTimeout(()=>btn.textContent='Copy',1400);
+    });
+  }
+
+  function clearAll() {
+    document.getElementById('inputArea').value='';
+    document.getElementById('outputBox').textContent='Your output will appear here.';
+    document.getElementById('outputBox').classList.add('placeholder');
+    document.getElementById('playBtn').disabled=true;
+    stopMorse();
+  }
+
+  // ── Audio playback ──
+  async function playMorse() {
+    if (playing) return;
+    const morse = document.getElementById('outputBox').textContent;
+    if (!morse || morse==='Your output will appear here.') return;
+
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    const wpm = parseInt(document.getElementById('wpmSlider').value);
+    const pitch = parseInt(document.getElementById('pitchSlider').value);
+    const unit = 1200 / wpm; // ms per dot
+
+    playing = true;
+    document.getElementById('playBtn').disabled=true;
+    document.getElementById('stopBtn').disabled=false;
+
+    const symbols = morse.split('');
+    let t = audioCtx.currentTime;
+
+    for (const sym of symbols) {
+      if (!playing) break;
+      if (sym==='.') {
+        beep(t, unit/1000, pitch);
+        t += unit/1000 + unit/1000;
+      } else if (sym==='-') {
+        beep(t, unit*3/1000, pitch);
+        t += unit*3/1000 + unit/1000;
+      } else if (sym===' ') {
+        t += unit*2/1000; // letter gap (3 units total with trailing unit)
+      } else if (sym==='/') {
+        t += unit*6/1000; // word gap (7 units total)
+      }
+    }
+
+    // Schedule stop
+    const totalTime = (t - audioCtx.currentTime) * 1000 + 200;
+    playTimeout = setTimeout(()=>{ stopMorse(); }, totalTime);
+  }
+
+  function beep(startTime, duration, freq) {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(0.4, startTime + 0.005);
+    gain.gain.setValueAtTime(0.4, startTime + duration - 0.005);
+    gain.gain.linearRampToValueAtTime(0, startTime + duration);
+    osc.start(startTime);
+    osc.stop(startTime + duration);
+  }
+
+  function stopMorse() {
+    playing = false;
+    clearTimeout(playTimeout);
+    if (audioCtx) { try { audioCtx.close(); } catch(e){} audioCtx=null; }
+    document.getElementById('playBtn').disabled=false;
+    document.getElementById('stopBtn').disabled=true;
+  }
+
+  // Auto-convert on input
+  document.getElementById('inputArea').addEventListener('input', convert);
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>
