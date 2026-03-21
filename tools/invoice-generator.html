@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice Generator — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:900px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .layout{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+    .field-group{display:flex;flex-direction:column;gap:.35rem;margin-bottom:.75rem}
+    .field-group label{font-size:.8rem;color:var(--muted)}
+    input[type="text"],input[type="number"],input[type="date"],textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.6rem .9rem;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--ink);outline:none;transition:border-color .2s}
+    input:focus,textarea:focus{border-color:var(--ink)}
+    textarea{resize:vertical;min-height:60px}
+    /* Line items */
+    .items-table{width:100%;border-collapse:collapse;margin-bottom:.75rem}
+    .items-table th{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:.4rem .5rem;text-align:left;border-bottom:1px solid var(--border)}
+    .items-table th:last-child{text-align:right}
+    .items-table td{padding:.3rem .3rem}
+    .items-table td:last-child{text-align:right;white-space:nowrap;font-size:.88rem;padding-right:.5rem}
+    .item-desc{width:40%}
+    .item-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);padding:.3rem .4rem;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--ink);outline:none}
+    .item-input:focus{border-color:var(--ink)}
+    .remove-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:0 .3rem;line-height:1;transition:color .15s}
+    .remove-btn:hover{color:#e24b4a}
+    .add-item-btn{background:transparent;border:1px dashed var(--border);border-radius:6px;width:100%;padding:.6rem;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--muted);cursor:pointer;transition:all .2s}
+    .add-item-btn:hover{border-color:var(--ink);color:var(--ink)}
+    /* Totals */
+    .totals-block{border-top:1px solid var(--border);padding-top:.75rem;display:flex;flex-direction:column;gap:.35rem}
+    .total-row{display:flex;justify-content:space-between;font-size:.88rem}
+    .total-row.grand{font-family:'DM Serif Display',serif;font-size:1.3rem;border-top:1px solid var(--border);padding-top:.5rem;margin-top:.25rem}
+    /* Preview */
+    .preview-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:2rem;margin-bottom:1rem}
+    .inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem}
+    .inv-title{font-family:'DM Serif Display',serif;font-size:2rem;letter-spacing:-.02em}
+    .inv-meta{text-align:right;font-size:.82rem;color:var(--muted);line-height:1.8}
+    .inv-parties{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;font-size:.85rem}
+    .party-label{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem}
+    .party-name{font-weight:500}
+    .inv-table{width:100%;border-collapse:collapse;margin-bottom:1rem;font-size:.85rem}
+    .inv-table th{border-bottom:1.5px solid var(--ink);padding:.4rem .5rem;text-align:left;font-weight:500}
+    .inv-table th:last-child,.inv-table td:last-child{text-align:right}
+    .inv-table td{padding:.45rem .5rem;border-bottom:1px solid var(--border)}
+    .inv-totals{display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;font-size:.85rem}
+    .inv-total-row{display:flex;gap:3rem}
+    .inv-total-row.final{font-family:'DM Serif Display',serif;font-size:1.1rem;border-top:1px solid var(--ink);padding-top:.4rem;margin-top:.2rem}
+    .inv-notes{margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.8rem;color:var(--muted)}
+    /* Actions */
+    .action-row{display:flex;gap:.75rem}
+    .btn{flex:1;padding:.85rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:all .2s;border:none;text-align:center}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
+    .btn-secondary:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media print{header,footer,.form-col,.action-row{display:none!important}.preview-card{border:none;padding:0}}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🧾 Business</p>
+  <h1>Invoice Generator</h1>
+  <p class="subtitle">Create a professional invoice or receipt in seconds. Print or save as PDF.</p>
+
+  <div class="layout">
+    <!-- Form -->
+    <div class="form-col">
+      <div class="card">
+        <p class="card-title">Invoice details</p>
+        <div class="field-group"><label>Invoice #</label><input type="text" id="invNum" value="INV-001" oninput="render()"/></div>
+        <div class="field-group"><label>Date</label><input type="date" id="invDate" oninput="render()"/></div>
+        <div class="field-group"><label>Due date</label><input type="date" id="dueDate" oninput="render()"/></div>
+      </div>
+      <div class="card">
+        <p class="card-title">From</p>
+        <div class="field-group"><label>Your name / company</label><input type="text" id="fromName" placeholder="Acme Inc." oninput="render()"/></div>
+        <div class="field-group"><label>Address / contact</label><textarea id="fromAddr" placeholder="123 Main St, City" oninput="render()"></textarea></div>
+      </div>
+      <div class="card">
+        <p class="card-title">Bill to</p>
+        <div class="field-group"><label>Client name</label><input type="text" id="toName" placeholder="Client Name" oninput="render()"/></div>
+        <div class="field-group"><label>Address / contact</label><textarea id="toAddr" placeholder="456 Client Ave, City" oninput="render()"></textarea></div>
+      </div>
+      <div class="card">
+        <p class="card-title">Line items</p>
+        <table class="items-table">
+          <thead><tr><th class="item-desc">Description</th><th>Qty</th><th>Rate</th><th style="text-align:right">Amount</th><th></th></tr></thead>
+          <tbody id="itemsBody"></tbody>
+        </table>
+        <button class="add-item-btn" onclick="addItem()">+ Add line item</button>
+        <div class="totals-block">
+          <div class="total-row"><span>Subtotal</span><span id="subtotalDisp">$0.00</span></div>
+          <div class="total-row"><span>Tax <input type="number" id="taxRate" value="0" min="0" max="100" step="0.1" style="width:44px;display:inline;padding:.2rem .4rem;font-size:.82rem" oninput="render()"/> %</span><span id="taxDisp">$0.00</span></div>
+          <div class="total-row grand"><span>Total</span><span id="totalDisp">$0.00</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <p class="card-title">Notes</p>
+        <textarea id="notes" placeholder="Payment terms, bank details, thank you message…" oninput="render()"></textarea>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div>
+      <div class="preview-card" id="invoicePreview">
+        <div class="inv-header">
+          <div class="inv-title">Invoice</div>
+          <div class="inv-meta">
+            <div id="p-num"></div>
+            <div id="p-date"></div>
+            <div id="p-due"></div>
+          </div>
+        </div>
+        <div class="inv-parties">
+          <div><div class="party-label">From</div><div class="party-name" id="p-from-name"></div><div style="white-space:pre-line;color:var(--muted);font-size:.82rem" id="p-from-addr"></div></div>
+          <div><div class="party-label">Bill to</div><div class="party-name" id="p-to-name"></div><div style="white-space:pre-line;color:var(--muted);font-size:.82rem" id="p-to-addr"></div></div>
+        </div>
+        <table class="inv-table"><thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead><tbody id="p-items"></tbody></table>
+        <div class="inv-totals">
+          <div class="inv-total-row"><span>Subtotal</span><span id="p-sub"></span></div>
+          <div class="inv-total-row"><span>Tax</span><span id="p-tax"></span></div>
+          <div class="inv-total-row final"><span>Total</span><span id="p-total"></span></div>
+        </div>
+        <div class="inv-notes" id="p-notes" style="display:none"></div>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-primary" onclick="window.print()">🖨 Print / Save PDF</button>
+        <button class="btn btn-secondary" onclick="resetForm()">↩ Reset</button>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let items=[{desc:'',qty:1,rate:0}];
+
+  function fmt(n){return'$'+parseFloat(n||0).toFixed(2);}
+
+  function renderItemsTable(){
+    const body=document.getElementById('itemsBody');
+    body.innerHTML=items.map((item,i)=>`
+      <tr>
+        <td><input class="item-input" value="${item.desc}" placeholder="Item description" oninput="items[${i}].desc=this.value;render()" /></td>
+        <td><input class="item-input" type="number" value="${item.qty}" min="0" step="1" style="width:50px" oninput="items[${i}].qty=parseFloat(this.value)||0;render()" /></td>
+        <td><input class="item-input" type="number" value="${item.rate}" min="0" step="0.01" style="width:70px" oninput="items[${i}].rate=parseFloat(this.value)||0;render()" /></td>
+        <td>${fmt(item.qty*item.rate)}</td>
+        <td><button class="remove-btn" onclick="removeItem(${i})">✕</button></td>
+      </tr>`).join('');
+  }
+
+  function addItem(){items.push({desc:'',qty:1,rate:0});renderItemsTable();render();}
+  function removeItem(i){if(items.length>1)items.splice(i,1);renderItemsTable();render();}
+
+  function render(){
+    renderItemsTable();
+    const sub=items.reduce((s,it)=>s+it.qty*it.rate,0);
+    const taxRate=parseFloat(document.getElementById('taxRate').value)||0;
+    const tax=sub*taxRate/100;
+    const total=sub+tax;
+    document.getElementById('subtotalDisp').textContent=fmt(sub);
+    document.getElementById('taxDisp').textContent=fmt(tax);
+    document.getElementById('totalDisp').textContent=fmt(total);
+    // Preview
+    document.getElementById('p-num').textContent='#'+document.getElementById('invNum').value;
+    document.getElementById('p-date').textContent=document.getElementById('invDate').value?'Date: '+document.getElementById('invDate').value:'';
+    document.getElementById('p-due').textContent=document.getElementById('dueDate').value?'Due: '+document.getElementById('dueDate').value:'';
+    document.getElementById('p-from-name').textContent=document.getElementById('fromName').value;
+    document.getElementById('p-from-addr').textContent=document.getElementById('fromAddr').value;
+    document.getElementById('p-to-name').textContent=document.getElementById('toName').value;
+    document.getElementById('p-to-addr').textContent=document.getElementById('toAddr').value;
+    document.getElementById('p-items').innerHTML=items.map(it=>`<tr><td>${it.desc||'—'}</td><td>${it.qty}</td><td>${fmt(it.rate)}</td><td>${fmt(it.qty*it.rate)}</td></tr>`).join('');
+    document.getElementById('p-sub').textContent=fmt(sub);
+    document.getElementById('p-tax').textContent=fmt(tax);
+    document.getElementById('p-total').textContent=fmt(total);
+    const notes=document.getElementById('notes').value;
+    const pn=document.getElementById('p-notes');
+    pn.style.display=notes?'block':'none';pn.textContent=notes;
+  }
+
+  function resetForm(){
+    items=[{desc:'',qty:1,rate:0}];
+    ['invNum','fromName','fromAddr','toName','toAddr','notes'].forEach(id=>document.getElementById(id).value=id==='invNum'?'INV-001':'');
+    ['invDate','dueDate'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('taxRate').value=0;
+    render();
+  }
+
+  // Set today's date
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('invDate').value=today;
+  render();
+</script>
+<script src="../ad.js"></script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Currency Converter — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:680px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.6rem;margin-bottom:1rem}
+    .convert-row{display:grid;grid-template-columns:1fr 48px 1fr;align-items:end;gap:.75rem}
+    .input-group{display:flex;flex-direction:column;gap:.4rem}
+    .input-group label{font-size:.82rem;color:var(--muted)}
+    input[type="number"],select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--ink);outline:none;transition:border-color .2s;padding:.65rem 1rem}
+    input:focus,select:focus{border-color:var(--ink)}
+    .swap-btn{width:48px;height:48px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+    .swap-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+    .result-card{background:var(--ink);color:#fff;border-radius:10px;padding:2rem;text-align:center;margin-bottom:1rem}
+    .result-amount{font-family:'DM Serif Display',serif;font-size:3.5rem;letter-spacing:-.03em;line-height:1;margin-bottom:.4rem}
+    .result-label{font-size:.85rem;color:rgba(255,255,255,.6)}
+    .rate-bar{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.4rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;font-size:.85rem}
+    .rate-label{color:var(--muted)}
+    .rate-val{font-weight:500}
+    .popular-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+    .pop-btn{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.5rem .75rem;font-family:'DM Sans',sans-serif;font-size:.8rem;cursor:pointer;transition:all .15s;text-align:center;color:var(--muted)}
+    .pop-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .status{font-size:.75rem;color:var(--muted);text-align:center;margin-top:.5rem}
+    .spinner{display:inline-block;width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--ink);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.convert-row{grid-template-columns:1fr 40px 1fr}.popular-grid{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">💱 Finance</p>
+  <h1>Currency Converter</h1>
+  <p class="subtitle">Live exchange rates updated daily. Convert between 160+ world currencies.</p>
+
+  <div class="card">
+    <div class="convert-row">
+      <div class="input-group">
+        <label>Amount</label>
+        <input type="number" id="amount" value="1" min="0" oninput="convert()" />
+      </div>
+      <button class="swap-btn" onclick="swapCurrencies()" title="Swap">⇄</button>
+      <div class="input-group">
+        <label>Result</label>
+        <input type="number" id="result" readonly style="background:var(--card);font-weight:500" />
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.75rem">
+      <div class="input-group"><label>From</label><select id="fromCur" onchange="convert()"></select></div>
+      <div class="input-group"><label>To</label><select id="toCur" onchange="convert()"></select></div>
+    </div>
+  </div>
+
+  <div class="rate-bar">
+    <span class="rate-label">Exchange rate</span>
+    <span class="rate-val" id="rateDisplay">—</span>
+  </div>
+
+  <div class="card">
+    <p style="font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem">Popular pairs</p>
+    <div class="popular-grid">
+      <button class="pop-btn" onclick="setPair('USD','EUR')">USD → EUR</button>
+      <button class="pop-btn" onclick="setPair('USD','GBP')">USD → GBP</button>
+      <button class="pop-btn" onclick="setPair('USD','JPY')">USD → JPY</button>
+      <button class="pop-btn" onclick="setPair('EUR','USD')">EUR → USD</button>
+      <button class="pop-btn" onclick="setPair('GBP','USD')">GBP → USD</button>
+      <button class="pop-btn" onclick="setPair('USD','CAD')">USD → CAD</button>
+    </div>
+  </div>
+
+  <p class="status" id="status"><span class="spinner"></span> Loading rates…</p>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  const CURRENCIES = ['AED','AUD','BRL','CAD','CHF','CNY','CZK','DKK','EUR','GBP','HKD','HUF','IDR','ILS','INR','JPY','KRW','MXN','MYR','NOK','NZD','PHP','PKR','PLN','RON','RUB','SAR','SEK','SGD','THB','TRY','TWD','USD','ZAR'];
+  let rates = {};
+  let loaded = false;
+
+  async function loadRates() {
+    try {
+      const res = await fetch('https://open.er-api.com/v6/latest/USD');
+      const data = await res.json();
+      if (data.result === 'success') {
+        rates = data.rates;
+        loaded = true;
+        const d = new Date(data.time_last_update_utc);
+        document.getElementById('status').textContent = 'Rates updated: ' + d.toLocaleDateString();
+        convert();
+      } else { throw new Error(); }
+    } catch(e) {
+      // Fallback static rates
+      rates = {USD:1,EUR:0.92,GBP:0.79,JPY:149.5,CAD:1.36,AUD:1.53,CHF:0.89,CNY:7.24,INR:83.1,MXN:17.1,BRL:4.97,KRW:1325,SGD:1.34,HKD:7.82,NOK:10.6,SEK:10.4,DKK:6.88,NZD:1.63,ZAR:18.6,TRY:30.5,SAR:3.75,AED:3.67,THB:35.1,MYR:4.67,IDR:15600,PHP:56.2,TWD:31.8,PLN:4.01,CZK:22.8,HUF:354,RON:4.57,ILS:3.68,RUB:91.5,PKR:279};
+      loaded = true;
+      document.getElementById('status').textContent = 'Using offline rates (no internet connection)';
+      convert();
+    }
+  }
+
+  function buildSelects() {
+    const from = document.getElementById('fromCur');
+    const to   = document.getElementById('toCur');
+    CURRENCIES.forEach(c => {
+      from.innerHTML += `<option value="${c}">${c}</option>`;
+      to.innerHTML   += `<option value="${c}">${c}</option>`;
+    });
+    from.value = 'USD';
+    to.value   = 'EUR';
+  }
+
+  function convert() {
+    if (!loaded) return;
+    const amount = parseFloat(document.getElementById('amount').value);
+    const from   = document.getElementById('fromCur').value;
+    const to     = document.getElementById('toCur').value;
+    if (isNaN(amount)) { document.getElementById('result').value=''; return; }
+    const inUSD  = amount / rates[from];
+    const result = inUSD * rates[to];
+    document.getElementById('result').value = result.toFixed(4);
+    const rate = rates[to] / rates[from];
+    document.getElementById('rateDisplay').textContent = `1 ${from} = ${rate.toFixed(6)} ${to}`;
+  }
+
+  function swapCurrencies() {
+    const from = document.getElementById('fromCur');
+    const to   = document.getElementById('toCur');
+    [from.value, to.value] = [to.value, from.value];
+    convert();
+  }
+
+  function setPair(f, t) {
+    document.getElementById('fromCur').value = f;
+    document.getElementById('toCur').value   = t;
+    convert();
+  }
+
+  buildSelects();
+  loadRates();
+</script>
+<script src="../ad.js"></script>
+</body>
+</html>
