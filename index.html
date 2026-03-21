@@ -49,7 +49,10 @@
 
   <header>
     <a class="logo" href="index.html">All Apps <span>by MrPress</span></a>
-    <input id="search" type="text" placeholder="Search tools…" />
+    <div class="header-right">
+      <a class="contact-btn" href="https://forms.gle/r1U3WtTiGjrTYTXs8" target="_blank" rel="noopener">Contact</a>
+      <input id="search" type="text" placeholder="Search tools…" />
+    </div>
   </header>
 
   <section class="hero">
@@ -245,6 +248,13 @@
       url:         "tools/paraphraser.html"
     },
     {
+      name:        "Humanizer",
+      description: "Remove AI writing patterns — significance inflation, em dashes, filler phrases, vague attributions and more.",
+      icon:        "🧑",
+      category:    "Text",
+      url:         "tools/humanizer.html"
+    },
+    {
       name:        "Number Sorter",
       description: "Paste a list of numbers and sort ascending or descending. Removes duplicates, shows sum, min, and max.",
       icon:        "🔢",
@@ -383,11 +393,6 @@
   });
 
   renderGrid();
-  </script>
-
-  <!-- Ad popup — safe wrapper so errors here never break the page -->
-  <script>
-    try { var s = document.createElement('script'); s.src = 'ad.js'; document.body.appendChild(s); } catch(e) {}
   </script>
 
 </body>
