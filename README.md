@@ -7,7 +7,7 @@
 [![GitHub Pages](https://img.shields.io/badge/Hosted%20on-GitHub%20Pages-181717?style=for-the-badge&logo=github)](https://github.com)
 [![Status](https://img.shields.io/badge/Status-Live-brightgreen?style=for-the-badge)]()
 [![Made by MrPress](https://img.shields.io/badge/Made%20by-MrPress-0a66c2?style=for-the-badge)]()
-[![PRs Welcome](https://img.shields.io/badge/PRs-NotWelcome-ff69b4?style=for-the-badge)]()
+[![PRs Welcome](https://img.shields.io/badge/PRs-No_Pulls-ff69b4?style=for-the-badge)]()
 
 <br/>
 
