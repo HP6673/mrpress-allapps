@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image to PDF — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a;--green-bg:#edf7f1}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:780px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .dropzone{border:1.5px dashed var(--border);border-radius:12px;padding:2.5rem 2rem;text-align:center;background:var(--card);cursor:pointer;transition:all .2s;position:relative;margin-bottom:1rem}
+    .dropzone:hover,.dropzone.drag-over{border-color:var(--ink);background:#faf9f5}
+    .dropzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .drop-icon{font-size:2rem;display:block;margin-bottom:.6rem}
+    .drop-title{font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:.3rem}
+    .drop-sub{font-size:.82rem;color:var(--muted)}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+    .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:.5rem;margin-bottom:.75rem}
+    .thumb{position:relative;aspect-ratio:3/4;background:var(--bg);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .thumb-num{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.5);color:#fff;font-size:.65rem;text-align:center;padding:.15rem}
+    .thumb-del{position:absolute;top:3px;right:3px;width:18px;height:18px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;font-size:.68rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .thumb-del:hover{background:#e24b4a}
+    .add-more{background:transparent;border:1px dashed var(--border);border-radius:6px;width:100%;padding:.5rem;font-size:.8rem;color:var(--muted);cursor:pointer;transition:all .2s;position:relative;text-align:center}
+    .add-more:hover{border-color:var(--ink);color:var(--ink)}
+    .add-more input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .opts-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem}
+    .opts-row label{font-size:.82rem;color:var(--muted)}
+    .btn-group{display:flex;gap:.4rem}
+    .opt-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:.35rem .75rem;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .opt-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .opt-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .progress-bar{height:4px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:1rem;display:none}
+    .progress-fill{height:100%;background:var(--ink);border-radius:99px;transition:width .15s;width:0%}
+    .success-row{background:var(--green-bg);border:1px solid #b2dfc6;border-radius:8px;padding:.9rem 1.2rem;font-size:.88rem;color:var(--green);margin-bottom:1rem;display:none}
+    .action-row{display:flex;gap:.75rem}
+    .btn{flex:1;padding:.9rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:all .2s;border:none;text-align:center}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-primary:disabled{opacity:.35;cursor:not-allowed}
+    .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
+    .btn-secondary:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🖼️ Document</p>
+  <h1>Image to PDF</h1>
+  <p class="subtitle">Convert one or more images into a single PDF. Drag to reorder. Choose page size and fit mode.</p>
+
+  <div class="dropzone" id="dz">
+    <input type="file" id="fileInput" accept="image/*" multiple />
+    <span class="drop-icon">📂</span>
+    <p class="drop-title">Drop images here</p>
+    <p class="drop-sub">PNG, JPG, WebP, GIF — multiple files welcome</p>
+  </div>
+
+  <div id="panel" style="display:none">
+    <div class="card">
+      <p class="card-title">Images <span id="imgCount" style="font-weight:300;text-transform:none;letter-spacing:0"></span></p>
+      <div class="thumbs" id="thumbs"></div>
+      <div class="add-more">+ Add more images<input type="file" id="addMore" accept="image/*" multiple onchange="addImages(this.files)" /></div>
+    </div>
+
+    <div class="card">
+      <p class="card-title">PDF options</p>
+      <div class="opts-row">
+        <label>Page size</label>
+        <div class="btn-group" id="sizeGroup">
+          <button class="opt-btn active" data-size="match">Match image</button>
+          <button class="opt-btn" data-size="a4">A4</button>
+          <button class="opt-btn" data-size="letter">Letter</button>
+        </div>
+      </div>
+      <div class="opts-row">
+        <label>Image fit</label>
+        <div class="btn-group" id="fitGroup">
+          <button class="opt-btn active" data-fit="contain">Fit (keep ratio)</button>
+          <button class="opt-btn" data-fit="fill">Fill page</button>
+          <button class="opt-btn" data-fit="original">Original size</button>
+        </div>
+      </div>
+      <div class="opts-row">
+        <label>Orientation</label>
+        <div class="btn-group" id="orientGroup">
+          <button class="opt-btn active" data-orient="auto">Auto</button>
+          <button class="opt-btn" data-orient="portrait">Portrait</button>
+          <button class="opt-btn" data-orient="landscape">Landscape</button>
+        </div>
+      </div>
+      <div class="opts-row">
+        <label>Margin</label>
+        <div class="btn-group" id="marginGroup">
+          <button class="opt-btn active" data-margin="0">None</button>
+          <button class="opt-btn" data-margin="20">Small</button>
+          <button class="opt-btn" data-margin="40">Medium</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-bar" id="pb"><div class="progress-fill" id="pf"></div></div>
+    <div class="success-row" id="success"></div>
+    <div class="action-row">
+      <button class="btn btn-primary" id="convertBtn" onclick="convert()">📄 Convert to PDF</button>
+      <button class="btn btn-secondary" onclick="resetAll()">↩ Start over</button>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script>
+  let images = []; // {file, url}
+  let pageSize='match', fitMode='contain', orient='auto', margin=0;
+
+  const dz=document.getElementById('dz');
+  document.getElementById('fileInput').addEventListener('change',e=>addImages(e.target.files));
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over')});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');addImages(e.dataTransfer.files)});
+
+  document.querySelectorAll('[data-size]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-size]').forEach(x=>x.classList.remove('active'));b.classList.add('active');pageSize=b.dataset.size;}));
+  document.querySelectorAll('[data-fit]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-fit]').forEach(x=>x.classList.remove('active'));b.classList.add('active');fitMode=b.dataset.fit;}));
+  document.querySelectorAll('[data-orient]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-orient]').forEach(x=>x.classList.remove('active'));b.classList.add('active');orient=b.dataset.orient;}));
+  document.querySelectorAll('[data-margin]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-margin]').forEach(x=>x.classList.remove('active'));b.classList.add('active');margin=parseInt(b.dataset.margin);}));
+
+  function addImages(files) {
+    Array.from(files).filter(f=>f.type.startsWith('image/')).forEach(f=>{
+      images.push({file:f, url:URL.createObjectURL(f)});
+    });
+    renderThumbs();
+    document.getElementById('panel').style.display = images.length ? 'block' : 'none';
+    dz.style.display = images.length ? 'none' : '';
+  }
+
+  function renderThumbs() {
+    const grid=document.getElementById('thumbs');
+    document.getElementById('imgCount').textContent=`— ${images.length} image${images.length!==1?'s':''}`;
+    grid.innerHTML='';
+    images.forEach((img,i)=>{
+      const div=document.createElement('div');div.className='thumb';
+      div.innerHTML=`<img src="${img.url}" alt=""><span class="thumb-num">${i+1}</span><button class="thumb-del" onclick="removeImg(${i})">✕</button>`;
+      grid.appendChild(div);
+    });
+  }
+
+  function removeImg(i){URL.revokeObjectURL(images[i].url);images.splice(i,1);renderThumbs();if(!images.length){document.getElementById('panel').style.display='none';dz.style.display='';};}
+
+  async function loadImg(url){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url;});}
+
+  async function convert() {
+    if(!images.length)return;
+    const btn=document.getElementById('convertBtn');btn.disabled=true;btn.textContent='Converting…';
+    const pb=document.getElementById('pb');pb.style.display='block';
+    const pf=document.getElementById('pf');pf.style.width='0%';
+    try {
+      const {jsPDF}=window.jspdf;
+      let pdf=null;
+      for(let i=0;i<images.length;i++){
+        pf.style.width=Math.round((i+1)/images.length*100)+'%';
+        const img=await loadImg(images[i].url);
+        const iw=img.naturalWidth, ih=img.naturalHeight;
+        // Page dimensions in pt
+        let pw,ph;
+        if(pageSize==='a4'){pw=595;ph=842;}
+        else if(pageSize==='letter'){pw=612;ph=792;}
+        else{pw=iw;ph=ih;} // match image
+        // Auto-orient
+        const isLandscape=orient==='landscape'||(orient==='auto'&&iw>ih);
+        let [fw,fh]=isLandscape?[Math.max(pw,ph),Math.min(pw,ph)]:[Math.min(pw,ph),Math.max(pw,ph)];
+        const o=isLandscape?'l':'p';
+        if(!pdf){pdf=new jsPDF({orientation:o,unit:'pt',format:[fw,fh]});}
+        else{pdf.addPage([fw,fh],o);}
+        // Image positioning
+        const m=margin;
+        const aw=fw-m*2, ah=fh-m*2;
+        let dx=m,dy=m,dw=aw,dh=ah;
+        if(fitMode==='contain'){
+          const s=Math.min(aw/iw,ah/ih);
+          dw=iw*s;dh=ih*s;dx=m+(aw-dw)/2;dy=m+(ah-dh)/2;
+        } else if(fitMode==='original'){
+          dw=iw;dh=ih;dx=m+(aw-dw)/2;dy=m+(ah-dh)/2;
+        }
+        // Draw to canvas for data URL
+        const c=document.createElement('canvas');c.width=iw;c.height=ih;
+        c.getContext('2d').drawImage(img,0,0);
+        pdf.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',dx,dy,dw,dh);
+        await new Promise(r=>setTimeout(r,0));
+      }
+      pdf.save('images.pdf');
+      document.getElementById('success').style.display='block';
+      document.getElementById('success').textContent=`✓ PDF created — ${images.length} page${images.length!==1?'s':''}.`;
+    }catch(e){alert('Conversion failed: '+e.message);}
+    btn.disabled=false;btn.textContent='📄 Convert to PDF';
+    setTimeout(()=>pb.style.display='none',800);
+  }
+
+  function resetAll(){images.forEach(i=>URL.revokeObjectURL(i.url));images=[];document.getElementById('panel').style.display='none';dz.style.display='';document.getElementById('fileInput').value='';document.getElementById('success').style.display='none';}
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPA Calculator — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:720px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+    /* Scale toggle */
+    .scale-row{display:flex;gap:.5rem;margin-bottom:1rem}
+    .scale-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:99px;padding:.35rem .9rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .scale-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .scale-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    /* Course rows */
+    .course-table{width:100%;border-collapse:collapse;margin-bottom:.75rem}
+    .course-table th{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:.4rem .5rem;text-align:left;border-bottom:1px solid var(--border)}
+    .course-table td{padding:.35rem .3rem;vertical-align:middle}
+    .course-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:.45rem .6rem;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--ink);outline:none;transition:border-color .2s}
+    .course-input:focus{border-color:var(--ink)}
+    select.course-input{cursor:pointer}
+    .del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.95rem;padding:0 .3rem;transition:color .15s}
+    .del-btn:hover{color:#e24b4a}
+    .add-btn{background:transparent;border:1px dashed var(--border);border-radius:7px;width:100%;padding:.6rem;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--muted);cursor:pointer;transition:all .2s;margin-bottom:.5rem}
+    .add-btn:hover{border-color:var(--ink);color:var(--ink)}
+    /* Result */
+    .result-box{background:var(--ink);color:#fff;border-radius:10px;padding:2rem;text-align:center;margin-bottom:1rem}
+    .gpa-big{font-family:'DM Serif Display',serif;font-size:5rem;letter-spacing:-.03em;line-height:1}
+    .gpa-label{font-size:.82rem;color:rgba(255,255,255,.55);margin-top:.4rem;letter-spacing:.08em;text-transform:uppercase}
+    .gpa-letter{font-size:1.2rem;margin-top:.5rem;color:rgba(255,255,255,.8)}
+    .stats-row{display:flex;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+    .stat{flex:1;background:var(--card);padding:.9rem;text-align:center}
+    .stat-val{font-family:'DM Serif Display',serif;font-size:1.5rem;letter-spacing:-.02em}
+    .stat-label{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🎓 Calculator</p>
+  <h1>GPA Calculator</h1>
+  <p class="subtitle">Add your courses, grades, and credit hours to calculate your GPA. Supports 4.0 and 5.0 scales.</p>
+
+  <div class="card">
+    <p class="card-title">Scale</p>
+    <div class="scale-row">
+      <button class="scale-btn active" onclick="setScale(4)">4.0 Scale</button>
+      <button class="scale-btn" onclick="setScale(5)">5.0 Scale (weighted)</button>
+    </div>
+    <p class="card-title">Courses</p>
+    <table class="course-table">
+      <thead><tr><th style="width:40%">Course name</th><th style="width:25%">Grade</th><th style="width:20%">Credits</th><th></th></tr></thead>
+      <tbody id="courseBody"></tbody>
+    </table>
+    <button class="add-btn" onclick="addCourse()">+ Add course</button>
+  </div>
+
+  <div class="result-box" id="resultBox">
+    <div class="gpa-big" id="gpaNum">—</div>
+    <div class="gpa-label">GPA</div>
+    <div class="gpa-letter" id="gpaLetter"></div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-val" id="statCredits">0</div><div class="stat-label">Total credits</div></div>
+    <div class="stat"><div class="stat-val" id="statCourses">0</div><div class="stat-label">Courses</div></div>
+    <div class="stat"><div class="stat-val" id="statPoints">0</div><div class="stat-label">Grade points</div></div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let scale=4;
+  let courses=[];
+
+  const GRADES_4={
+    'A+':4.0,'A':4.0,'A-':3.7,
+    'B+':3.3,'B':3.0,'B-':2.7,
+    'C+':2.3,'C':2.0,'C-':1.7,
+    'D+':1.3,'D':1.0,'D-':0.7,
+    'F':0,'WF':0
+  };
+  const GRADES_5={
+    'A+':5.0,'A':5.0,'A-':4.7,
+    'B+':4.3,'B':4.0,'B-':3.7,
+    'C+':3.3,'C':3.0,'C-':2.7,
+    'D+':2.3,'D':2.0,'D-':1.7,
+    'F':0,'WF':0
+  };
+
+  function setScale(s){
+    scale=s;
+    document.querySelectorAll('.scale-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&s===4)||(i===1&&s===5)));
+    calc();
+  }
+
+  function addCourse(name='',grade='A',credits=3){
+    courses.push({name,grade,credits});
+    renderCourses();
+  }
+
+  function removeCourse(i){courses.splice(i,1);renderCourses();}
+
+  function renderCourses(){
+    const tbody=document.getElementById('courseBody');
+    const grades=Object.keys(GRADES_4);
+    tbody.innerHTML='';
+    courses.forEach((c,i)=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td><input class="course-input" value="${c.name}" placeholder="e.g. Math 101" oninput="courses[${i}].name=this.value" /></td>
+        <td><select class="course-input" onchange="courses[${i}].grade=this.value;calc()">
+          ${grades.map(g=>`<option value="${g}"${g===c.grade?' selected':''}>${g}</option>`).join('')}
+        </select></td>
+        <td><input class="course-input" type="number" value="${c.credits}" min="0" max="10" step=".5" oninput="courses[${i}].credits=parseFloat(this.value)||0;calc()" /></td>
+        <td><button class="del-btn" onclick="removeCourse(${i})">✕</button></td>`;
+      tbody.appendChild(tr);
+    });
+    calc();
+  }
+
+  function calc(){
+    const table=scale===4?GRADES_4:GRADES_5;
+    let totalPoints=0,totalCredits=0;
+    courses.forEach(c=>{
+      const pts=(table[c.grade]||0)*c.credits;
+      totalPoints+=pts;
+      totalCredits+=c.credits;
+    });
+    const gpa=totalCredits>0?totalPoints/totalCredits:0;
+    document.getElementById('gpaNum').textContent=totalCredits>0?gpa.toFixed(2):'—';
+    document.getElementById('gpaLetter').textContent=totalCredits>0?letterGrade(gpa):'';
+    document.getElementById('statCredits').textContent=totalCredits;
+    document.getElementById('statCourses').textContent=courses.length;
+    document.getElementById('statPoints').textContent=totalPoints.toFixed(2);
+  }
+
+  function letterGrade(gpa){
+    if(gpa>=3.7)return 'A / Excellent';
+    if(gpa>=3.3)return 'A− / Very Good';
+    if(gpa>=3.0)return 'B+ / Good';
+    if(gpa>=2.7)return 'B / Above Average';
+    if(gpa>=2.0)return 'C / Average';
+    if(gpa>=1.0)return 'D / Below Average';
+    return 'F / Failing';
+  }
+
+  // Seed with 3 starter courses
+  addCourse('Course 1','A',3);
+  addCourse('Course 2','B+',3);
+  addCourse('Course 3','A-',4);
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

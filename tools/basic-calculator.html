@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculator — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;display:flex;align-items:flex-start;justify-content:center}
+    .calc-wrap{width:100%;max-width:340px}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;text-align:center}
+    h1{font-family:'DM Serif Display',serif;font-size:2rem;letter-spacing:-.025em;margin-bottom:1.5rem;text-align:center}
+    /* Display */
+    .display{background:var(--ink);border-radius:12px 12px 0 0;padding:1.2rem 1.4rem;text-align:right}
+    .display-expr{font-size:.85rem;color:rgba(255,255,255,.45);min-height:1.3em;margin-bottom:.25rem;word-break:break-all}
+    .display-val{font-family:'DM Serif Display',serif;font-size:2.8rem;color:#fff;letter-spacing:-.02em;word-break:break-all;line-height:1.1}
+    /* Buttons */
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden}
+    .btn{background:var(--card);border:none;padding:1.1rem .5rem;font-family:'DM Sans',sans-serif;font-size:1.1rem;cursor:pointer;transition:background .12s;user-select:none;-webkit-tap-highlight-color:transparent}
+    .btn:hover{background:#f0efe9}
+    .btn:active{background:#e8e6de}
+    .btn.op{color:#1a7a4a;font-weight:500}
+    .btn.fn{color:var(--muted);font-size:.9rem}
+    .btn.eq{background:var(--ink);color:#fff;font-size:1.3rem}
+    .btn.eq:hover{background:#222}
+    .btn.eq:active{background:#333}
+    .btn.zero{grid-column:span 2}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding:2rem 1rem 4rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <div class="calc-wrap">
+    <p class="eyebrow">🔢 Calculator</p>
+    <h1>Calculator</h1>
+    <div class="display">
+      <div class="display-expr" id="expr"></div>
+      <div class="display-val" id="disp">0</div>
+    </div>
+    <div class="grid">
+      <button class="btn fn" onclick="clearAll()">AC</button>
+      <button class="btn fn" onclick="toggleSign()">+/−</button>
+      <button class="btn fn" onclick="percent()">%</button>
+      <button class="btn op" onclick="inputOp('/')">÷</button>
+
+      <button class="btn" onclick="inputNum('7')">7</button>
+      <button class="btn" onclick="inputNum('8')">8</button>
+      <button class="btn" onclick="inputNum('9')">9</button>
+      <button class="btn op" onclick="inputOp('*')">×</button>
+
+      <button class="btn" onclick="inputNum('4')">4</button>
+      <button class="btn" onclick="inputNum('5')">5</button>
+      <button class="btn" onclick="inputNum('6')">6</button>
+      <button class="btn op" onclick="inputOp('-')">−</button>
+
+      <button class="btn" onclick="inputNum('1')">1</button>
+      <button class="btn" onclick="inputNum('2')">2</button>
+      <button class="btn" onclick="inputNum('3')">3</button>
+      <button class="btn op" onclick="inputOp('+')">+</button>
+
+      <button class="btn zero" onclick="inputNum('0')">0</button>
+      <button class="btn" onclick="inputDot()">.</button>
+      <button class="btn eq" onclick="calculate()">=</button>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let current='0', expr='', op=null, prev=null, fresh=false;
+
+  function upd(){
+    document.getElementById('disp').textContent=current.length>12?parseFloat(current).toExponential(6):current;
+    document.getElementById('expr').textContent=expr;
+  }
+
+  function inputNum(n){
+    if(fresh){current='0';fresh=false;}
+    current=current==='0'?n:(current+n);
+    upd();
+  }
+
+  function inputDot(){
+    if(fresh){current='0';fresh=false;}
+    if(!current.includes('.'))current+='.';
+    upd();
+  }
+
+  function inputOp(o){
+    if(op&&!fresh)calculate(true);
+    prev=parseFloat(current);
+    op=o;
+    const sym={'+':'+','-':'−','*':'×','/':'÷'}[o];
+    expr=current+' '+sym;
+    fresh=true;
+    upd();
+  }
+
+  function calculate(chain=false){
+    if(op===null||prev===null)return;
+    const cur=parseFloat(current);
+    let res;
+    switch(op){
+      case '+':res=prev+cur;break;
+      case '-':res=prev-cur;break;
+      case '*':res=prev*cur;break;
+      case '/':res=cur===0?'Error':prev/cur;break;
+    }
+    if(!chain){expr=expr+current+' =';op=null;prev=null;}
+    current=res==='Error'?'Error':String(parseFloat(res.toPrecision(12)));
+    fresh=true;
+    upd();
+  }
+
+  function clearAll(){current='0';expr='';op=null;prev=null;fresh=false;upd();}
+  function toggleSign(){if(current!=='0'&&current!=='Error')current=current.startsWith('-')?current.slice(1):'-'+current;upd();}
+  function percent(){if(!isNaN(parseFloat(current)))current=String(parseFloat(current)/100);upd();}
+
+  document.addEventListener('keydown',e=>{
+    if('0123456789'.includes(e.key))inputNum(e.key);
+    else if(e.key==='.')inputDot();
+    else if(['+','-','*','/'].includes(e.key))inputOp(e.key);
+    else if(e.key==='Enter'||e.key==='=')calculate();
+    else if(e.key==='Escape')clearAll();
+    else if(e.key==='Backspace'){if(current.length>1&&current!=='Error')current=current.slice(0,-1);else current='0';upd();}
+  });
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

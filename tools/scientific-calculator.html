@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scientific Calculator — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3rem 2rem 5rem;display:flex;align-items:flex-start;justify-content:center}
+    .calc-wrap{width:100%;max-width:480px}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;text-align:center}
+    h1{font-family:'DM Serif Display',serif;font-size:2rem;letter-spacing:-.025em;margin-bottom:1.5rem;text-align:center}
+    /* Display */
+    .display{background:var(--ink);border-radius:12px 12px 0 0;padding:1rem 1.2rem;text-align:right}
+    .display-expr{font-size:.78rem;color:rgba(255,255,255,.4);min-height:1.2em;margin-bottom:.2rem;word-break:break-all;font-family:monospace}
+    .display-val{font-family:'DM Serif Display',serif;font-size:2.2rem;color:#fff;letter-spacing:-.01em;word-break:break-all;line-height:1.15}
+    .mode-row{background:#1a1a1a;padding:.4rem .8rem;display:flex;gap:.75rem;font-size:.72rem;color:rgba(255,255,255,.4)}
+    .mode-toggle{cursor:pointer;padding:.1rem .35rem;border-radius:3px;transition:all .15s;user-select:none}
+    .mode-toggle.active{background:rgba(255,255,255,.15);color:#fff}
+    /* Grid */
+    .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden}
+    .btn{background:var(--card);border:none;padding:.85rem .3rem;font-family:'DM Sans',sans-serif;font-size:.88rem;cursor:pointer;transition:background .12s;user-select:none;-webkit-tap-highlight-color:transparent;line-height:1.2}
+    .btn:hover{background:#f0efe9}
+    .btn:active{background:#e8e6de}
+    .btn.op{color:#1a7a4a;font-weight:500;font-size:1rem}
+    .btn.fn{color:var(--muted);font-size:.8rem}
+    .btn.sci{color:#185fa5;font-size:.78rem}
+    .btn.eq{background:var(--ink);color:#fff;font-size:1.2rem}
+    .btn.eq:hover{background:#222}
+    .btn.num{font-size:1rem}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding:2rem 1rem 4rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <div class="calc-wrap">
+    <p class="eyebrow">🔬 Calculator</p>
+    <h1>Scientific Calculator</h1>
+    <div class="display">
+      <div class="display-expr" id="expr"></div>
+      <div class="display-val" id="disp">0</div>
+    </div>
+    <div class="mode-row">
+      <span class="mode-toggle active" id="modeRad" onclick="setMode('rad')">RAD</span>
+      <span class="mode-toggle" id="modeDeg" onclick="setMode('deg')">DEG</span>
+      <span id="memInd" style="margin-left:auto;display:none">M</span>
+    </div>
+    <div class="grid">
+      <!-- Row 1 -->
+      <button class="btn sci" onclick="sciOp('inv')">2nd</button>
+      <button class="btn sci" id="btnSin" onclick="sciOp('sin')">sin</button>
+      <button class="btn sci" id="btnCos" onclick="sciOp('cos')">cos</button>
+      <button class="btn sci" id="btnTan" onclick="sciOp('tan')">tan</button>
+      <button class="btn fn" onclick="sciOp('inv_trig')">sin⁻¹</button>
+      <!-- Row 2 -->
+      <button class="btn sci" onclick="sciOp('log')">log</button>
+      <button class="btn sci" onclick="sciOp('ln')">ln</button>
+      <button class="btn sci" onclick="sciOp('sqrt')">√</button>
+      <button class="btn sci" onclick="sciOp('cbrt')">∛</button>
+      <button class="btn sci" onclick="sciOp('pow2')">x²</button>
+      <!-- Row 3 -->
+      <button class="btn sci" onclick="sciOp('pow')">xʸ</button>
+      <button class="btn sci" onclick="sciOp('10x')">10ˣ</button>
+      <button class="btn sci" onclick="sciOp('ex')">eˣ</button>
+      <button class="btn sci" onclick="sciOp('fact')">n!</button>
+      <button class="btn sci" onclick="sciOp('abs')">|x|</button>
+      <!-- Row 4 -->
+      <button class="btn sci" onclick="sciOp('pi')">π</button>
+      <button class="btn sci" onclick="sciOp('e')">e</button>
+      <button class="btn sci" onclick="sciOp('1x')">1/x</button>
+      <button class="btn fn" onclick="memOp('mc')">MC</button>
+      <button class="btn fn" onclick="memOp('mr')">MR</button>
+      <!-- Row 5 -->
+      <button class="btn fn" onclick="clearAll()">AC</button>
+      <button class="btn fn" onclick="toggleSign()">+/−</button>
+      <button class="btn fn" onclick="percent()">%</button>
+      <button class="btn fn" onclick="memOp('ms')">MS</button>
+      <button class="btn op" onclick="inputOp('/')">÷</button>
+      <!-- Row 6 -->
+      <button class="btn num" onclick="inputNum('7')">7</button>
+      <button class="btn num" onclick="inputNum('8')">8</button>
+      <button class="btn num" onclick="inputNum('9')">9</button>
+      <button class="btn fn" onclick="backspace()">⌫</button>
+      <button class="btn op" onclick="inputOp('*')">×</button>
+      <!-- Row 7 -->
+      <button class="btn num" onclick="inputNum('4')">4</button>
+      <button class="btn num" onclick="inputNum('5')">5</button>
+      <button class="btn num" onclick="inputNum('6')">6</button>
+      <button class="btn fn" onclick="paren('(')"> ( </button>
+      <button class="btn op" onclick="inputOp('-')">−</button>
+      <!-- Row 8 -->
+      <button class="btn num" onclick="inputNum('1')">1</button>
+      <button class="btn num" onclick="inputNum('2')">2</button>
+      <button class="btn num" onclick="inputNum('3')">3</button>
+      <button class="btn fn" onclick="paren(')')"> ) </button>
+      <button class="btn op" onclick="inputOp('+')">+</button>
+      <!-- Row 9 -->
+      <button class="btn num" style="grid-column:span 2" onclick="inputNum('0')">0</button>
+      <button class="btn num" onclick="inputDot()">.</button>
+      <button class="btn fn" onclick="sciOp('EE')">EE</button>
+      <button class="btn eq" onclick="calculate()">=</button>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let current='0', exprStr='', op=null, prev=null, fresh=false;
+  let angleMode='rad', mem=0, inv=false, pendingPow=false;
+
+  function upd(){
+    let d=current;
+    if(d.length>14) try{d=parseFloat(current).toPrecision(10);}catch(e){}
+    document.getElementById('disp').textContent=d;
+    document.getElementById('expr').textContent=exprStr;
+  }
+
+  function setMode(m){
+    angleMode=m;
+    document.getElementById('modeRad').classList.toggle('active',m==='rad');
+    document.getElementById('modeDeg').classList.toggle('active',m==='deg');
+  }
+
+  function toRad(a){return angleMode==='deg'?a*Math.PI/180:a;}
+  function fromRad(a){return angleMode==='deg'?a*180/Math.PI:a;}
+
+  function inputNum(n){
+    if(fresh){current='0';fresh=false;}
+    current=current==='0'?n:(current+n);
+    upd();
+  }
+  function inputDot(){if(fresh){current='0';fresh=false;}if(!current.includes('.'))current+='.';upd();}
+  function backspace(){if(current.length>1&&current!=='Error')current=current.slice(0,-1);else current='0';upd();}
+
+  function inputOp(o){
+    if(op&&!fresh)calculate(true);
+    prev=parseFloat(current);
+    op=o;
+    const sym={'+':'+','-':'−','*':'×','/':'÷'}[o];
+    exprStr=current+' '+sym;
+    fresh=true;upd();
+  }
+
+  function paren(p){
+    // Simple — append to expression display, evaluate full expression on =
+    exprStr+=p; upd();
+  }
+
+  function calculate(chain=false){
+    if(op===null||prev===null)return;
+    const cur=parseFloat(current);
+    let res;
+    switch(op){
+      case '+':res=prev+cur;break;
+      case '-':res=prev-cur;break;
+      case '*':res=prev*cur;break;
+      case '/':res=cur===0?NaN:prev/cur;break;
+      case '^':res=Math.pow(prev,cur);break;
+    }
+    if(!chain){exprStr=exprStr+current+' =';op=null;prev=null;}
+    current=isNaN(res)?'Error':String(parseFloat(res.toPrecision(12)));
+    fresh=true;upd();
+  }
+
+  function sciOp(fn){
+    const x=parseFloat(current);
+    let res;
+    switch(fn){
+      case 'sin': res=Math.sin(toRad(x));break;
+      case 'cos': res=Math.cos(toRad(x));break;
+      case 'tan': res=Math.tan(toRad(x));break;
+      case 'inv_trig': res=fromRad(Math.asin(x));break;
+      case 'log': res=Math.log10(x);break;
+      case 'ln':  res=Math.log(x);break;
+      case 'sqrt':res=Math.sqrt(x);break;
+      case 'cbrt':res=Math.cbrt(x);break;
+      case 'pow2':res=x*x;break;
+      case 'pow': prev=x;op='^';exprStr=current+' ^';fresh=true;upd();return;
+      case '10x': res=Math.pow(10,x);break;
+      case 'ex':  res=Math.exp(x);break;
+      case 'fact':res=factorial(x);break;
+      case 'abs': res=Math.abs(x);break;
+      case 'pi':  current=String(Math.PI);upd();return;
+      case 'e':   current=String(Math.E);upd();return;
+      case '1x':  res=1/x;break;
+      case 'EE':  current+='e';upd();return;
+      case 'inv': inv=!inv;return;
+    }
+    exprStr=fn+'('+current+')';
+    current=isNaN(res)||!isFinite(res)?'Error':String(parseFloat(res.toPrecision(12)));
+    fresh=true;upd();
+  }
+
+  function factorial(n){
+    n=Math.round(n);
+    if(n<0||n>170)return Infinity;
+    if(n<=1)return 1;
+    let r=1;for(let i=2;i<=n;i++)r*=i;return r;
+  }
+
+  function clearAll(){current='0';exprStr='';op=null;prev=null;fresh=false;upd();}
+  function toggleSign(){if(current!=='0'&&current!=='Error')current=current.startsWith('-')?current.slice(1):'-'+current;upd();}
+  function percent(){if(!isNaN(parseFloat(current)))current=String(parseFloat(current)/100);upd();}
+
+  function memOp(m){
+    if(m==='mc'){mem=0;document.getElementById('memInd').style.display='none';}
+    else if(m==='mr'){current=String(mem);fresh=true;upd();}
+    else if(m==='ms'){mem=parseFloat(current);document.getElementById('memInd').style.display='inline';fresh=true;}
+  }
+
+  document.addEventListener('keydown',e=>{
+    if('0123456789'.includes(e.key))inputNum(e.key);
+    else if(e.key==='.')inputDot();
+    else if(['+','-','*','/'].includes(e.key))inputOp(e.key);
+    else if(e.key==='Enter'||e.key==='=')calculate();
+    else if(e.key==='Escape')clearAll();
+    else if(e.key==='Backspace')backspace();
+  });
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>
