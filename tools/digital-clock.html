@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Clock — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column;transition:background .4s,color .4s}
+
+    /* ── Normal mode ── */
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border);transition:all .3s}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;transition:all .3s}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:2rem;transition:opacity .3s}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted);transition:all .3s}
+
+    /* ── Clock face ── */
+    .clock-wrap{text-align:center;position:relative}
+    .clock-time{font-family:'Share Tech Mono',monospace;font-size:clamp(4rem,14vw,10rem);letter-spacing:.04em;line-height:1;color:var(--ink);transition:color .4s,font-size .3s;user-select:none}
+    .clock-seconds{font-family:'Share Tech Mono',monospace;font-size:clamp(1.5rem,4vw,3rem);letter-spacing:.04em;color:var(--muted);margin-left:.25em;transition:color .4s}
+    .clock-date{font-family:'DM Sans',sans-serif;font-size:clamp(.85rem,2vw,1.1rem);color:var(--muted);margin-top:1rem;letter-spacing:.08em;text-transform:uppercase;transition:color .4s}
+    .clock-ampm{font-family:'DM Sans',sans-serif;font-size:clamp(.75rem,2vw,1rem);color:var(--muted);margin-left:.5em;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+
+    /* ── Controls ── */
+    .controls{display:flex;gap:.6rem;margin-top:2.5rem;flex-wrap:wrap;justify-content:center;transition:opacity .3s}
+    .ctrl-btn{background:transparent;border:1px solid var(--border);border-radius:99px;padding:.4rem 1rem;font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--muted);cursor:pointer;transition:all .2s}
+    .ctrl-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .ctrl-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+
+    /* ── Fullscreen mode ── */
+    body.fullscreen{background:#0a0a0a;--ink:#f0f0f0;--muted:#555;--border:#222;--bg:#0a0a0a}
+    body.fullscreen header,body.fullscreen footer,body.fullscreen .eyebrow,body.fullscreen .controls{opacity:0;pointer-events:none;height:0;overflow:hidden;padding:0;margin:0;border:none}
+    body.fullscreen main{padding:0;background:#0a0a0a}
+    body.fullscreen .clock-time{font-size:clamp(5rem,22vw,18rem);color:#f0f0f0}
+    body.fullscreen .clock-seconds{color:#444}
+    body.fullscreen .clock-date{color:#333;margin-top:1.5rem}
+    body.fullscreen .fs-hint{opacity:1}
+
+    .fs-btn{position:fixed;bottom:2rem;right:2rem;background:rgba(0,0,0,.15);border:1px solid rgba(0,0,0,.12);border-radius:8px;padding:.5rem 1rem;font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--muted);cursor:pointer;transition:all .2s;z-index:100;backdrop-filter:blur(4px)}
+    .fs-btn:hover{background:rgba(0,0,0,.25);color:var(--ink)}
+    body.fullscreen .fs-btn{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:#444}
+    body.fullscreen .fs-btn:hover{background:rgba(255,255,255,.1);color:#888}
+
+    .fs-hint{position:fixed;bottom:5rem;right:2rem;font-size:.72rem;color:#333;opacity:0;transition:opacity .3s;pointer-events:none}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+
+<main>
+  <p class="eyebrow">🕐 Utility</p>
+  <div class="clock-wrap">
+    <div>
+      <span class="clock-time" id="clockTime">00:00</span><span class="clock-seconds" id="clockSec">:00</span><span class="clock-ampm" id="clockAmpm"></span>
+    </div>
+    <div class="clock-date" id="clockDate"></div>
+  </div>
+  <div class="controls">
+    <button class="ctrl-btn active" id="btn12" onclick="set12()">12h</button>
+    <button class="ctrl-btn" id="btn24" onclick="set24()">24h</button>
+    <button class="ctrl-btn active" id="btnSec" onclick="toggleSec()">Seconds</button>
+    <button class="ctrl-btn active" id="btnDate" onclick="toggleDate()">Date</button>
+  </div>
+</main>
+
+<button class="fs-btn" id="fsBtn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+<p class="fs-hint">Press Esc or click anywhere to exit</p>
+<footer>All Apps by MrPress</footer>
+
+<script>
+  let use24 = false, showSec = true, showDate = true;
+
+  const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function tick() {
+    const now = new Date();
+    let h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+    let ampm = '';
+
+    if (!use24) {
+      ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+    }
+
+    document.getElementById('clockTime').textContent = pad(h) + ':' + pad(m);
+    document.getElementById('clockSec').textContent  = showSec ? ':' + pad(s) : '';
+    document.getElementById('clockSec').style.display = showSec ? '' : 'none';
+    document.getElementById('clockAmpm').textContent  = !use24 ? ampm : '';
+    document.getElementById('clockDate').style.display = showDate ? '' : 'none';
+    if (showDate) {
+      document.getElementById('clockDate').textContent =
+        DAYS[now.getDay()] + ', ' + MONTHS[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+    }
+  }
+
+  function pad(n) { return String(n).padStart(2,'0'); }
+
+  function set12() {
+    use24 = false;
+    document.getElementById('btn12').classList.add('active');
+    document.getElementById('btn24').classList.remove('active');
+    tick();
+  }
+  function set24() {
+    use24 = true;
+    document.getElementById('btn24').classList.add('active');
+    document.getElementById('btn12').classList.remove('active');
+    tick();
+  }
+  function toggleSec() {
+    showSec = !showSec;
+    document.getElementById('btnSec').classList.toggle('active', showSec);
+    tick();
+  }
+  function toggleDate() {
+    showDate = !showDate;
+    document.getElementById('btnDate').classList.toggle('active', showDate);
+    tick();
+  }
+
+  function toggleFullscreen() {
+    const isFs = document.body.classList.toggle('fullscreen');
+    document.getElementById('fsBtn').textContent = isFs ? '✕ Exit' : '⛶ Fullscreen';
+    if (isFs) {
+      document.addEventListener('click', exitOnClick);
+      document.addEventListener('keydown', exitOnEsc);
+    }
+  }
+
+  function exitOnClick(e) {
+    if (e.target.id === 'fsBtn') return;
+    exitFs();
+  }
+  function exitOnEsc(e) {
+    if (e.key === 'Escape') exitFs();
+  }
+  function exitFs() {
+    document.body.classList.remove('fullscreen');
+    document.getElementById('fsBtn').textContent = '⛶ Fullscreen';
+    document.removeEventListener('click', exitOnClick);
+    document.removeEventListener('keydown', exitOnEsc);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

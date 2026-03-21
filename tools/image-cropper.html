@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Cropper — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:960px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .dropzone{border:1.5px dashed var(--border);border-radius:12px;padding:3rem 2rem;text-align:center;background:var(--card);cursor:pointer;transition:border-color .2s;position:relative}
+    .dropzone:hover,.dropzone.drag-over{border-color:var(--ink);background:#faf9f5}
+    .dropzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .drop-icon{font-size:2.2rem;display:block;margin-bottom:.75rem}
+    .drop-title{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:.3rem}
+    .drop-sub{font-size:.85rem;color:var(--muted)}
+    .panel{display:none;margin-top:1.5rem}
+    .panel.visible{display:block}
+    .layout{display:grid;grid-template-columns:1fr 260px;gap:1.5rem;align-items:start}
+
+    /* ── Crop canvas area ── */
+    .crop-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .crop-label{padding:.65rem 1rem;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);display:flex;justify-content:space-between}
+    .crop-stage{position:relative;overflow:hidden;background:repeating-conic-gradient(#ddd 0% 25%,#f0f0f0 0% 50%) 0 0/16px 16px;cursor:crosshair;user-select:none}
+    #cropImg{display:block;max-width:100%}
+    .crop-overlay{position:absolute;inset:0;pointer-events:none}
+    .crop-box{position:absolute;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.45);cursor:move;pointer-events:all}
+    .crop-box::before,.crop-box::after{content:'';position:absolute;background:#fff}
+    /* handles */
+    .handle{position:absolute;width:10px;height:10px;background:#fff;border:1.5px solid #aaa;border-radius:2px}
+    .handle.nw{top:-5px;left:-5px;cursor:nw-resize}
+    .handle.ne{top:-5px;right:-5px;cursor:ne-resize}
+    .handle.sw{bottom:-5px;left:-5px;cursor:sw-resize}
+    .handle.se{bottom:-5px;right:-5px;cursor:se-resize}
+    .handle.n{top:-5px;left:50%;transform:translateX(-50%);cursor:n-resize}
+    .handle.s{bottom:-5px;left:50%;transform:translateX(-50%);cursor:s-resize}
+    .handle.w{left:-5px;top:50%;transform:translateY(-50%);cursor:w-resize}
+    .handle.e{right:-5px;top:50%;transform:translateY(-50%);cursor:e-resize}
+
+    /* ── Controls panel ── */
+    .ctrl-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.3rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+    .coord-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.75rem}
+    .coord-group{display:flex;flex-direction:column;gap:.3rem}
+    .coord-group label{font-size:.72rem;color:var(--muted)}
+    .coord-group input{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:.45rem .6rem;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--ink);outline:none;width:100%}
+    .coord-group input:focus{border-color:var(--ink)}
+    .ratio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-bottom:.5rem}
+    .ratio-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:.45rem .3rem;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s;text-align:center}
+    .ratio-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .ratio-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .fmt-row{display:flex;gap:.4rem;margin-bottom:.75rem}
+    .fmt-btn{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:.4rem;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s;text-align:center}
+    .fmt-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .fmt-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .size-info{font-size:.78rem;color:var(--muted);text-align:center;margin-bottom:.75rem}
+    .btn{width:100%;padding:.85rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:all .2s;border:none;text-align:center;margin-bottom:.5rem}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
+    .btn-secondary:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:760px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.layout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">✂️ Image</p>
+  <h1>Image Cropper</h1>
+  <p class="subtitle">Upload an image, drag to select a crop region, and download the result. Set exact coordinates or lock to an aspect ratio.</p>
+
+  <div class="dropzone" id="dropzone">
+    <input type="file" id="fileInput" accept="image/*" />
+    <span class="drop-icon">📂</span>
+    <p class="drop-title">Drop an image here</p>
+    <p class="drop-sub">or click to browse</p>
+  </div>
+
+  <div class="panel" id="panel">
+    <div class="layout">
+      <!-- Crop stage -->
+      <div class="crop-wrap">
+        <div class="crop-label"><span>Drag to crop</span><span id="stageMeta"></span></div>
+        <div class="crop-stage" id="cropStage">
+          <img id="cropImg" src="" alt="" draggable="false" />
+          <div class="crop-box" id="cropBox">
+            <div class="handle nw" data-dir="nw"></div>
+            <div class="handle ne" data-dir="ne"></div>
+            <div class="handle sw" data-dir="sw"></div>
+            <div class="handle se" data-dir="se"></div>
+            <div class="handle n"  data-dir="n"></div>
+            <div class="handle s"  data-dir="s"></div>
+            <div class="handle w"  data-dir="w"></div>
+            <div class="handle e"  data-dir="e"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div>
+        <div class="ctrl-card">
+          <p class="card-title">Aspect ratio</p>
+          <div class="ratio-grid" id="ratioGrid">
+            <button class="ratio-btn active" data-r="0">Free</button>
+            <button class="ratio-btn" data-r="1">1:1</button>
+            <button class="ratio-btn" data-r="1.333">4:3</button>
+            <button class="ratio-btn" data-r="1.778">16:9</button>
+            <button class="ratio-btn" data-r="0.667">2:3</button>
+            <button class="ratio-btn" data-r="2.333">7:3</button>
+          </div>
+        </div>
+
+        <div class="ctrl-card">
+          <p class="card-title">Crop coordinates (px)</p>
+          <div class="coord-grid">
+            <div class="coord-group"><label>X</label><input type="number" id="cx" min="0" oninput="fromCoords()" /></div>
+            <div class="coord-group"><label>Y</label><input type="number" id="cy" min="0" oninput="fromCoords()" /></div>
+            <div class="coord-group"><label>Width</label><input type="number" id="cw" min="1" oninput="fromCoords()" /></div>
+            <div class="coord-group"><label>Height</label><input type="number" id="ch" min="1" oninput="fromCoords()" /></div>
+          </div>
+          <div class="size-info" id="sizeInfo">—</div>
+        </div>
+
+        <div class="ctrl-card">
+          <p class="card-title">Output format</p>
+          <div class="fmt-row" id="fmtRow">
+            <button class="fmt-btn active" data-fmt="image/png"  data-ext="png">PNG</button>
+            <button class="fmt-btn" data-fmt="image/jpeg" data-ext="jpg">JPG</button>
+            <button class="fmt-btn" data-fmt="image/webp" data-ext="webp">WebP</button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="cropAndDownload()">✂️ Crop & Download</button>
+        <button class="btn btn-secondary" onclick="resetAll()">↩ New image</button>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<canvas id="canvas" style="display:none"></canvas>
+<script>
+  let natW=0, natH=0, scaleX=1, scaleY=1;
+  let box={x:0,y:0,w:0,h:0}; // in display pixels
+  let dragState=null, lockedRatio=0;
+  let outFmt='image/png', outExt='png';
+  let fileName='crop';
+
+  const stage   = document.getElementById('cropStage');
+  const cropBox = document.getElementById('cropBox');
+  const img     = document.getElementById('cropImg');
+
+  // File load
+  document.getElementById('fileInput').addEventListener('change', e=>{if(e.target.files[0])loadFile(e.target.files[0])});
+  const dz=document.getElementById('dropzone');
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over')});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0])});
+
+  function loadFile(file){
+    fileName=file.name.replace(/\.[^.]+$/,'');
+    const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      natW=img.naturalWidth; natH=img.naturalHeight;
+      document.getElementById('stageMeta').textContent=natW+'×'+natH+'px';
+      dz.style.display='none';
+      document.getElementById('panel').classList.add('visible');
+      setTimeout(initCrop,50);
+    };
+    img.src=url;
+  }
+
+  function initCrop(){
+    const dispW=img.offsetWidth, dispH=img.offsetHeight;
+    scaleX=natW/dispW; scaleY=natH/dispH;
+    // default: 80% centered
+    const pad=dispW*.1;
+    box={x:pad, y:dispH*.1, w:dispW*.8, h:dispH*.8};
+    if(lockedRatio>0) box.h=box.w/lockedRatio;
+    renderBox();
+  }
+
+  function renderBox(){
+    cropBox.style.left  = box.x+'px';
+    cropBox.style.top   = box.y+'px';
+    cropBox.style.width = box.w+'px';
+    cropBox.style.height= box.h+'px';
+    updateCoords();
+  }
+
+  function updateCoords(){
+    const rx=Math.round(box.x*scaleX), ry=Math.round(box.y*scaleY);
+    const rw=Math.round(box.w*scaleX), rh=Math.round(box.h*scaleY);
+    document.getElementById('cx').value=rx;
+    document.getElementById('cy').value=ry;
+    document.getElementById('cw').value=rw;
+    document.getElementById('ch').value=rh;
+    document.getElementById('sizeInfo').textContent=rw+' × '+rh+' px';
+  }
+
+  function fromCoords(){
+    const rx=parseInt(document.getElementById('cx').value)||0;
+    const ry=parseInt(document.getElementById('cy').value)||0;
+    const rw=parseInt(document.getElementById('cw').value)||10;
+    const rh=parseInt(document.getElementById('ch').value)||10;
+    box={x:rx/scaleX, y:ry/scaleY, w:rw/scaleX, h:rh/scaleY};
+    renderBox();
+  }
+
+  // Drag to create new crop area
+  stage.addEventListener('mousedown',e=>{
+    if(e.target===cropBox||e.target.classList.contains('handle'))return;
+    const r=stage.getBoundingClientRect();
+    const sx=e.clientX-r.left, sy=e.clientY-r.top;
+    dragState={type:'create',sx,sy};
+    e.preventDefault();
+  });
+
+  // Move box
+  cropBox.addEventListener('mousedown',e=>{
+    if(e.target.classList.contains('handle'))return;
+    const r=stage.getBoundingClientRect();
+    dragState={type:'move',ox:e.clientX-r.left-box.x,oy:e.clientY-r.top-box.y};
+    e.preventDefault();
+  });
+
+  // Resize handles
+  cropBox.querySelectorAll('.handle').forEach(h=>{
+    h.addEventListener('mousedown',e=>{
+      const r=stage.getBoundingClientRect();
+      dragState={type:'resize',dir:h.dataset.dir,startBox:{...box},sx:e.clientX-r.left,sy:e.clientY-r.top};
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  });
+
+  document.addEventListener('mousemove',e=>{
+    if(!dragState)return;
+    const r=stage.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    const dispW=img.offsetWidth, dispH=img.offsetHeight;
+
+    if(dragState.type==='create'){
+      let x=Math.min(mx,dragState.sx), y=Math.min(my,dragState.sy);
+      let w=Math.abs(mx-dragState.sx), h=Math.abs(my-dragState.sy);
+      if(lockedRatio>0) h=w/lockedRatio;
+      box={x:Math.max(0,x), y:Math.max(0,y), w:Math.min(w,dispW-x), h:Math.min(h,dispH-y)};
+    } else if(dragState.type==='move'){
+      box.x=Math.max(0,Math.min(mx-dragState.ox, dispW-box.w));
+      box.y=Math.max(0,Math.min(my-dragState.oy, dispH-box.h));
+    } else if(dragState.type==='resize'){
+      const {dir,startBox,sx,sy}=dragState;
+      let dx=mx-sx, dy=my-sy;
+      let {x,y,w,h}=startBox;
+      if(dir.includes('e')) w=Math.max(10,w+dx);
+      if(dir.includes('s')) h=Math.max(10,h+dy);
+      if(dir.includes('w')){ x+=dx; w=Math.max(10,w-dx); }
+      if(dir.includes('n')){ y+=dy; h=Math.max(10,h-dy); }
+      if(lockedRatio>0){ h=w/lockedRatio; }
+      box={x:Math.max(0,x), y:Math.max(0,y), w:Math.min(w,dispW-Math.max(0,x)), h:Math.min(h,dispH-Math.max(0,y))};
+    }
+    renderBox();
+  });
+
+  document.addEventListener('mouseup',()=>{ dragState=null; });
+
+  // Aspect ratio
+  document.getElementById('ratioGrid').addEventListener('click',e=>{
+    const btn=e.target.closest('.ratio-btn');
+    if(!btn)return;
+    document.querySelectorAll('.ratio-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    lockedRatio=parseFloat(btn.dataset.r);
+    if(lockedRatio>0){ box.h=box.w/lockedRatio; renderBox(); }
+  });
+
+  // Format
+  document.getElementById('fmtRow').addEventListener('click',e=>{
+    const btn=e.target.closest('.fmt-btn');
+    if(!btn)return;
+    document.querySelectorAll('.fmt-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    outFmt=btn.dataset.fmt; outExt=btn.dataset.ext;
+  });
+
+  function cropAndDownload(){
+    if(!natW)return;
+    const rx=Math.round(box.x*scaleX), ry=Math.round(box.y*scaleY);
+    const rw=Math.max(1,Math.round(box.w*scaleX)), rh=Math.max(1,Math.round(box.h*scaleY));
+    const canvas=document.getElementById('canvas');
+    canvas.width=rw; canvas.height=rh;
+    const ctx=canvas.getContext('2d');
+    if(outFmt==='image/jpeg'){ctx.fillStyle='#fff';ctx.fillRect(0,0,rw,rh);}
+    ctx.drawImage(img, rx,ry,rw,rh, 0,0,rw,rh);
+    const a=document.createElement('a');
+    a.download=fileName+'-cropped.'+outExt;
+    a.href=canvas.toDataURL(outFmt,0.92);
+    a.click();
+  }
+
+  function resetAll(){
+    dz.style.display='';
+    document.getElementById('panel').classList.remove('visible');
+    document.getElementById('fileInput').value='';
+    natW=natH=0;
+  }
+
+  // Touch support
+  function toMouse(touch, el){
+    const r=el.getBoundingClientRect();
+    return{clientX:touch.clientX,clientY:touch.clientY};
+  }
+  stage.addEventListener('touchstart',e=>{const t=e.touches[0];stage.dispatchEvent(new MouseEvent('mousedown',{clientX:t.clientX,clientY:t.clientY,bubbles:true}));},{passive:true});
+  document.addEventListener('touchmove',e=>{if(dragState){const t=e.touches[0];document.dispatchEvent(new MouseEvent('mousemove',{clientX:t.clientX,clientY:t.clientY}));e.preventDefault();}},{passive:false});
+  document.addEventListener('touchend',()=>document.dispatchEvent(new MouseEvent('mouseup')));
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>
