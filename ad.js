@@ -11,10 +11,10 @@
  * ============================================================
  */
 
-const AD_ENABLED = true;                    // ← true/false to toggle sitewide
+const AD_ENABLED = false;                    // ← true/false to toggle sitewide
 const AD_IMAGE   = "ads/ad.png";           // ← path to your ad image in the repo
-const AD_LINK    = "https://example.com";  // ← where clicking the ad takes the user
-const AD_ALT     = "Advertisement";        // ← alt text for the image
+const AD_LINK    = "https://hazwoper-osha.com";  // ← where clicking the ad takes the user
+const AD_ALT     = "Advertisement Goes Here";        // ← alt text for the image
 
 // ── Do not edit below unless you know what you're doing ──────
 
