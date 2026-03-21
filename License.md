@@ -1,3 +1,6 @@
+
+--  VIEW IN CODE WINDOW --
+
 ================================================================================
                     MRPRESS LLC PROPRIETARY SOFTWARE LICENSE
                           AND END USER LICENSE AGREEMENT
