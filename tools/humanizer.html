@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Humanizer — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:980px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:1.5rem;line-height:1.6}
+
+    /* Strength pills */
+    .strength-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center}
+    .strength-label{font-size:.78rem;color:var(--muted);margin-right:.25rem}
+    .strength-btn{background:transparent;border:1.5px solid var(--border);border-radius:99px;padding:.35rem .9rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .strength-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .strength-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+
+    /* Layout */
+    .layout{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem}
+    .panel{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+    .panel-head{padding:.7rem 1rem;border-bottom:1px solid var(--border);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+    .word-count{font-size:.75rem;color:var(--muted)}
+    textarea{flex:1;width:100%;background:transparent;border:none;padding:1rem;font-family:'DM Sans',sans-serif;font-size:.93rem;color:var(--ink);resize:none;outline:none;line-height:1.75;min-height:260px}
+    textarea::placeholder{color:var(--muted)}
+    .output-area{flex:1;padding:1rem;font-size:.93rem;line-height:1.75;color:var(--ink);min-height:260px;white-space:pre-wrap;word-break:break-word;position:relative}
+    .output-area.empty{color:var(--muted);font-style:italic}
+    .output-area.streaming::after{content:'▋';animation:blink .7s step-end infinite;color:var(--muted)}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+    /* Patterns detected */
+    .patterns-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.3rem;margin-bottom:1rem;display:none}
+    .patterns-card.visible{display:block}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem}
+    .patterns-list{display:flex;gap:.4rem;flex-wrap:wrap}
+    .pattern-tag{background:#fdf0f0;border:1px solid #f5c1c1;border-radius:99px;padding:.2rem .7rem;font-size:.75rem;color:#b03030}
+
+    /* Actions */
+    .action-row{display:flex;gap:.75rem}
+    .btn{flex:1;padding:.9rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1.05rem;cursor:pointer;transition:all .2s;border:none;text-align:center}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-primary:disabled{opacity:.35;cursor:not-allowed}
+    .btn-sm{flex:0;padding:.9rem 1.3rem;background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .btn-sm:hover{border-color:var(--ink);color:var(--ink)}
+    .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:.4rem}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Pattern indicators legend */
+    .legend{font-size:.78rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.7}
+    .legend span{display:inline-block;background:#fdf0f0;border:1px solid #f5c1c1;border-radius:4px;padding:.05rem .45rem;font-size:.72rem;color:#b03030;margin:0 .15rem}
+
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:760px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.layout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🧑 Text</p>
+  <h1>Humanizer</h1>
+  <p class="subtitle">Removes AI writing patterns — significance inflation, promotional language, em dash overuse, vague attributions, filler phrases, and more. Powered by AI, guided by Wikipedia's Signs of AI Writing guide.</p>
+
+  <div class="strength-row">
+    <span class="strength-label">Intensity:</span>
+    <button class="strength-btn" data-s="light">Light</button>
+    <button class="strength-btn active" data-s="standard">Standard</button>
+    <button class="strength-btn" data-s="aggressive">Aggressive</button>
+  </div>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="panel-head"><span>Original text</span><span class="word-count" id="inCount">0 words</span></div>
+      <textarea id="inputText" placeholder="Paste your AI-generated text here…" oninput="countIn()"></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><span>Humanized</span><span class="word-count" id="outCount"></span></div>
+      <div class="output-area empty" id="outputArea">Your humanized text will appear here.</div>
+    </div>
+  </div>
+
+  <div class="patterns-card" id="patternsCard">
+    <p class="card-title">AI patterns detected & removed</p>
+    <div class="patterns-list" id="patternsList"></div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn btn-primary" id="humanizeBtn" onclick="humanize()">🧑 Humanize</button>
+    <button class="btn-sm" onclick="copyOut()">Copy</button>
+    <button class="btn-sm" onclick="clearAll()">Clear</button>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let strength = 'standard';
+  let streaming = false;
+
+  document.querySelectorAll('[data-s]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-s]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      strength = btn.dataset.s;
+    });
+  });
+
+  function countIn() {
+    const t = document.getElementById('inputText').value.trim();
+    document.getElementById('inCount').textContent = (t ? t.split(/\s+/).length : 0) + ' words';
+  }
+
+  function buildSystemPrompt() {
+    const intensityNote = {
+      light: 'Make light edits — fix only the most glaring AI patterns while keeping most of the original phrasing intact.',
+      standard: 'Rewrite thoroughly — fix all identified AI patterns while preserving the core meaning and intent.',
+      aggressive: 'Aggressively rewrite — strip all AI patterns and inject strong personality, varied rhythm, and specific language. The result may differ substantially from the original.',
+    }[strength];
+
+    return `You are a writing editor that removes AI-generated writing patterns to make text sound natural and human. ${intensityNote}
+
+The patterns you must fix, based on Wikipedia's "Signs of AI writing" guide:
+
+1. SIGNIFICANCE INFLATION — Remove phrases like "stands as a testament", "marking a pivotal moment", "underscores its importance", "evolving landscape", "key turning point", "indelible mark". Say what happened directly.
+
+2. PROMOTIONAL LANGUAGE — Remove "nestled", "vibrant", "breathtaking", "groundbreaking", "renowned", "stunning", "boasts", "showcasing", "commitment to excellence". Use plain descriptive language.
+
+3. SUPERFICIAL -ING PHRASES — Remove tacked-on participle phrases like "highlighting the importance of...", "reflecting broader trends...", "contributing to...", "underscoring...". Cut them or integrate the meaning properly.
+
+4. VAGUE ATTRIBUTIONS — Replace "experts argue", "industry observers note", "some critics believe", "many have said" with specific named sources or cut the attribution.
+
+5. EM DASH OVERUSE — Replace em dashes (—) used as all-purpose connectors with proper punctuation or restructured sentences.
+
+6. RULE OF THREE / SYNONYM CYCLING — Remove patterns like "The system serves as a catalyst. The assistant functions as a partner. The tool stands as a foundation." Pick one, cut the rest.
+
+7. AI VOCABULARY — Remove: delve, utilize, leverage (metaphorical), robust, seamless, holistic, synergy, paradigm, multifaceted, nuanced, transformative, cutting-edge, game-changing, innovative. Use plain words.
+
+8. NEGATIVE PARALLELISM — Remove "It's not just X; it's Y" constructions. Just say Y.
+
+9. COPULA AVOIDANCE — Replace "serves as", "functions as", "stands as", "acts as" with "is" or "are".
+
+10. EXCESSIVE HEDGING — Replace "could potentially possibly be argued that it might" with direct statements.
+
+11. FILLER PHRASES — Remove "In order to", "It is important to note that", "At this point in time", "Due to the fact that", "has the ability to".
+
+12. GENERIC CONCLUSIONS — Remove "the future looks bright", "exciting times lie ahead", "this represents a major step", "journey toward excellence".
+
+13. CHATBOT ARTIFACTS — Remove "Great question!", "I hope this helps!", "Let me know if you'd like more", "Certainly!", "Absolutely!".
+
+14. EMOJI + BULLET ABUSE — Remove decorative emojis and turn excessive bullet lists into prose where appropriate.
+
+After rewriting, do a final check: ask yourself "What still makes this obviously AI-generated?" then fix those remaining tells.
+
+Output ONLY the humanized text. No preamble, no explanation, no "Here is the rewritten version:". Just the clean text.
+
+Then on a new line add exactly this separator: ---PATTERNS---
+Then list (one per line) the AI pattern types you found and fixed, using short labels like: "Significance inflation", "Em dash overuse", "AI vocabulary (leverage, robust)", "Vague attribution", etc. Only list patterns that were actually present.`;
+  }
+
+  async function humanize() {
+    const text = document.getElementById('inputText').value.trim();
+    if (!text) { alert('Please enter some text first.'); return; }
+    if (streaming) return;
+
+    const btn = document.getElementById('humanizeBtn');
+    const output = document.getElementById('outputArea');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Humanizing…';
+    output.classList.remove('empty');
+    output.classList.add('streaming');
+    output.textContent = '';
+    document.getElementById('patternsCard').classList.remove('visible');
+    streaming = true;
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 2048,
+          stream: true,
+          system: buildSystemPrompt(),
+          messages: [{ role: 'user', content: text }]
+        })
+      });
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let fullText = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const json = JSON.parse(data);
+            if (json.type === 'content_block_delta' && json.delta?.text) {
+              fullText += json.delta.text;
+              // Only show the text part (before ---PATTERNS---)
+              const splitIdx = fullText.indexOf('---PATTERNS---');
+              output.textContent = splitIdx >= 0 ? fullText.slice(0, splitIdx).trim() : fullText;
+            }
+          } catch {}
+        }
+      }
+
+      // Parse out patterns
+      const splitIdx = fullText.indexOf('---PATTERNS---');
+      const cleanText = splitIdx >= 0 ? fullText.slice(0, splitIdx).trim() : fullText.trim();
+      const patternsRaw = splitIdx >= 0 ? fullText.slice(splitIdx + 14).trim() : '';
+
+      output.textContent = cleanText;
+      output.classList.remove('streaming');
+
+      // Show patterns
+      if (patternsRaw) {
+        const patterns = patternsRaw.split('\n').map(p => p.trim()).filter(p => p && p.length > 1);
+        if (patterns.length) {
+          const list = document.getElementById('patternsList');
+          list.innerHTML = patterns.map(p => `<span class="pattern-tag">${p}</span>`).join('');
+          document.getElementById('patternsCard').classList.add('visible');
+        }
+      }
+
+      const words = cleanText.split(/\s+/).filter(Boolean).length;
+      document.getElementById('outCount').textContent = words + ' words';
+
+    } catch (err) {
+      output.textContent = 'Something went wrong. Please try again.';
+      output.classList.add('empty');
+      output.classList.remove('streaming');
+    }
+
+    streaming = false;
+    btn.disabled = false;
+    btn.textContent = '🧑 Humanize';
+  }
+
+  function copyOut() {
+    const text = document.getElementById('outputArea').textContent;
+    if (!text || text === 'Your humanized text will appear here.') return;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelectorAll('.btn-sm')[0];
+      btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = 'Copy', 1400);
+    });
+  }
+
+  function clearAll() {
+    document.getElementById('inputText').value = '';
+    document.getElementById('outputArea').textContent = 'Your humanized text will appear here.';
+    document.getElementById('outputArea').classList.add('empty');
+    document.getElementById('inCount').textContent = '0 words';
+    document.getElementById('outCount').textContent = '';
+    document.getElementById('patternsCard').classList.remove('visible');
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>
