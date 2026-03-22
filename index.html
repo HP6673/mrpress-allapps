@@ -75,436 +75,106 @@
   // ============================================================
   //  TOOL LIST — Add a tool by pasting a block here.
   //  Then upload the tool's HTML file to the /tools/ folder.
-  //  That's it — no other files need to change.
   //
-  //  Copy this block to add a tool:
-  //  ─────────────────────────────────────────────────────────
-  //  {
-  //    name:        "",
-  //    description: "",
-  //    icon:        "",
-  //    category:    "",
-  //    url:         "tools/.html"
-  //  },
+  //  Template:
+  //  { name:"", description:"", icon:"", category:"", url:"tools/.html" },
   // ============================================================
 
   const TOOLS = [
 
-    // ── Text ─────────────────────────────────────────────────
-    {
-      name:        "Word Counter",
-      description: "Count words, characters, sentences and reading time instantly.",
-      icon:        "📝",
-      category:    "Text",
-      url:         "tools/word-counter.html"
-    },
-
-    // ── Image ────────────────────────────────────────────────
-    {
-      name:        "Image Converter",
-      description: "Convert any image between JPG, PNG, GIF, BMP, TIFF, and WebP — right in your browser.",
-      icon:        "🖼️",
-      category:    "Image",
-      url:         "tools/image-converter.html"
-    },
-    {
-      name:        "Image Rotator",
-      description: "Rotate or flip any image by any angle. Download instantly.",
-      icon:        "🔄",
-      category:    "Image",
-      url:         "tools/image-rotator.html"
-    },
-    {
-      name:        "Image Quality",
-      description: "Compress images and adjust quality. Live before/after comparison with file size savings.",
-      icon:        "🗜️",
-      category:    "Image",
-      url:         "tools/image-quality.html"
-    },
-    {
-      name:        "Image Grayscaler",
-      description: "Convert images to grayscale, sepia, cool/warm tint, or invert. Adjust brightness and contrast.",
-      icon:        "⬛",
-      category:    "Image",
-      url:         "tools/image-grayscaler.html"
-    },
+    // ── Business ─────────────────────────────────────────────
+    { name:"Invoice Generator", description:"Create a professional invoice or receipt in seconds. Print or save as PDF.", icon:"📄", category:"Business", url:"tools/invoice-generator.html" },
+    { name:"Business Calculators", description:"ROI, break-even point, and profit margin — three essential business calculators in one.", icon:"💼", category:"Business", url:"tools/business-calculators.html" },
 
     // ── Calculator ───────────────────────────────────────────
-    {
-      name:        "Tip Calculator",
-      description: "Calculate tip and split the bill between any number of people.",
-      icon:        "🧾",
-      category:    "Calculator",
-      url:         "tools/tip-calculator.html"
-    },
-    {
-      name:        "BMI Calculator",
-      description: "Calculate your Body Mass Index in metric or imperial with a visual scale.",
-      icon:        "⚖️",
-      category:    "Calculator",
-      url:         "tools/bmi-calculator.html"
-    },
-
-    // ── Finance ──────────────────────────────────────────────
-    {
-      name:        "Currency Converter",
-      description: "Live exchange rates for 160+ currencies with popular pair shortcuts.",
-      icon:        "💱",
-      category:    "Finance",
-      url:         "tools/currency-converter.html"
-    },
-    {
-      name:        "Loan Calculator",
-      description: "Calculate monthly payments, total interest, and a full amortization schedule.",
-      icon:        "🏦",
-      category:    "Finance",
-      url:         "tools/loan-calculator.html"
-    },
+    { name:"Calculator", description:"A clean, fast basic calculator. Supports keyboard input.", icon:"🔢", category:"Calculator", url:"tools/basic-calculator.html" },
+    { name:"Scientific Calculator", description:"Full scientific calculator with trig, log, factorial, memory, and RAD/DEG mode.", icon:"🔬", category:"Calculator", url:"tools/scientific-calculator.html" },
+    { name:"BMI Calculator", description:"Calculate your Body Mass Index in metric or imperial with a visual scale.", icon:"⚖️", category:"Calculator", url:"tools/bmi-calculator.html" },
+    { name:"GPA Calculator", description:"Add courses, grades, and credit hours to calculate your GPA. Supports 4.0 and 5.0 scales.", icon:"🎓", category:"Calculator", url:"tools/gpa-calculator.html" },
+    { name:"Percentage Calculator", description:"Six common percentage calculations — X% of Y, change, increase, discount and more.", icon:"％", category:"Calculator", url:"tools/percentage-calculator.html" },
+    { name:"Tip Calculator", description:"Calculate tip and split the bill between any number of people.", icon:"🧾", category:"Calculator", url:"tools/tip-calculator.html" },
+    { name:"Final Grade Calculator", description:"Find out what score you need on your final exam to achieve your target grade.", icon:"📝", category:"Calculator", url:"tools/final-grade-calculator.html" },
 
     // ── Design ───────────────────────────────────────────────
-    {
-      name:        "Color Picker",
-      description: "Pick any color and get HEX, RGB, and HSL values instantly. Includes shades and tints.",
-      icon:        "🎨",
-      category:    "Design",
-      url:         "tools/color-picker.html"
-    },
+    { name:"Color Picker", description:"Pick any color and get HEX, RGB, and HSL values instantly. Includes shades and tints.", icon:"🎨", category:"Design", url:"tools/color-picker.html" },
 
-    // ── Business ─────────────────────────────────────────────
-    {
-      name:        "Invoice Generator",
-      description: "Create a professional invoice or receipt in seconds. Print or save as PDF.",
-      icon:        "📄",
-      category:    "Business",
-      url:         "tools/invoice-generator.html"
-    },
+    // ── Document ─────────────────────────────────────────────
+    { name:"Image to PDF", description:"Convert one or more images into a single PDF. Choose page size, fit mode, and margins.", icon:"🖼️", category:"Document", url:"tools/image-to-pdf.html" },
+    { name:"Merge / Split PDF", description:"Combine multiple PDFs into one file, or split a PDF into separate pages or ranges.", icon:"📎", category:"Document", url:"tools/merge-split-pdf.html" },
+    { name:"Save Website as PDF", description:"Open any webpage and save it as a PDF using your browser's built-in print dialog.", icon:"🌐", category:"Document", url:"tools/website-to-pdf.html" },
+    { name:"Slides to PDF", description:"Convert slide screenshots or images into a PDF, or extract PDF pages as images in a ZIP.", icon:"📑", category:"Document", url:"tools/slides-to-pdf.html" },
+    { name:"Watermark PDF", description:"Add a custom text watermark to every page of a PDF. Set opacity, angle, colour, and position.", icon:"💧", category:"Document", url:"tools/watermark-pdf.html" },
+
+    // ── Finance ──────────────────────────────────────────────
+    { name:"Currency Converter", description:"Live exchange rates for 160+ currencies with popular pair shortcuts.", icon:"💱", category:"Finance", url:"tools/currency-converter.html" },
+    { name:"Loan Calculator", description:"Calculate monthly payments, total interest, and a full amortization schedule.", icon:"🏦", category:"Finance", url:"tools/loan-calculator.html" },
+    { name:"Sales Tax Calculator", description:"Calculate sales tax for any US state with average combined state + local rates. Auto-detects your location.", icon:"🧾", category:"Finance", url:"tools/sales-tax.html" },
+
+    // ── Fun ──────────────────────────────────────────────────
+    { name:"Coin Flip", description:"Flip a coin. Tracks your heads and tails streak. Click or press Space.", icon:"🪙", category:"Fun", url:"tools/coin-flip.html" },
+    { name:"CPS Tests", description:"Test your reaction time, mouse click speed (CPS), and spacebar speed — three tests in one.", icon:"⚡", category:"Fun", url:"tools/speed-tests.html" },
+    { name:"Decision Maker", description:"Think of a yes/no question and let fate decide. Yes, No, or Maybe — with mode options.", icon:"🤔", category:"Fun", url:"tools/decision-maker.html" },
+    { name:"Dice Roller", description:"Roll any number of dice — D4, D6, D8, D10, D12, D20, or D100. Up to 12 dice at once.", icon:"🎲", category:"Fun", url:"tools/dice-roller.html" },
+    { name:"Name Wheel", description:"Spin a wheel to randomly pick a winner from your list of names.", icon:"🎡", category:"Fun", url:"tools/name-wheel.html" },
+    { name:"Typing Speed Test", description:"Measure your WPM and accuracy. 15, 30, 60, or 120 second tests with live stats.", icon:"⌨️", category:"Fun", url:"tools/typing-speed.html" },
+
+    // ── GIF ──────────────────────────────────────────────────
+    { name:"GIF Speed Changer", description:"Speed up or slow down any GIF. Preview and download instantly.", icon:"⚡", category:"GIF", url:"tools/gif-speed.html" },
+    { name:"GIF to ZIP", description:"Extract every frame from a GIF as PNG or JPG images, bundled into a ZIP file.", icon:"📦", category:"GIF", url:"tools/gif-to-zip.html" },
+
+    // ── Image ────────────────────────────────────────────────
+    { name:"Image Border", description:"Add a custom border around any image — choose size, colour, and corner radius.", icon:"🖼️", category:"Image", url:"tools/image-border.html" },
+    { name:"Image Converter", description:"Convert any image between JPG, PNG, GIF, BMP, TIFF, and WebP — right in your browser.", icon:"🖼️", category:"Image", url:"tools/image-converter.html" },
+    { name:"Image Cropper", description:"Drag to crop any image. Lock to an aspect ratio or enter exact pixel coordinates.", icon:"✂️", category:"Image", url:"tools/image-cropper.html" },
+    { name:"Image Grayscaler", description:"Convert images to grayscale, sepia, cool/warm tint, or invert. Adjust brightness and contrast.", icon:"⬛", category:"Image", url:"tools/image-grayscaler.html" },
+    { name:"Image Metadata Viewer", description:"View EXIF data, camera settings, GPS location, and file info embedded in any image.", icon:"🔍", category:"Image", url:"tools/image-metadata.html" },
+    { name:"Image Quality", description:"Compress images and adjust quality. Live before/after comparison with file size savings.", icon:"🗜️", category:"Image", url:"tools/image-quality.html" },
+    { name:"Image Rotator", description:"Rotate or flip any image by any angle. Download instantly.", icon:"🔄", category:"Image", url:"tools/image-rotator.html" },
+
+    // ── Math ─────────────────────────────────────────────────
+    { name:"Factor Calculator", description:"Find all factors, factor pairs, and prime factorization of any number. Also calculates GCF and LCM.", icon:"✖️", category:"Math", url:"tools/factor-calculator.html" },
+    { name:"Prime Number Checker", description:"Check if a number is prime, find nearby primes, and list all primes in any range.", icon:"🔢", category:"Math", url:"tools/prime-checker.html" },
+
+    // ── Media ────────────────────────────────────────────────
+    { name:"Volume Changer", description:"Upload any audio or video file, adjust the volume up to 300%, and download the result.", icon:"🔊", category:"Media", url:"tools/volume-changer.html" },
 
     // ── Security ─────────────────────────────────────────────
-    {
-      name:        "Password Generator",
-      description: "Generate strong, random passwords with custom length and character options.",
-      icon:        "🔒",
-      category:    "Security",
-      url:         "tools/password-generator.html"
-    },
+    { name:"Password Generator", description:"Generate strong, random passwords with custom length and character options.", icon:"🔒", category:"Security", url:"tools/password-generator.html" },
+    { name:"Password Strength Checker", description:"Analyse any password's strength, entropy, crack time estimates, and get specific tips to improve it.", icon:"🔐", category:"Security", url:"tools/password-strength.html" },
+
+    // ── Text ─────────────────────────────────────────────────
+    { name:"Extra Space Remover", description:"Clean up messy text — remove double spaces, blank lines, trim edges, fix tabs, and more.", icon:"␣", category:"Text", url:"tools/extra-space-remover.html" },
+    { name:"Humanizer", description:"Remove AI writing patterns — significance inflation, em dashes, filler phrases, vague attributions and more.", icon:"🧑", category:"Text", url:"tools/humanizer.html" },
+    { name:"Paraphraser", description:"Rewrite any text in a different tone — Standard, Formal, Casual, Concise, Creative and more. Powered by AI.", icon:"✍️", category:"Text", url:"tools/paraphraser.html" },
+    { name:"Text Case Converter", description:"Convert text to UPPER, lower, Title, camelCase, snake_case and more.", icon:"Aa", category:"Text", url:"tools/text-case-converter.html" },
+    { name:"Word Counter", description:"Count words, characters, sentences and reading time instantly.", icon:"📝", category:"Text", url:"tools/word-counter.html" },
+    { name:"Word Scrambler", description:"Scramble letters, words, or sentences in multiple modes. Great for puzzles and games.", icon:"🔀", category:"Text", url:"tools/word-scrambler.html" },
 
     // ── Utility ──────────────────────────────────────────────
-    {
-      name:        "QR Code Generator",
-      description: "Turn any URL, text, email, or phone number into a downloadable QR code.",
-      icon:        "📷",
-      category:    "Utility",
-      url:         "tools/qr-generator.html"
-    },
-    {
-      name:        "Unit Converter",
-      description: "Convert between length, weight, temperature, and volume units instantly.",
-      icon:        "📐",
-      category:    "Utility",
-      url:         "tools/unit-converter.html"
-    },
-    {
-      name:        "Timer",
-      description: "Countdown timer and stopwatch with lap tracking, presets, and looping alarm.",
-      icon:        "⏱️",
-      category:    "Utility",
-      url:         "tools/timer.html"
-    },
-
-    // ── ADD MORE TOOLS BELOW ──────────────────────────────────
-    {
-      name:        "Image Border",
-      description: "Add a custom border around any image — choose size, colour, and corner radius.",
-      icon:        "🖼️",
-      category:    "Image",
-      url:         "tools/image-border.html"
-    },
-    {
-      name:        "GIF Speed Changer",
-      description: "Speed up or slow down any GIF. Preview and download instantly.",
-      icon:        "⚡",
-      category:    "GIF",
-      url:         "tools/gif-speed.html"
-    },
-    {
-      name:        "GIF to ZIP",
-      description: "Extract every frame from a GIF as PNG or JPG images, bundled into a ZIP file.",
-      icon:        "📦",
-      category:    "GIF",
-      url:         "tools/gif-to-zip.html"
-    },
-    {
-      name:        "Word Scrambler",
-      description: "Scramble letters, words, or sentences in multiple modes. Great for puzzles and games.",
-      icon:        "🔀",
-      category:    "Text",
-      url:         "tools/word-scrambler.html"
-    },
-    {
-      name:        "Paraphraser",
-      description: "Rewrite any text in a different tone — Standard, Formal, Casual, Concise, Creative and more. Powered by AI.",
-      icon:        "✍️",
-      category:    "Text",
-      url:         "tools/paraphraser.html"
-    },
-    {
-      name:        "Humanizer",
-      description: "Remove AI writing patterns — significance inflation, em dashes, filler phrases, vague attributions and more.",
-      icon:        "🧑",
-      category:    "Text",
-      url:         "tools/humanizer.html"
-    },
-    {
-      name:        "Number Sorter",
-      description: "Paste a list of numbers and sort ascending or descending. Removes duplicates, shows sum, min, and max.",
-      icon:        "🔢",
-      category:    "Utility",
-      url:         "tools/number-sorter.html"
-    },
-    {
-      name:        "Digital Clock",
-      description: "A clean, minimal digital clock. Hit fullscreen to hide everything and use it as a desk clock.",
-      icon:        "🕐",
-      category:    "Utility",
-      url:         "tools/digital-clock.html"
-    },
-    {
-      name:        "Image Cropper",
-      description: "Drag to crop any image. Lock to an aspect ratio or enter exact pixel coordinates.",
-      icon:        "✂️",
-      category:    "Image",
-      url:         "tools/image-cropper.html"
-    },
-    {
-      name:        "Slides to PDF",
-      description: "Convert slide screenshots or images into a PDF, or extract PDF pages as images in a ZIP.",
-      icon:        "📑",
-      category:    "Document",
-      url:         "tools/slides-to-pdf.html"
-    },
-    {
-      name:        "Merge / Split PDF",
-      description: "Combine multiple PDFs into one file, or split a PDF into separate pages or ranges.",
-      icon:        "📎",
-      category:    "Document",
-      url:         "tools/merge-split-pdf.html"
-    },
-    {
-      name:        "Save Website as PDF",
-      description: "Open any webpage and save it as a PDF using your browser's built-in print dialog.",
-      icon:        "🌐",
-      category:    "Document",
-      url:         "tools/website-to-pdf.html"
-    },
-    {
-      name:        "Watermark PDF",
-      description: "Add a custom text watermark to every page of a PDF. Set opacity, angle, colour, and position.",
-      icon:        "💧",
-      category:    "Document",
-      url:         "tools/watermark-pdf.html"
-    },
-    {
-      name:        "Image Metadata Viewer",
-      description: "View EXIF data, camera settings, GPS location, and file info embedded in any image.",
-      icon:        "🔍",
-      category:    "Image",
-      url:         "tools/image-metadata.html"
-    },
-    {
-      name:        "Extra Space Remover",
-      description: "Clean up messy text — remove double spaces, blank lines, trim edges, fix tabs, and more.",
-      icon:        "␣",
-      category:    "Text",
-      url:         "tools/extra-space-remover.html"
-    },
-    {
-      name:        "Username Generator",
-      description: "Generate unique usernames by style — mixed, gamer, professional, adjective+noun and more.",
-      icon:        "👤",
-      category:    "Utility",
-      url:         "tools/username-generator.html"
-    },
-    {
-      name:        "Fake Name Generator",
-      description: "Generate realistic fake identities with name, email, phone, address and job for testing.",
-      icon:        "🪪",
-      category:    "Utility",
-      url:         "tools/fake-name-generator.html"
-    },
-    {
-      name:        "Morse Code",
-      description: "Convert text to Morse code and back. Play it as audio with adjustable speed and pitch.",
-      icon:        "📡",
-      category:    "Utility",
-      url:         "tools/morse-code.html"
-    },
-    {
-      name:        "ZIP Tool",
-      description: "Compress files into a ZIP archive or extract the contents of any ZIP — all in your browser.",
-      icon:        "📦",
-      category:    "Utility",
-      url:         "tools/zip-tool.html"
-    },
-    {
-      name:        "File Size Calculator",
-      description: "Convert between bytes, KB, MB, GB and TB. Check real file sizes and calculate storage capacity.",
-      icon:        "💾",
-      category:    "Utility",
-      url:         "tools/file-size-calculator.html"
-    },
-    {
-      name:        "Image to PDF",
-      description: "Convert one or more images into a single PDF. Choose page size, fit mode, and margins.",
-      icon:        "🖼️",
-      category:    "Document",
-      url:         "tools/image-to-pdf.html"
-    },
-    {
-      name:        "Calculator",
-      description: "A clean, fast basic calculator. Supports keyboard input.",
-      icon:        "🔢",
-      category:    "Calculator",
-      url:         "tools/basic-calculator.html"
-    },
-    {
-      name:        "Scientific Calculator",
-      description: "Full scientific calculator with trig, log, factorial, memory, and RAD/DEG mode.",
-      icon:        "🔬",
-      category:    "Calculator",
-      url:         "tools/scientific-calculator.html"
-    },
-    {
-      name:        "GPA Calculator",
-      description: "Add courses, grades, and credit hours to calculate your GPA. Supports 4.0 and 5.0 scales.",
-      icon:        "🎓",
-      category:    "Calculator",
-      url:         "tools/gpa-calculator.html"
-    },
-    {
-      name:        "Percentage Calculator",
-      description: "Six common percentage calculations — X% of Y, change, increase, discount and more.",
-      icon:        "％",
-      category:    "Calculator",
-      url:         "tools/percentage-calculator.html"
-    },
-    {
-      name:        "Final Grade Calculator",
-      description: "Find out what score you need on your final exam to achieve your target grade.",
-      icon:        "📝",
-      category:    "Calculator",
-      url:         "tools/final-grade-calculator.html"
-    },
-    {
-      name:        "Time & World Clock",
-      description: "Calculate the difference between two dates and times, or check the current time in cities worldwide.",
-      icon:        "🌍",
-      category:    "Utility",
-      url:         "tools/time-world-clock.html"
-    },
-    {
-      name:        "Prime Number Checker",
-      description: "Check if a number is prime, find nearby primes, and list all primes in any range.",
-      icon:        "🔢",
-      category:    "Math",
-      url:         "tools/prime-checker.html"
-    },
-    {
-      name:        "Random Tools",
-      description: "Flip a coin, roll dice (D4 to D100, choose how many), or spin a name wheel to pick a winner.",
-      icon:        "🎲",
-      category:    "Fun",
-      url:         "tools/random-tools.html"
-    },
-    {
-      name:        "Factor Calculator",
-      description: "Find all factors, factor pairs, and prime factorization of any number. Also calculates GCF and LCM.",
-      icon:        "✖️",
-      category:    "Math",
-      url:         "tools/factor-calculator.html"
-    },
-    {
-      name:        "Typing Speed Test",
-      description: "Measure your WPM and accuracy. 15, 30, 60, or 120 second tests with live stats.",
-      icon:        "⌨️",
-      category:    "Fun",
-      url:         "tools/typing-speed.html"
-    },
-    {
-      name:        "CPS Tests",
-      description: "Test your reaction time, mouse click speed (CPS), and spacebar speed — three tests in one.",
-      icon:        "⚡",
-      category:    "Fun",
-      url:         "tools/speed-tests.html"
-    },
-    {
-      name:        "Business Calculators",
-      description: "ROI, break-even point, and profit margin — three essential business calculators in one.",
-      icon:        "💼",
-      category:    "Finance",
-      url:         "tools/business-calculators.html"
-    },
-    {
-      name:        "Sales Tax Calculator",
-      description: "Calculate sales tax for any US state with average combined state + local rates. Auto-detects your location.",
-      icon:        "🧾",
-      category:    "Finance",
-      url:         "tools/sales-tax.html"
-    },
-    {
-      name:        "Password Strength Checker",
-      description: "Analyse any password's strength, entropy, crack time estimates, and get specific tips to improve it.",
-      icon:        "🔐",
-      category:    "Security",
-      url:         "tools/password-strength.html"
-    },
-    {
-      name:        "Website Status Checker",
-      description: "Check if a website is up or down, view response time, and see HTTP status codes.",
-      icon:        "🌐",
-      category:    "Utility",
-      url:         "tools/website-status.html"
-    },
-    {
-      name:        "Random Generator",
-      description: "Generate random numbers from any range, or let the Decision Maker answer your yes/no questions.",
-      icon:        "🎲",
-      category:    "Utility",
-      url:         "tools/random-generator.html"
-    },
-    {
-      name:        "Internet Speed Test",
-      description: "Measure your download speed, upload speed, and ping — runs entirely in your browser.",
-      icon:        "📶",
-      category:    "Utility",
-      url:         "tools/speed-test.html"
-    },
-    {
-      name:        "Volume Changer",
-      description: "Upload any audio or video file, adjust the volume up to 300%, and download the result.",
-      icon:        "🔊",
-      category:    "Media",
-      url:         "tools/volume-changer.html"
-    },
-    {
-      name:        "Nickname Generator",
-      description: "Generate cute, cool, funny, gamer, and short nicknames from any name or word.",
-      icon:        "😄",
-      category:    "Utility",
-      url:         "tools/nickname-generator.html"
-    },
+    { name:"Digital Clock", description:"A clean, minimal digital clock. Hit fullscreen to hide everything and use it as a desk clock.", icon:"🕐", category:"Utility", url:"tools/digital-clock.html" },
+    { name:"Fake Name Generator", description:"Generate realistic fake identities with name, email, phone, address and job for testing.", icon:"🪪", category:"Utility", url:"tools/fake-name-generator.html" },
+    { name:"File Size Calculator", description:"Convert between bytes, KB, MB, GB and TB. Check real file sizes and calculate storage capacity.", icon:"💾", category:"Utility", url:"tools/file-size-calculator.html" },
+    { name:"Internet Speed Test", description:"Measure your download speed, upload speed, and ping — runs entirely in your browser.", icon:"📶", category:"Utility", url:"tools/speed-test.html" },
+    { name:"Morse Code", description:"Convert text to Morse code and back. Play it as audio with adjustable speed and pitch.", icon:"📡", category:"Utility", url:"tools/morse-code.html" },
+    { name:"Nickname Generator", description:"Generate cute, cool, funny, gamer, and short nicknames from any name or word.", icon:"😄", category:"Utility", url:"tools/nickname-generator.html" },
+    { name:"Number Sorter", description:"Paste a list of numbers and sort ascending or descending. Removes duplicates, shows sum, min, and max.", icon:"🔢", category:"Utility", url:"tools/number-sorter.html" },
+    { name:"QR Code Generator", description:"Turn any URL, text, email, or phone number into a downloadable QR code.", icon:"📷", category:"Utility", url:"tools/qr-generator.html" },
+    { name:"Random Number Generator", description:"Generate random numbers from any range. Choose count, toggle no-repeats, view history.", icon:"🎲", category:"Utility", url:"tools/random-number.html" },
+    { name:"Time & World Clock", description:"Calculate the difference between two dates and times, or check the current time in cities worldwide.", icon:"🌍", category:"Utility", url:"tools/time-world-clock.html" },
+    { name:"Timer", description:"Countdown timer and stopwatch with lap tracking, presets, and looping alarm.", icon:"⏱️", category:"Utility", url:"tools/timer.html" },
+    { name:"Unit Converter", description:"Convert between length, weight, temperature, and volume units instantly.", icon:"📐", category:"Utility", url:"tools/unit-converter.html" },
+    { name:"Username Generator", description:"Generate unique usernames by style — mixed, gamer, professional, adjective+noun and more.", icon:"👤", category:"Utility", url:"tools/username-generator.html" },
+    { name:"Website Status Checker", description:"Check if a website is up or down, view response time, and see HTTP status codes.", icon:"🌐", category:"Utility", url:"tools/website-status.html" },
+    { name:"ZIP Tool", description:"Compress files into a ZIP archive or extract the contents of any ZIP — all in your browser.", icon:"📦", category:"Utility", url:"tools/zip-tool.html" },
 
     // ── ADD MORE TOOLS BELOW ──────────────────────────────────
 
   ];
 
-  // ── Sort tools alphabetically ──
   TOOLS.sort((a, b) => a.name.localeCompare(b.name));
-
-  // ── Set copyright year ──
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  // ── Build category filters ──
-  const cats = ['all', ...new Set(TOOLS.map(t => t.category)).keys()].sort((a,b) => a === 'all' ? -1 : b === 'all' ? 1 : a.localeCompare(b));
+  const cats = ['all', ...[...new Set(TOOLS.map(t => t.category))].sort()];
   const filterBar = document.getElementById('filterBar');
   cats.forEach(cat => {
     const btn = document.createElement('button');
@@ -514,42 +184,28 @@
     filterBar.appendChild(btn);
   });
 
-  // ── Render grid ──
-  let activeCat = 'all';
-  let searchQuery = '';
+  let activeCat = 'all', searchQuery = '';
 
   function renderGrid() {
-    const grid  = document.getElementById('toolGrid');
+    const grid = document.getElementById('toolGrid');
     const count = document.getElementById('toolCount');
     const foot  = document.getElementById('footerCount');
-
     const filtered = TOOLS.filter(t => {
-      const matchCat    = activeCat === 'all' || t.category === activeCat;
-      const q           = searchQuery.toLowerCase();
+      const matchCat = activeCat === 'all' || t.category === activeCat;
+      const q = searchQuery.toLowerCase();
       const matchSearch = !q || t.name.toLowerCase().includes(q) || t.description.toLowerCase().includes(q) || t.category.toLowerCase().includes(q);
       return matchCat && matchSearch;
     });
-
     count.textContent = filtered.length + ' tool' + (filtered.length !== 1 ? 's' : '');
     foot.textContent  = TOOLS.length + ' tools total';
     grid.innerHTML    = '';
-
-    if (!filtered.length) {
-      grid.innerHTML = '<div class="empty">No tools found. Try a different search.</div>';
-      return;
-    }
-
+    if (!filtered.length) { grid.innerHTML = '<div class="empty">No tools found. Try a different search.</div>'; return; }
     filtered.forEach((tool, i) => {
       const a = document.createElement('a');
       a.className = 'tool-card';
       a.href = tool.url;
       a.style.animationDelay = (i * 0.04) + 's';
-      a.innerHTML = `
-        <div class="tool-icon">${tool.icon}</div>
-        <div class="tool-name">${tool.name}</div>
-        <div class="tool-desc">${tool.description}</div>
-        <span class="tool-tag">${tool.category}</span>
-      `;
+      a.innerHTML = `<div class="tool-icon">${tool.icon}</div><div class="tool-name">${tool.name}</div><div class="tool-desc">${tool.description}</div><span class="tool-tag">${tool.category}</span>`;
       grid.appendChild(a);
     });
   }
