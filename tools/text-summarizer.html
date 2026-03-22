@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text Summarizer — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:900px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:1.5rem;line-height:1.6}
+    .opts-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center}
+    .opts-row label{font-size:.82rem;color:var(--muted);margin-right:.25rem}
+    .opt-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:99px;padding:.35rem .9rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .opt-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .opt-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .layout{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem}
+    .panel{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+    .panel-head{padding:.7rem 1rem;border-bottom:1px solid var(--border);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+    .word-ct{font-size:.75rem;color:var(--muted)}
+    textarea{flex:1;width:100%;background:transparent;border:none;padding:1rem;font-family:'DM Sans',sans-serif;font-size:.93rem;color:var(--ink);resize:none;outline:none;line-height:1.75;min-height:260px}
+    textarea::placeholder{color:var(--muted)}
+    .output-area{flex:1;padding:1rem;font-size:.93rem;line-height:1.75;color:var(--ink);min-height:260px;white-space:pre-wrap;word-break:break-word}
+    .output-area.empty{color:var(--muted);font-style:italic}
+    .output-area.streaming::after{content:'▋';animation:blink .7s step-end infinite;color:var(--muted)}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    .action-row{display:flex;gap:.75rem}
+    .btn{flex:1;padding:.9rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1.05rem;cursor:pointer;transition:all .2s;border:none;text-align:center}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-primary:disabled{opacity:.35;cursor:not-allowed}
+    .btn-sm{flex:0;padding:.9rem 1.3rem;background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .btn-sm:hover{border-color:var(--ink);color:var(--ink)}
+    .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:.4rem}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:760px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.layout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">✂️ Text</p>
+  <h1>Text Summarizer</h1>
+  <p class="subtitle">Shorten or summarize any text. Choose your output style — powered by AI.</p>
+
+  <div class="opts-row">
+    <label>Style</label>
+    <button class="opt-btn active" data-s="short">Short summary</button>
+    <button class="opt-btn" data-s="bullet">Bullet points</button>
+    <button class="opt-btn" data-s="oneline">One sentence</button>
+    <button class="opt-btn" data-s="eli5">Explain simply</button>
+    <button class="opt-btn" data-s="tldr">TL;DR</button>
+    <button class="opt-btn" data-s="formal">Formal abstract</button>
+  </div>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="panel-head"><span>Original text</span><span class="word-ct" id="inCount">0 words</span></div>
+      <textarea id="inputText" placeholder="Paste any text here to summarize…" oninput="countWords()"></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><span>Summary</span><span class="word-ct" id="outCount"></span></div>
+      <div class="output-area empty" id="outputArea">Your summary will appear here.</div>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn btn-primary" id="summarizeBtn" onclick="summarize()">✂️ Summarize</button>
+    <button class="btn-sm" onclick="copyOut()">Copy</button>
+    <button class="btn-sm" onclick="clearAll()">Clear</button>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let style='short', streaming=false;
+
+  document.querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('[data-s]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');style=b.dataset.s;
+  }));
+
+  function countWords(){
+    const t=document.getElementById('inputText').value.trim();
+    document.getElementById('inCount').textContent=(t?t.split(/\s+/).length:0)+' words';
+  }
+
+  const PROMPTS={
+    short:'Write a clear, concise summary of the following text in 2-4 sentences. Capture the main points and key information. Output only the summary, no preamble.',
+    bullet:'Summarize the following text as a clean bullet-point list of the key points. Use 3-7 bullets. Start each bullet with "•". Output only the bullets.',
+    oneline:'Summarize the following text in exactly one clear, informative sentence. Output only that sentence.',
+    eli5:'Explain the following text simply, as if explaining to someone with no background knowledge. Use plain language, short sentences, and avoid jargon. Output only the explanation.',
+    tldr:'Write a "TL;DR:" summary of the following text in 1-2 sentences. Start with "TL;DR:" and output only that.',
+    formal:'Write a formal academic-style abstract of the following text in 3-5 sentences. Use professional language. Output only the abstract.',
+  };
+
+  async function summarize(){
+    const text=document.getElementById('inputText').value.trim();
+    if(!text){alert('Please enter some text.');return;}
+    if(streaming)return;
+    streaming=true;
+    const btn=document.getElementById('summarizeBtn');
+    const out=document.getElementById('outputArea');
+    btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Summarizing…';
+    out.className='output-area streaming';out.textContent='';
+
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',max_tokens:800,stream:true,
+          system:PROMPTS[style],
+          messages:[{role:'user',content:text}]
+        })
+      });
+      const reader=res.body.getReader();const decoder=new TextDecoder();let buf='',full='';
+      while(true){
+        const{done,value}=await reader.read();if(done)break;
+        buf+=decoder.decode(value,{stream:true});
+        const lines=buf.split('\n');buf=lines.pop();
+        for(const line of lines){
+          if(!line.startsWith('data: '))continue;
+          const d=line.slice(6).trim();if(d==='[DONE]')continue;
+          try{const j=JSON.parse(d);if(j.type==='content_block_delta'&&j.delta?.text){full+=j.delta.text;out.textContent=full;}}catch{}
+        }
+      }
+      out.className='output-area';
+      document.getElementById('outCount').textContent=(full.trim().split(/\s+/).length)+' words';
+    }catch(e){out.textContent='Something went wrong. Please try again.';out.className='output-area empty';}
+    streaming=false;btn.disabled=false;btn.textContent='✂️ Summarize';
+  }
+
+  function copyOut(){
+    const t=document.getElementById('outputArea').textContent;
+    if(!t||t==='Your summary will appear here.')return;
+    navigator.clipboard.writeText(t).then(()=>{const b=document.querySelectorAll('.btn-sm')[0];b.textContent='✓ Copied';setTimeout(()=>b.textContent='Copy',1400);});
+  }
+
+  function clearAll(){
+    document.getElementById('inputText').value='';
+    document.getElementById('outputArea').textContent='Your summary will appear here.';
+    document.getElementById('outputArea').className='output-area empty';
+    document.getElementById('inCount').textContent='0 words';
+    document.getElementById('outCount').textContent='';
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

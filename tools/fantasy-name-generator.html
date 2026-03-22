@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fantasy Name Generator — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:760px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .opts-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+    .opts-row label{font-size:.82rem;color:var(--muted)}
+    .opt-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:.4rem .9rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .opt-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .opt-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .gen-btn{width:100%;background:var(--ink);color:#fff;border:none;border-radius:8px;padding:.95rem;font-family:'DM Serif Display',serif;font-size:1.1rem;cursor:pointer;transition:opacity .2s;margin-bottom:1.2rem}
+    .gen-btn:hover{opacity:.8}
+    .names-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.5rem}
+    .name-card{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:.85rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.4rem;transition:border-color .15s}
+    .name-card:hover{border-color:var(--muted)}
+    .name-text{font-family:'DM Serif Display',serif;font-size:1.05rem;letter-spacing:-.01em}
+    .name-type{font-size:.67rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-top:.1rem}
+    .copy-mini{background:transparent;border:1px solid var(--border);border-radius:4px;padding:.15rem .55rem;font-size:.7rem;color:var(--muted);cursor:pointer;flex-shrink:0;transition:all .15s}
+    .copy-mini:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">⚔️ Fun</p>
+  <h1>Fantasy Name Generator</h1>
+  <p class="subtitle">Generate names for characters, places, and creatures across fantasy, sci-fi, and mythological settings.</p>
+
+  <div class="opts-row">
+    <label>Type</label>
+    <button class="opt-btn active" data-t="human">Human</button>
+    <button class="opt-btn" data-t="elf">Elf</button>
+    <button class="opt-btn" data-t="dwarf">Dwarf</button>
+    <button class="opt-btn" data-t="orc">Orc</button>
+    <button class="opt-btn" data-t="dragon">Dragon</button>
+    <button class="opt-btn" data-t="wizard">Wizard</button>
+    <button class="opt-btn" data-t="place">Place</button>
+    <button class="opt-btn" data-t="scifi">Sci-Fi</button>
+  </div>
+  <div class="opts-row">
+    <label>Gender</label>
+    <button class="opt-btn active" data-g="any">Any</button>
+    <button class="opt-btn" data-g="m">Masculine</button>
+    <button class="opt-btn" data-g="f">Feminine</button>
+  </div>
+
+  <button class="gen-btn" onclick="generate()">⚔️ Generate Names</button>
+  <div class="names-grid" id="namesGrid"></div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  const DATA={
+    human:{
+      m:{pre:['Ald','Bran','Cal','Dorn','Eld','Fenn','Gar','Hal','Iv','Jor','Keld','Lor','Mord','Nor','Old','Pell','Ran','Sel','Tor','Ulf','Val','Wyl'],suf:['an','en','ric','mond','ic','ard','bert','win','ford','er','helm','wick','ton','mar']},
+      f:{pre:['Ada','Bri','Cara','Del','Eli','Fay','Gwen','Hel','Isa','Jen','Kat','Lyn','Mel','Nor','Orla','Pru','Ros','Syl','Tel','Ura','Val','Wil'],suf:['a','ia','ine','ara','wyn','elle','ith','eth','ona','aya','isa','era']},
+    },
+    elf:{
+      m:{pre:['Aer','Cael','Eid','Fael','Gal','Ith','Laer','Mael','Nael','Orin','Rael','Sael','Thal','Vael','Xael','Zael'],suf:['ion','iel','ith','ath','ir','in','orn','an','el','en','ar']},
+      f:{pre:['Aer','Cael','Eid','Fael','Gal','Ith','Laer','Mael','Nael','Orin','Rael','Sael','Thal','Vael'],suf:['iel','iel','ith','ara','iel','ina','ela','iel','elle','ia','iel']},
+    },
+    dwarf:{
+      m:{pre:['Bald','Brom','Dag','Dur','Fal','Gim','Gron','Har','Khar','Mor','Nor','Orm','Rok','Thor','Thr','Vol'],suf:['in','ur','im','ar','or','un','ik','ak','dok','bur','rok','gar']},
+      f:{pre:['Brig','Dis','Dur','Gerd','Hil','Ing','Kris','Myr','Sig','Thrud','Ull','Viga'],suf:['a','ra','in','dis','na','da','ild','vi','sa']},
+    },
+    orc:{
+      m:{pre:['Ag','Bog','Drak','Grak','Grok','Grul','Kruk','Mog','Rak','Skrag','Thog','Ug','Vrak','Zog','Zug'],suf:['og','nak','ash','rot','gor','gar','mash','nuk','rak','zar','kut']},
+      f:{pre:['Ag','Bur','Gruk','Krug','Mag','Nak','Rog','Shak','Ug','Vak','Zag'],suf:['ra','sha','ka','na','ya','ura','aka','isa']},
+    },
+    dragon:{
+      m:{pre:['Aur','Bal','Crim','Drak','Fyr','Grix','Hel','Igni','Karr','Luth','Mord','Neth','Orm','Pyrr','Ryx','Skar','Thrax','Vyrm','Zeph'],suf:['ax','ex','ix','ox','on','ar','os','ath','oth','ux','ian','aus']},
+      f:{pre:['Aur','Bal','Crim','Drak','Fyr','Grix','Hel','Igni','Karr','Luth','Mord','Neth','Orm','Pyrr','Ryx','Skar'],suf:['ia','ara','ina','ona','ura','ella','ith','eth','ax']},
+    },
+    wizard:{
+      m:{pre:['Alb','Arc','Cad','Eld','Gand','Herc','Merd','Mrl','Nym','Ori','Rad','Sor','Trith','Val','Zar'],suf:['us','ius','ock','ic','in','an','ath','on','ex','ander','imus']},
+      f:{pre:['Ala','Bea','Cir','Dian','Elz','Fau','Gal','Hec','Isis','Jade','Kali','Lilith','Morg','Nyx','Pand'],suf:['a','ia','ra','ine','ate','ith','elle','ula','ara','ona']},
+    },
+    place:{
+      m:{pre:['Ash','Black','Cold','Dark','Dusk','Ever','Frost','Grim','Iron','Lost','Night','Old','Shadow','Silver','Storm','Stone','Thorn','White'],suf:['fell','haven','hold','keep','moor','peak','reach','ridge','rift','run','shire','vale','wall','watch','wood']},
+      f:{pre:['Ash','Black','Cold','Dark','Dusk','Ever','Frost','Grim','Iron','Lost','Night','Old','Shadow','Silver','Storm','Stone','Thorn','White'],suf:['fell','haven','hold','keep','moor','peak','reach','ridge','rift','run','shire','vale','wall','watch','wood']},
+    },
+    scifi:{
+      m:{pre:['Ax','Cyr','Dax','Ek','Fyrd','Gex','Hyx','Ixa','Jyx','Kael','Lex','Myr','Nyx','Orx','Pyx','Ryx','Syx','Tex','Urak','Vex','Xar','Zyph'],suf:['on','ar','ix','ax','yx','en','or','ek','an','us','ox']},
+      f:{pre:['Ara','Cy','Dex','Elix','Fyra','Gala','Helix','Ixa','Jyra','Kira','Lyra','Myra','Nyra','Oryx','Pyra','Ryxa','Syra','Tyra','Vex','Xyra','Zyra'],suf:['a','ia','ra','ix','yx','ella','ina','ara','ona']},
+    },
+  };
+
+  let type='human', gender='any';
+  document.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-t]').forEach(x=>x.classList.remove('active'));b.classList.add('active');type=b.dataset.t;}));
+  document.querySelectorAll('[data-g]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-g]').forEach(x=>x.classList.remove('active'));b.classList.add('active');gender=b.dataset.g;}));
+
+  function rand(arr){return arr[Math.floor(Math.random()*arr.length)];}
+  function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+  function makeName(){
+    const d=DATA[type];
+    const g=gender==='any'?(Math.random()<.5?'m':'f'):gender;
+    const src=d[g]||d.m;
+    const name=cap(rand(src.pre))+rand(src.suf);
+    // For place, combine two parts
+    if(type==='place') return cap(rand(d.m.pre))+rand(d.m.suf);
+    return name;
+  }
+
+  function typeLabel(t,g){
+    const tl={human:'Human',elf:'Elf',dwarf:'Dwarf',orc:'Orc',dragon:'Dragon',wizard:'Wizard',place:'Place',scifi:'Sci-Fi'}[t];
+    const gl={m:'♂',f:'♀',any:''}[g]||'';
+    return tl+(gl?' '+gl:'');
+  }
+
+  function generate(){
+    const grid=document.getElementById('namesGrid');
+    const names=new Set();let att=0;
+    while(names.size<16&&att<300){names.add(makeName());att++;}
+    grid.innerHTML='';
+    const g=gender==='any'?'any':gender;
+    [...names].forEach(name=>{
+      const div=document.createElement('div');div.className='name-card';
+      div.innerHTML=`<div><div class="name-text">${name}</div><span class="name-type">${typeLabel(type,g)}</span></div><button class="copy-mini" onclick="cp(this,'${name}')">Copy</button>`;
+      grid.appendChild(div);
+    });
+  }
+
+  function cp(btn,text){navigator.clipboard.writeText(text).then(()=>{btn.textContent='✓';setTimeout(()=>btn.textContent='Copy',1300);});}
+
+  generate();
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

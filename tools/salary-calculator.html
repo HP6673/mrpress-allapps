@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salary Calculator — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:700px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+    .input-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
+    .input-group label{font-size:.82rem;color:var(--muted)}
+    .amount-row{display:flex;gap:.5rem;align-items:stretch}
+    .currency-pre{background:var(--bg);border:1px solid var(--border);border-right:none;border-radius:6px 0 0 6px;padding:.7rem 1rem;font-size:.95rem;color:var(--muted);display:flex;align-items:center;flex-shrink:0}
+    .big-input{flex:1;background:var(--bg);border:1px solid var(--border);border-left:none;border-radius:0 6px 6px 0;padding:.7rem 1rem;font-family:'DM Serif Display',serif;font-size:2rem;color:var(--ink);outline:none;transition:border-color .2s}
+    .big-input:focus{border-color:var(--ink)}
+    .big-input::placeholder{color:var(--border)}
+    .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem}
+    .field{display:flex;flex-direction:column;gap:.4rem}
+    .field label{font-size:.82rem;color:var(--muted)}
+    .field-wrap{position:relative}
+    .field-suf{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);font-size:.88rem;color:var(--muted);pointer-events:none}
+    input[type="number"]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.6rem 2.5rem .6rem .85rem;font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--ink);outline:none;transition:border-color .2s}
+    input[type="number"]:focus{border-color:var(--ink)}
+    /* Direction toggle */
+    .dir-tabs{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.5rem}
+    .dir-tab{background:var(--card);padding:.85rem;text-align:center;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;color:var(--muted);transition:background .15s}
+    .dir-tab.active{background:var(--ink);color:#fff}
+    /* Results table */
+    .results-table{width:100%;border-collapse:collapse}
+    .results-table tr:not(:last-child) td{border-bottom:1px solid var(--border)}
+    .results-table td{padding:.75rem 1rem;font-size:.9rem;vertical-align:middle}
+    .results-table td:first-child{color:var(--muted);width:50%}
+    .results-table td:last-child{font-family:'DM Serif Display',serif;font-size:1.15rem;letter-spacing:-.01em;text-align:right}
+    .results-table tr.highlight td{background:#f7f6f2}
+    .results-table tr.highlight td:last-child{font-size:1.5rem;color:var(--ink)}
+    /* Hero */
+    .result-hero{background:var(--ink);color:#fff;border-radius:10px;padding:2rem;text-align:center;margin-bottom:1rem}
+    .rh-big{font-family:'DM Serif Display',serif;font-size:4.5rem;letter-spacing:-.03em;line-height:1}
+    .rh-label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:.4rem}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.options-grid{grid-template-columns:1fr}.rh-big{font-size:3rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">💵 Finance</p>
+  <h1>Salary Calculator</h1>
+  <p class="subtitle">Convert between annual salary and hourly rate. Adjust hours per week and weeks worked per year.</p>
+
+  <div class="dir-tabs">
+    <button class="dir-tab active" id="tabSalary" onclick="setDir('salary')">Annual → Hourly</button>
+    <button class="dir-tab" id="tabHourly" onclick="setDir('hourly')">Hourly → Annual</button>
+  </div>
+
+  <div class="card">
+    <div class="input-group" id="mainInputGroup">
+      <label id="mainLabel">Annual salary</label>
+      <div class="amount-row">
+        <div class="currency-pre">$</div>
+        <input type="number" class="big-input" id="mainInput" placeholder="65000" min="0" step="0.01" oninput="calc()" />
+      </div>
+    </div>
+    <div class="options-grid">
+      <div class="field">
+        <label>Hours per week</label>
+        <div class="field-wrap">
+          <input type="number" id="hoursPerWeek" value="40" min="1" max="168" step=".5" oninput="calc()" />
+          <span class="field-suf">hrs</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Weeks per year</label>
+        <div class="field-wrap">
+          <input type="number" id="weeksPerYear" value="52" min="1" max="52" step="1" oninput="calc()" />
+          <span class="field-suf">wks</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-hero" id="resultHero" style="display:none">
+    <div class="rh-big" id="heroVal">—</div>
+    <div class="rh-label" id="heroLabel">Hourly rate</div>
+  </div>
+
+  <div class="card" id="breakdownCard" style="display:none">
+    <p class="card-title">Full breakdown</p>
+    <table class="results-table" id="breakdownTable"></table>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let direction = 'salary';
+
+  function setDir(d) {
+    direction = d;
+    document.getElementById('tabSalary').classList.toggle('active', d === 'salary');
+    document.getElementById('tabHourly').classList.toggle('active', d === 'hourly');
+    document.getElementById('mainLabel').textContent = d === 'salary' ? 'Annual salary' : 'Hourly rate';
+    document.getElementById('mainInput').placeholder = d === 'salary' ? '65000' : '25.00';
+    document.getElementById('mainInput').value = '';
+    document.getElementById('resultHero').style.display = 'none';
+    document.getElementById('breakdownCard').style.display = 'none';
+  }
+
+  function fmt(n, decimals = 2) {
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  }
+
+  function calc() {
+    const val = parseFloat(document.getElementById('mainInput').value);
+    const hpw = parseFloat(document.getElementById('hoursPerWeek').value) || 40;
+    const wpy = parseFloat(document.getElementById('weeksPerYear').value) || 52;
+    if (isNaN(val) || val <= 0) { document.getElementById('resultHero').style.display = 'none'; document.getElementById('breakdownCard').style.display = 'none'; return; }
+
+    const totalHours = hpw * wpy;
+    let annual, hourly;
+    if (direction === 'salary') { annual = val; hourly = annual / totalHours; }
+    else { hourly = val; annual = hourly * totalHours; }
+
+    const daily = hourly * hpw / 5;
+    const weekly = hourly * hpw;
+    const biweekly = weekly * 2;
+    const semimonthly = annual / 24;
+    const monthly = annual / 12;
+
+    document.getElementById('resultHero').style.display = 'block';
+    document.getElementById('breakdownCard').style.display = 'block';
+    document.getElementById('heroVal').textContent = direction === 'salary' ? fmt(hourly) : fmt(annual, 0);
+    document.getElementById('heroLabel').textContent = direction === 'salary' ? 'Hourly rate' : 'Annual salary';
+
+    document.getElementById('breakdownTable').innerHTML = `
+      <tr><td>Hourly</td><td>${fmt(hourly)}</td></tr>
+      <tr><td>Daily (${hpw/5}h day)</td><td>${fmt(daily)}</td></tr>
+      <tr><td>Weekly (${hpw}h)</td><td>${fmt(weekly)}</td></tr>
+      <tr><td>Bi-weekly</td><td>${fmt(biweekly)}</td></tr>
+      <tr><td>Semi-monthly</td><td>${fmt(semimonthly)}</td></tr>
+      <tr><td>Monthly</td><td>${fmt(monthly)}</td></tr>
+      <tr class="highlight"><td>Annual</td><td>${fmt(annual, 0)}</td></tr>
+      <tr><td style="color:var(--muted);font-size:.78rem;padding-top:.5rem" colspan="2">Based on ${hpw} hrs/week × ${wpy} weeks = ${totalHours.toLocaleString()} total hours/year</td></tr>`;
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

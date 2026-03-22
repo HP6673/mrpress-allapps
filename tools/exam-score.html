@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exam Score Calculator — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:720px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.5rem}
+    .mode-tab{background:var(--card);padding:.85rem;text-align:center;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;color:var(--muted);transition:background .15s}
+    .mode-tab.active{background:var(--ink);color:#fff}
+    .section{display:none}.section.visible{display:block}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+    /* Score table */
+    .score-table{width:100%;border-collapse:collapse;margin-bottom:.75rem}
+    .score-table th{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:.4rem .5rem;text-align:left;border-bottom:1px solid var(--border)}
+    .score-table td{padding:.35rem .35rem;vertical-align:middle}
+    .tdinput{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:.45rem .6rem;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--ink);outline:none;transition:border-color .2s}
+    .tdinput:focus{border-color:var(--ink)}
+    .del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:0 .3rem;transition:color .15s}
+    .del-btn:hover{color:#e24b4a}
+    .add-row-btn{background:transparent;border:1px dashed var(--border);border-radius:7px;width:100%;padding:.55rem;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--muted);cursor:pointer;transition:all .2s;margin-bottom:.5rem}
+    .add-row-btn:hover{border-color:var(--ink);color:var(--ink)}
+    /* Result hero */
+    .result-hero{background:var(--ink);color:#fff;border-radius:10px;padding:2rem;text-align:center;margin-bottom:1rem}
+    .res-score{font-family:'DM Serif Display',serif;font-size:5rem;letter-spacing:-.03em;line-height:1}
+    .res-pct{font-size:1.5rem;opacity:.6;margin-left:.25rem}
+    .res-letter{font-size:1.2rem;margin-top:.4rem;opacity:.8}
+    .res-label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-top:.3rem}
+    /* Stats */
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+    .stat{background:var(--card);padding:.9rem;text-align:center}
+    .stat-val{font-family:'DM Serif Display',serif;font-size:1.5rem;letter-spacing:-.02em}
+    .stat-label{font-size:.67rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+    /* Simple calc */
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem}
+    .field{display:flex;flex-direction:column;gap:.4rem}
+    .field label{font-size:.82rem;color:var(--muted)}
+    .fw{position:relative}
+    .pre{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);font-size:.88rem;color:var(--muted);pointer-events:none}
+    .suf{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);font-size:.88rem;color:var(--muted);pointer-events:none}
+    input[type="number"]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.65rem 2rem .65rem 1rem;font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--ink);outline:none;transition:border-color .2s;text-align:center}
+    input[type="number"].with-pre{padding-left:2rem;padding-right:1rem}
+    input:focus{border-color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.field-row{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">📝 Calculator</p>
+  <h1>Exam Score Calculator</h1>
+  <p class="subtitle">Calculate your overall grade from multiple weighted assignments, or quickly find a score from points earned.</p>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="setMode('weighted')">Weighted grades</button>
+    <button class="mode-tab" onclick="setMode('simple')">Points scored</button>
+  </div>
+
+  <!-- WEIGHTED -->
+  <div class="section visible" id="secWeighted">
+    <div class="card">
+      <p class="card-title">Assignments / Exams</p>
+      <table class="score-table">
+        <thead><tr><th style="width:35%">Name</th><th>Score (%)</th><th>Weight (%)</th><th></th></tr></thead>
+        <tbody id="scoreBody"></tbody>
+      </table>
+      <button class="add-row-btn" onclick="addRow()">+ Add assignment</button>
+    </div>
+    <div class="result-hero" id="wResult" style="display:none">
+      <div><span class="res-score" id="wScore">—</span><span class="res-pct">%</span></div>
+      <div class="res-letter" id="wLetter"></div>
+      <div class="res-label">Weighted overall grade</div>
+    </div>
+    <div class="stats-row" id="wStats" style="display:none">
+      <div class="stat"><div class="stat-val" id="wHighest">—</div><div class="stat-label">Highest</div></div>
+      <div class="stat"><div class="stat-val" id="wLowest">—</div><div class="stat-label">Lowest</div></div>
+      <div class="stat"><div class="stat-val" id="wWeight">—</div><div class="stat-label">Weight used</div></div>
+    </div>
+  </div>
+
+  <!-- SIMPLE -->
+  <div class="section" id="secSimple">
+    <div class="card">
+      <p class="card-title">Points</p>
+      <div class="field-row">
+        <div class="field"><label>Points earned</label><div class="fw"><input type="number" id="sEarned" placeholder="85" min="0" oninput="calcSimple()" /></div></div>
+        <div class="field"><label>Total possible</label><div class="fw"><input type="number" id="sTotal" placeholder="100" min="1" oninput="calcSimple()" /></div></div>
+      </div>
+    </div>
+    <div class="result-hero" id="sResult" style="display:none">
+      <div><span class="res-score" id="sScore">—</span><span class="res-pct">%</span></div>
+      <div class="res-letter" id="sLetter"></div>
+      <div class="res-label">Score</div>
+    </div>
+    <!-- Grade scale reference -->
+    <div class="card">
+      <p class="card-title">Grade scale reference</p>
+      <table class="score-table">
+        <thead><tr><th>Grade</th><th>Range</th><th>GPA</th></tr></thead>
+        <tbody>
+          ${[['A+','97–100','4.0'],['A','93–96','4.0'],['A−','90–92','3.7'],['B+','87–89','3.3'],['B','83–86','3.0'],['B−','80–82','2.7'],['C+','77–79','2.3'],['C','73–76','2.0'],['C−','70–72','1.7'],['D+','67–69','1.3'],['D','63–66','1.0'],['D−','60–62','0.7'],['F','Below 60','0.0']].map(([g,r,gp])=>`<tr><td style="font-weight:500">${g}</td><td style="color:var(--muted)">${r}</td><td style="color:var(--muted)">${gp}</td></tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let rows=[{name:'Midterm',score:'78',weight:'30'},{name:'Final',score:'85',weight:'40'},{name:'Homework',score:'92',weight:'30'}];
+
+  function setMode(m){
+    document.querySelectorAll('.mode-tab').forEach((t,i)=>t.classList.toggle('active',['weighted','simple'][i]===m));
+    document.getElementById('secWeighted').classList.toggle('visible',m==='weighted');
+    document.getElementById('secSimple').classList.toggle('visible',m==='simple');
+  }
+
+  function letterGrade(pct){
+    if(pct>=97)return'A+';if(pct>=93)return'A';if(pct>=90)return'A−';
+    if(pct>=87)return'B+';if(pct>=83)return'B';if(pct>=80)return'B−';
+    if(pct>=77)return'C+';if(pct>=73)return'C';if(pct>=70)return'C−';
+    if(pct>=67)return'D+';if(pct>=63)return'D';if(pct>=60)return'D−';
+    return'F';
+  }
+
+  function renderRows(){
+    const tbody=document.getElementById('scoreBody');
+    tbody.innerHTML='';
+    rows.forEach((r,i)=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td><input class="tdinput" value="${r.name}" placeholder="Assignment ${i+1}" oninput="rows[${i}].name=this.value" /></td>
+        <td><input class="tdinput" type="number" value="${r.score}" min="0" max="100" placeholder="0" oninput="rows[${i}].score=this.value;calcWeighted()" /></td>
+        <td><input class="tdinput" type="number" value="${r.weight}" min="0" max="100" placeholder="0" oninput="rows[${i}].weight=this.value;calcWeighted()" /></td>
+        <td><button class="del-btn" onclick="removeRow(${i})">✕</button></td>`;
+      tbody.appendChild(tr);
+    });
+    calcWeighted();
+  }
+
+  function addRow(){rows.push({name:'',score:'',weight:''});renderRows();}
+  function removeRow(i){rows.splice(i,1);renderRows();}
+
+  function calcWeighted(){
+    const valid=rows.filter(r=>r.score!==''&&r.weight!=='').map(r=>({s:parseFloat(r.score),w:parseFloat(r.weight)})).filter(r=>!isNaN(r.s)&&!isNaN(r.w)&&r.w>0);
+    if(!valid.length){document.getElementById('wResult').style.display='none';document.getElementById('wStats').style.display='none';return;}
+    const totalW=valid.reduce((s,r)=>s+r.w,0);
+    const weighted=valid.reduce((s,r)=>s+r.s*r.w,0)/totalW;
+    const scores=valid.map(r=>r.s);
+    document.getElementById('wResult').style.display='block';document.getElementById('wStats').style.display='grid';
+    document.getElementById('wScore').textContent=weighted.toFixed(1);
+    document.getElementById('wLetter').textContent=letterGrade(weighted);
+    document.getElementById('wHighest').textContent=Math.max(...scores).toFixed(1)+'%';
+    document.getElementById('wLowest').textContent=Math.min(...scores).toFixed(1)+'%';
+    document.getElementById('wWeight').textContent=totalW.toFixed(0)+'%';
+  }
+
+  function calcSimple(){
+    const earned=parseFloat(document.getElementById('sEarned').value);
+    const total=parseFloat(document.getElementById('sTotal').value);
+    const res=document.getElementById('sResult');
+    if(isNaN(earned)||isNaN(total)||total<=0){res.style.display='none';return;}
+    const pct=earned/total*100;
+    res.style.display='block';
+    document.getElementById('sScore').textContent=pct.toFixed(1);
+    document.getElementById('sLetter').textContent=letterGrade(pct);
+  }
+
+  renderRows();
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

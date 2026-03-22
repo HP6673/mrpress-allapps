@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tug of War — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--p1:#378add;--p2:#e24b4a}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:2.5rem 4rem 4rem;max-width:680px;margin:0 auto;width:100%;display:flex;flex-direction:column;align-items:center}
+    h1{font-family:'DM Serif Display',serif;font-size:2.4rem;letter-spacing:-.025em;margin-bottom:1.2rem;text-align:center}
+    /* Opts */
+    .opts-section{width:100%;margin-bottom:1.2rem}
+    .opts-label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+    .opts-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem}
+    .opt-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:.4rem .9rem;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .opt-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .opt-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    /* Players */
+    .players{display:grid;grid-template-columns:1fr 1fr;gap:1rem;width:100%;margin-bottom:1rem}
+    .player-box{border-radius:12px;padding:1.2rem;text-align:center;transition:transform .1s}
+    .player-box.p1{background:var(--p1);color:#fff}
+    .player-box.p2{background:var(--p2);color:#fff}
+    .player-box:active{transform:scale(.96)}
+    .pb-name{font-size:.78rem;opacity:.8;margin-bottom:.25rem;letter-spacing:.05em;text-transform:uppercase}
+    .pb-cps{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.02em;line-height:1}
+    .pb-label{font-size:.68rem;opacity:.65;margin-top:.2rem}
+    .pb-key{font-size:.75rem;opacity:.6;margin-top:.4rem}
+    /* Rope */
+    .rope-wrap{width:100%;margin-bottom:.75rem}
+    .rope-track{background:var(--border);border-radius:99px;height:28px;position:relative;overflow:visible}
+    .rope-fill-l{position:absolute;top:0;left:0;height:100%;background:var(--p1);border-radius:99px 0 0 99px;transition:width .1s}
+    .rope-fill-r{position:absolute;top:0;right:0;height:100%;background:var(--p2);border-radius:0 99px 99px 0;transition:width .1s}
+    .rope-knot{position:absolute;top:50%;width:36px;height:36px;background:var(--ink);border-radius:50%;transform:translate(-50%,-50%);transition:left .1s;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;box-shadow:0 3px 10px rgba(0,0,0,.3);z-index:2}
+    .zone-label{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);padding-top:.4rem}
+    /* Timer */
+    .timer-bar{width:100%;height:6px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:.5rem}
+    .timer-fill{height:100%;background:var(--ink);border-radius:99px;transition:width .1s linear}
+    .timer-text{text-align:center;font-family:'DM Serif Display',serif;font-size:1.8rem;margin-bottom:.75rem}
+    /* Status */
+    .status{text-align:center;font-size:.9rem;color:var(--muted);margin-bottom:.75rem;min-height:1.3rem}
+    .score-row{display:flex;gap:1rem;justify-content:center;font-size:.88rem;color:var(--muted);margin-bottom:.75rem}
+    .score-row strong{color:var(--ink)}
+    /* Buttons */
+    .action-row{display:flex;gap:.5rem;width:100%}
+    .start-btn{flex:1;background:var(--ink);color:#fff;border:none;border-radius:8px;padding:.9rem;font-family:'DM Serif Display',serif;font-size:1.05rem;cursor:pointer;transition:opacity .2s}
+    .start-btn:hover{opacity:.8}
+    .reset-btn{background:transparent;border:1.5px solid var(--border);border-radius:8px;padding:.9rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap}
+    .reset-btn:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:600px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}h1{font-size:2rem}.pb-cps{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <h1>Tug of War 🪢</h1>
+
+  <div class="opts-section">
+    <div class="opts-label">Mode</div>
+    <div class="opts-row" id="modeRow">
+      <button class="opt-btn active" data-m="bot">vs Bot</button>
+      <button class="opt-btn" data-m="friend">vs Friend (same keyboard)</button>
+    </div>
+    <div id="diffSection">
+      <div class="opts-label">Bot difficulty</div>
+      <div class="opts-row" id="diffRow">
+        <button class="opt-btn" data-d="easy">Easy (~3 CPS)</button>
+        <button class="opt-btn active" data-d="medium">Medium (~6 CPS)</button>
+        <button class="opt-btn" data-d="hard">Hard (~9 CPS)</button>
+        <button class="opt-btn" data-d="impossible">Impossible (~15 CPS)</button>
+      </div>
+    </div>
+    <div class="opts-label">Duration</div>
+    <div class="opts-row" id="durRow">
+      <button class="opt-btn" data-dur="10">10s</button>
+      <button class="opt-btn active" data-dur="20">20s</button>
+      <button class="opt-btn" data-dur="30">30s</button>
+    </div>
+  </div>
+
+  <!-- Players -->
+  <div class="players">
+    <div class="player-box p1" id="p1Box" onclick="p1Click()">
+      <div class="pb-name">You</div>
+      <div class="pb-cps" id="p1cps">0</div>
+      <div class="pb-label">clicks/sec</div>
+      <div class="pb-key" id="p1key">Click / tap here</div>
+    </div>
+    <div class="player-box p2" id="p2Box" onclick="p2Click()">
+      <div class="pb-name" id="p2name">Bot</div>
+      <div class="pb-cps" id="p2cps">0</div>
+      <div class="pb-label">clicks/sec</div>
+      <div class="pb-key" id="p2key">or press 'K'</div>
+    </div>
+  </div>
+
+  <!-- Rope -->
+  <div class="rope-wrap">
+    <div class="rope-track" id="ropeTrack">
+      <div class="rope-fill-l" id="ropeL" style="width:50%"></div>
+      <div class="rope-fill-r" id="ropeR" style="width:50%"></div>
+      <div class="rope-knot" id="ropeKnot" style="left:50%">🪢</div>
+    </div>
+    <div class="zone-label"><span style="color:var(--p1)">◀ Your zone</span><span style="color:var(--p2)">Bot's zone ▶</span></div>
+  </div>
+
+  <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
+  <div class="timer-text" id="timerText">—</div>
+  <div class="status" id="status">Click Start to begin</div>
+  <div class="score-row">Wins — You: <strong id="ws1">0</strong> &nbsp; <span id="opp">Bot</span>: <strong id="ws2">0</strong></div>
+
+  <div class="action-row">
+    <button class="start-btn" id="startBtn" onclick="startGame()">▶ Start</button>
+    <button class="reset-btn" onclick="resetScores()">Reset scores</button>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  const BOT_CPS={easy:3,medium:6,hard:9,impossible:15};
+  let mode='bot',diff='medium',duration=20;
+  let running=false,position=0; // -50 to 50, negative = p1 winning
+  let p1clicks=0,p2clicks=0,timer=null,botTimer=null,timeLeft=0;
+  let wins=[0,0];
+
+  document.querySelectorAll('[data-m]').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('[data-m]').forEach(x=>x.classList.remove('active'));b.classList.add('active');mode=b.dataset.m;
+    document.getElementById('diffSection').style.display=mode==='bot'?'block':'none';
+    const isBot=mode==='bot';
+    document.getElementById('p2name').textContent=isBot?'Bot':'Player 2';
+    document.getElementById('p2key').textContent=isBot?'':'Press K or tap';
+    document.getElementById('ws2').parentElement.querySelectorAll('span')[0].textContent=isBot?'Bot':'Player 2';
+    document.getElementById('opp').textContent=isBot?'Bot':'P2';
+    document.querySelector('.zone-label').lastElementChild.textContent=(isBot?'Bot':'P2')+'\'s zone ▶';
+  }));
+  document.querySelectorAll('[data-d]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-d]').forEach(x=>x.classList.remove('active'));b.classList.add('active');diff=b.dataset.d;}));
+  document.querySelectorAll('[data-dur]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-dur]').forEach(x=>x.classList.remove('active'));b.classList.add('active');duration=parseInt(b.dataset.dur);}));
+
+  function startGame(){
+    if(running)return;
+    running=true;position=0;p1clicks=0;p2clicks=0;timeLeft=duration;
+    document.getElementById('p1cps').textContent=0;document.getElementById('p2cps').textContent=0;
+    document.getElementById('startBtn').textContent='Running…';
+    document.getElementById('status').textContent='Click as fast as you can!';
+    updateRope();
+    // Bot auto-click
+    if(mode==='bot'){
+      const cps=BOT_CPS[diff]+(diff==='impossible'?Math.random()*4-2:Math.random()*1-.5);
+      const interval=1000/cps;
+      botTimer=setInterval(()=>{if(running){p2clicks++;position=Math.min(50,position+1);updateCPS();updateRope();}},interval);
+    }
+    // Countdown
+    const total=duration;
+    timer=setInterval(()=>{
+      timeLeft-=.1;
+      document.getElementById('timerFill').style.width=(timeLeft/total*100)+'%';
+      document.getElementById('timerText').textContent=Math.ceil(timeLeft);
+      if(timeLeft<=0){endGame();}
+    },100);
+  }
+
+  function p1Click(){
+    if(!running)return;
+    p1clicks++;position=Math.max(-50,position-1);
+    updateCPS();updateRope();
+  }
+
+  function p2Click(){
+    if(!running||mode==='bot')return;
+    p2clicks++;position=Math.min(50,position+1);
+    updateCPS();updateRope();
+  }
+
+  function updateCPS(){
+    const elapsed=duration-timeLeft;
+    if(elapsed<.1)return;
+    document.getElementById('p1cps').textContent=(p1clicks/elapsed).toFixed(1);
+    document.getElementById('p2cps').textContent=(p2clicks/elapsed).toFixed(1);
+  }
+
+  function updateRope(){
+    // position: -50 = full p1, 0 = center, 50 = full p2
+    const pct=50+position; // 0-100, 50 = center
+    document.getElementById('ropeKnot').style.left=pct+'%';
+    document.getElementById('ropeL').style.width=pct+'%';
+    document.getElementById('ropeR').style.width=(100-pct)+'%';
+    // Color pulse when winning
+    if(position<-20)document.getElementById('p1Box').style.transform='scale(1.03)';
+    else document.getElementById('p1Box').style.transform='';
+    if(position>20)document.getElementById('p2Box').style.transform='scale(1.03)';
+    else document.getElementById('p2Box').style.transform='';
+  }
+
+  function endGame(){
+    clearInterval(timer);clearInterval(botTimer);running=false;
+    const p2n=mode==='bot'?'Bot':'Player 2';
+    let msg;
+    if(position<-5){wins[0]++;msg='🎉 You win!';document.getElementById('ws1').textContent=wins[0];}
+    else if(position>5){wins[1]++;msg=p2n+' wins!';document.getElementById('ws2').textContent=wins[1];}
+    else msg="It's a draw!";
+    document.getElementById('status').textContent=msg;
+    document.getElementById('startBtn').textContent='▶ Play again';
+    document.getElementById('timerText').textContent='0';
+  }
+
+  function resetScores(){wins=[0,0];document.getElementById('ws1').textContent=0;document.getElementById('ws2').textContent=0;}
+
+  // Keyboard: A/D or arrows for p1, K for p2
+  document.addEventListener('keydown',e=>{
+    if(['a','A','ArrowLeft'].includes(e.key)){e.preventDefault();p1Click();}
+    if(['k','K','ArrowRight'].includes(e.key)){e.preventDefault();p2Click();}
+    if(e.key===' '){e.preventDefault();if(!running)startGame();}
+  });
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSV Cleaner — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a;--green-bg:#edf7f1}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:900px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:1.5rem;line-height:1.6}
+    /* Options */
+    .opts-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.3rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.85rem}
+    .opts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.5rem}
+    .opt-check{display:flex;align-items:flex-start;gap:.6rem;padding:.5rem .65rem;background:var(--bg);border:1.5px solid var(--border);border-radius:7px;cursor:pointer;transition:border-color .15s}
+    .opt-check:hover{border-color:var(--muted)}
+    .opt-check input{margin-top:.15rem;accent-color:var(--ink);cursor:pointer;flex-shrink:0}
+    .opt-label{font-size:.83rem;line-height:1.3}
+    .opt-desc{font-size:.72rem;color:var(--muted);display:block;margin-top:.1rem}
+    /* Layout */
+    .layout{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem}
+    .panel{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+    .panel-head{padding:.7rem 1rem;border-bottom:1px solid var(--border);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between}
+    textarea{flex:1;width:100%;background:transparent;border:none;padding:1rem;font-family:'DM Sans',monospace;font-size:.82rem;color:var(--ink);resize:none;outline:none;line-height:1.65;min-height:280px}
+    textarea::placeholder{color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.88rem}
+    .drop-zone{border:1.5px dashed var(--border);border-radius:8px;padding:1rem;text-align:center;cursor:pointer;position:relative;margin-bottom:1rem;transition:all .2s;background:var(--bg)}
+    .drop-zone:hover,.drop-zone.drag-over{border-color:var(--ink);background:#faf9f5}
+    .drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .drop-zone p{font-size:.82rem;color:var(--muted)}
+    .stats-row{background:var(--green-bg);border:1px solid #b2dfc6;border-radius:8px;padding:.75rem 1.1rem;font-size:.85rem;color:var(--green);margin-bottom:1rem;display:none;gap:1.5rem;flex-wrap:wrap}
+    .action-row{display:flex;gap:.75rem}
+    .btn{flex:1;padding:.9rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:all .2s;border:none}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-sm{flex:0;padding:.9rem 1.3rem;background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .btn-sm:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:760px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.layout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🧹 Utility</p>
+  <h1>CSV Cleaner</h1>
+  <p class="subtitle">Paste or upload a CSV and clean up whitespace, empty rows, duplicate headers and more — instantly.</p>
+
+  <div class="drop-zone" id="dropZone">
+    <input type="file" id="fileInput" accept=".csv,text/csv,text/plain" onchange="loadFile(this)" />
+    <p>📂 Drop a CSV file here or click to upload — or just paste below</p>
+  </div>
+
+  <div class="opts-card">
+    <p class="card-title">Cleaning options</p>
+    <div class="opts-grid">
+      <label class="opt-check"><input type="checkbox" id="trimCells" checked onchange="clean()" /><span><span class="opt-label">Trim cell whitespace</span><span class="opt-desc">Remove leading/trailing spaces from each cell</span></span></label>
+      <label class="opt-check"><input type="checkbox" id="removeEmpty" checked onchange="clean()" /><span><span class="opt-label">Remove empty rows</span><span class="opt-desc">Delete rows where all cells are blank</span></span></label>
+      <label class="opt-check"><input type="checkbox" id="removeDupHeader" onchange="clean()" /><span><span class="opt-label">Remove duplicate headers</span><span class="opt-desc">Remove repeated header rows</span></span></label>
+      <label class="opt-check"><input type="checkbox" id="collapseSpaces" onchange="clean()" /><span><span class="opt-label">Collapse internal spaces</span><span class="opt-desc">Replace multiple spaces inside cells with one</span></span></label>
+      <label class="opt-check"><input type="checkbox" id="removeBlankCols" onchange="clean()" /><span><span class="opt-label">Remove blank columns</span><span class="opt-desc">Delete columns that are entirely empty</span></span></label>
+      <label class="opt-check"><input type="checkbox" id="trimQuotes" onchange="clean()" /><span><span class="opt-label">Strip outer quotes</span><span class="opt-desc">Remove unnecessary quote wrapping from cells</span></span></label>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="panel-head"><span>Input CSV</span><span id="inStats"></span></div>
+      <textarea id="inputArea" placeholder="Paste CSV data here…" oninput="clean()"></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><span>Cleaned CSV</span><span id="outStats"></span></div>
+      <textarea id="outputArea" readonly placeholder="Cleaned output appears here…"></textarea>
+    </div>
+  </div>
+
+  <div class="stats-row" id="statsRow" style="display:flex">
+    <span id="statRows"></span><span id="statCells"></span><span id="statRemoved"></span>
+  </div>
+
+  <div class="action-row">
+    <button class="btn btn-primary" onclick="clean()">🧹 Clean</button>
+    <button class="btn-sm" onclick="copyOut()">Copy</button>
+    <button class="btn-sm" onclick="downloadOut()">Download CSV</button>
+    <button class="btn-sm" onclick="clearAll()">Clear</button>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  const dz=document.getElementById('dropZone');
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over')});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)readFile(f)});
+
+  function loadFile(inp){if(inp.files[0])readFile(inp.files[0]);}
+  function readFile(f){const r=new FileReader();r.onload=e=>{document.getElementById('inputArea').value=e.target.result;clean();};r.readAsText(f);}
+
+  function parseCSV(text){
+    const rows=[];const lines=text.split(/\r?\n/);
+    for(const line of lines){
+      const cells=[];let cur='',inQ=false;
+      for(let i=0;i<line.length;i++){
+        const c=line[i];
+        if(c==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
+        else if(c===','&&!inQ){cells.push(cur);cur='';}
+        else cur+=c;
+      }
+      cells.push(cur);rows.push(cells);
+    }
+    return rows;
+  }
+
+  function toCSV(rows){
+    return rows.map(row=>row.map(cell=>{
+      const needsQuotes=cell.includes(',')||cell.includes('"')||cell.includes('\n');
+      return needsQuotes?'"'+cell.replace(/"/g,'""')+'"':cell;
+    }).join(',')).join('\n');
+  }
+
+  function clean(){
+    const raw=document.getElementById('inputArea').value;
+    if(!raw.trim()){document.getElementById('outputArea').value='';document.getElementById('statsRow').style.display='none';return;}
+    let rows=parseCSV(raw);
+    const origRows=rows.length;
+    const origCells=rows.reduce((s,r)=>s+r.length,0);
+
+    // Options
+    const trimCells=document.getElementById('trimCells').checked;
+    const removeEmpty=document.getElementById('removeEmpty').checked;
+    const removeDupHeader=document.getElementById('removeDupHeader').checked;
+    const collapseSpaces=document.getElementById('collapseSpaces').checked;
+    const removeBlankCols=document.getElementById('removeBlankCols').checked;
+    const trimQuotes=document.getElementById('trimQuotes').checked;
+
+    // Trim cells
+    if(trimCells) rows=rows.map(r=>r.map(c=>c.trim()));
+    // Collapse internal spaces
+    if(collapseSpaces) rows=rows.map(r=>r.map(c=>c.replace(/ {2,}/g,' ')));
+    // Strip outer quotes
+    if(trimQuotes) rows=rows.map(r=>r.map(c=>c.startsWith('"')&&c.endsWith('"')?c.slice(1,-1).replace(/""/g,'"'):c));
+    // Remove empty rows
+    if(removeEmpty) rows=rows.filter(r=>r.some(c=>c.trim()!==''));
+    // Remove duplicate headers
+    if(removeDupHeader&&rows.length>1){
+      const header=rows[0].join(',');
+      rows=[rows[0],...rows.slice(1).filter(r=>r.join(',')!==header)];
+    }
+    // Remove blank columns
+    if(removeBlankCols&&rows.length){
+      const colCount=Math.max(...rows.map(r=>r.length));
+      const keepCols=Array.from({length:colCount},(_,i)=>rows.some(r=>(r[i]||'').trim()!==''));
+      rows=rows.map(r=>r.filter((_,i)=>keepCols[i]));
+    }
+
+    const out=toCSV(rows);
+    document.getElementById('outputArea').value=out;
+    document.getElementById('inStats').textContent=origRows+' rows · '+origCells+' cells';
+    document.getElementById('outStats').textContent=rows.length+' rows · '+rows.reduce((s,r)=>s+r.length,0)+' cells';
+    const removed=origRows-rows.length;
+    document.getElementById('statsRow').style.display='flex';
+    document.getElementById('statRows').textContent='✓ '+rows.length+' rows kept';
+    document.getElementById('statCells').textContent=rows.reduce((s,r)=>s+r.length,0)+' cells';
+    document.getElementById('statRemoved').textContent=removed>0?removed+' rows removed':'No rows removed';
+  }
+
+  function copyOut(){
+    const t=document.getElementById('outputArea').value;if(!t)return;
+    navigator.clipboard.writeText(t).then(()=>{const b=document.querySelectorAll('.btn-sm')[0];b.textContent='✓ Copied';setTimeout(()=>b.textContent='Copy',1400);});
+  }
+
+  function downloadOut(){
+    const t=document.getElementById('outputArea').value;if(!t)return;
+    const a=document.createElement('a');a.download='cleaned.csv';a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(t);a.click();
+  }
+
+  function clearAll(){
+    document.getElementById('inputArea').value='';document.getElementById('outputArea').value='';
+    document.getElementById('statsRow').style.display='none';document.getElementById('inStats').textContent='';document.getElementById('outStats').textContent='';
+    document.getElementById('fileInput').value='';
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

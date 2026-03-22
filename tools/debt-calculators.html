@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Debt Calculators — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--red:#b03030;--red-bg:#fdf0f0;--green:#1a7a4a;--green-bg:#edf7f1}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:760px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.5rem}
+    .mode-tab{background:var(--card);padding:.9rem;text-align:center;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;color:var(--muted);transition:background .15s;line-height:1.3}
+    .mode-tab.active{background:var(--ink);color:#fff}
+    .section{display:none}.section.visible{display:block}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+    .fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.5rem}
+    .field{display:flex;flex-direction:column;gap:.4rem}
+    .field label{font-size:.82rem;color:var(--muted)}
+    .fw{position:relative}
+    .pre{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);font-size:.9rem;color:var(--muted);pointer-events:none}
+    .suf{position:absolute;right:.9rem;top:50%;transform:translateY(-50%);font-size:.9rem;color:var(--muted);pointer-events:none}
+    input[type="number"]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.65rem 2.2rem .65rem 2rem;font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--ink);outline:none;transition:border-color .2s;text-align:center}
+    input.np{padding-left:1rem}
+    input.ns{padding-right:1rem}
+    input:focus{border-color:var(--ink)}
+    /* Results */
+    .result-hero{background:var(--ink);color:#fff;border-radius:10px;padding:2rem;text-align:center;margin-bottom:1rem;display:none}
+    .rh-big{font-family:'DM Serif Display',serif;font-size:4rem;letter-spacing:-.03em;line-height:1}
+    .rh-label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:.4rem}
+    .rh-sub{font-size:.9rem;color:rgba(255,255,255,.7);margin-top:.6rem}
+    .breakdown{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.5rem;margin-bottom:1rem;display:none}
+    .bk{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.9rem;text-align:center}
+    .bk-val{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.01em}
+    .bk-label{font-size:.67rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+    /* Warning */
+    .warning{background:var(--red-bg);border:1px solid #f5c1c1;border-radius:8px;padding:.9rem 1.2rem;font-size:.88rem;color:var(--red);margin-bottom:1rem;display:none}
+    /* Schedule table */
+    .schedule-wrap{max-height:280px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;margin-bottom:1rem;display:none}
+    .schedule-table{width:100%;border-collapse:collapse;font-size:.8rem}
+    .schedule-table th{position:sticky;top:0;background:var(--bg);font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:.5rem .75rem;text-align:left;border-bottom:1px solid var(--border)}
+    .schedule-table td{padding:.45rem .75rem;border-bottom:1px solid var(--border)}
+    .schedule-table tr:last-child td{border-bottom:none}
+    .schedule-table td:not(:first-child){font-family:monospace}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.fields-grid{grid-template-columns:1fr}.breakdown{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">💳 Finance</p>
+  <h1>Debt Calculators</h1>
+  <p class="subtitle">Calculate debt payoff timelines and credit card interest costs. See exactly what your debt is costing you.</p>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="setMode('payoff')">Debt Payoff</button>
+    <button class="mode-tab" onclick="setMode('cc')">Credit Card Interest</button>
+  </div>
+
+  <!-- DEBT PAYOFF -->
+  <div class="section visible" id="secPayoff">
+    <div class="card">
+      <p class="card-title">Debt details</p>
+      <div class="fields-grid">
+        <div class="field"><label>Balance owed</label><div class="fw"><span class="pre">$</span><input type="number" id="pBalance" class="ns" placeholder="5000" min="0" step="0.01" oninput="calcPayoff()" /></div></div>
+        <div class="field"><label>Annual interest rate</label><div class="fw"><input type="number" id="pRate" class="np ns" placeholder="18" min="0" max="100" step="0.01" oninput="calcPayoff()" /><span class="suf">%</span></div></div>
+        <div class="field"><label>Monthly payment</label><div class="fw"><span class="pre">$</span><input type="number" id="pPayment" class="ns" placeholder="150" min="0" step="0.01" oninput="calcPayoff()" /></div></div>
+        <div class="field"><label>Extra monthly payment</label><div class="fw"><span class="pre">$</span><input type="number" id="pExtra" class="ns" placeholder="0" min="0" step="0.01" oninput="calcPayoff()" /></div></div>
+      </div>
+    </div>
+    <div class="warning" id="pWarning"></div>
+    <div class="result-hero" id="pResult">
+      <div class="rh-big" id="pBig">—</div>
+      <div class="rh-label">Time to payoff</div>
+      <div class="rh-sub" id="pSub"></div>
+    </div>
+    <div class="breakdown" id="pBreakdown">
+      <div class="bk"><div class="bk-val" id="pTotalPaid">—</div><div class="bk-label">Total paid</div></div>
+      <div class="bk"><div class="bk-val" id="pTotalInt">—</div><div class="bk-label">Total interest</div></div>
+      <div class="bk"><div class="bk-val" id="pSaved">—</div><div class="bk-label">Saved vs min</div></div>
+      <div class="bk"><div class="bk-val" id="pMonths">—</div><div class="bk-label">Months</div></div>
+    </div>
+    <div class="schedule-wrap" id="pSchedule">
+      <table class="schedule-table">
+        <thead><tr><th>Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead>
+        <tbody id="pScheduleBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CREDIT CARD -->
+  <div class="section" id="secCc">
+    <div class="card">
+      <p class="card-title">Card details</p>
+      <div class="fields-grid">
+        <div class="field"><label>Current balance</label><div class="fw"><span class="pre">$</span><input type="number" id="ccBalance" class="ns" placeholder="3000" min="0" step="0.01" oninput="calcCC()" /></div></div>
+        <div class="field"><label>APR (annual rate)</label><div class="fw"><input type="number" id="ccApr" class="np ns" placeholder="24.99" min="0" max="100" step="0.01" oninput="calcCC()" /><span class="suf">%</span></div></div>
+        <div class="field"><label>Monthly payment</label><div class="fw"><span class="pre">$</span><input type="number" id="ccPayment" class="ns" placeholder="100" min="0" step="0.01" oninput="calcCC()" /></div></div>
+        <div class="field"><label>New monthly charges</label><div class="fw"><span class="pre">$</span><input type="number" id="ccNew" class="ns" placeholder="0" min="0" step="0.01" oninput="calcCC()" /></div></div>
+      </div>
+    </div>
+    <div class="warning" id="ccWarning"></div>
+    <div class="result-hero" id="ccResult">
+      <div class="rh-big" id="ccBig">—</div>
+      <div class="rh-label">Total interest you'll pay</div>
+      <div class="rh-sub" id="ccSub"></div>
+    </div>
+    <div class="breakdown" id="ccBreakdown">
+      <div class="bk"><div class="bk-val" id="ccMonths">—</div><div class="bk-label">Months to payoff</div></div>
+      <div class="bk"><div class="bk-val" id="ccTotalPaid">—</div><div class="bk-label">Total paid</div></div>
+      <div class="bk"><div class="bk-val" id="ccMonthlyInt">—</div><div class="bk-label">First month interest</div></div>
+      <div class="bk"><div class="bk-val" id="ccEffective">—</div><div class="bk-label">Monthly rate</div></div>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  function setMode(m){
+    document.querySelectorAll('.mode-tab').forEach((t,i)=>t.classList.toggle('active',['payoff','cc'][i]===m));
+    document.getElementById('secPayoff').classList.toggle('visible',m==='payoff');
+    document.getElementById('secCc').classList.toggle('visible',m==='cc');
+  }
+  function fmt(n,d=2){return'$'+n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});}
+  function months2str(m){const y=Math.floor(m/12),mo=m%12;return(y>0?y+' yr'+(y>1?'s':'')+' ':'')+(mo>0?mo+' mo':'');}
+
+  function calcPayoff(){
+    const bal=parseFloat(document.getElementById('pBalance').value)||0;
+    const rate=parseFloat(document.getElementById('pRate').value)||0;
+    const payment=parseFloat(document.getElementById('pPayment').value)||0;
+    const extra=parseFloat(document.getElementById('pExtra').value)||0;
+    const total=payment+extra;
+    const warn=document.getElementById('pWarning');
+    const res=document.getElementById('pResult');
+    const bd=document.getElementById('pBreakdown');
+    const sch=document.getElementById('pSchedule');
+    if(!bal||!payment){res.style.display='none';bd.style.display='none';sch.style.display='none';warn.style.display='none';return;}
+    const mRate=rate/100/12;
+    const minInt=bal*mRate;
+    if(total<=minInt&&rate>0){warn.style.display='block';warn.textContent=`⚠️ Your payment of ${fmt(total)} doesn't cover the monthly interest of ${fmt(minInt)}. You'll never pay off this debt — increase your payment.`;res.style.display='none';bd.style.display='none';sch.style.display='none';return;}
+    warn.style.display='none';
+    // Simulate payoff
+    let balance=bal,months=0,totalPaid=0,totalInt=0;
+    const rows=[];
+    while(balance>0&&months<600){
+      const interest=balance*mRate;
+      const principal=Math.min(total-interest,balance);
+      const payment_=Math.min(total,balance+interest);
+      balance-=principal;totalPaid+=payment_;totalInt+=interest;months++;
+      if(rows.length<60)rows.push({month:months,payment:payment_,principal,interest,balance:Math.max(0,balance)});
+      if(balance<0.01)break;
+    }
+    res.style.display='block';bd.style.display='grid';sch.style.display='block';
+    document.getElementById('pBig').textContent=months2str(months);
+    document.getElementById('pSub').textContent=`Paid off in ${months} months · ${fmt(totalInt)} in interest`;
+    document.getElementById('pTotalPaid').textContent=fmt(totalPaid);
+    document.getElementById('pTotalInt').textContent=fmt(totalInt);
+    document.getElementById('pMonths').textContent=months;
+    document.getElementById('pSaved').textContent=extra>0?fmt(extra*months)+' extra paid':fmt(0);
+    document.getElementById('pScheduleBody').innerHTML=rows.map(r=>`<tr><td>${r.month}</td><td>${fmt(r.payment)}</td><td>${fmt(r.principal)}</td><td>${fmt(r.interest)}</td><td>${fmt(r.balance)}</td></tr>`).join('');
+  }
+
+  function calcCC(){
+    const bal=parseFloat(document.getElementById('ccBalance').value)||0;
+    const apr=parseFloat(document.getElementById('ccApr').value)||0;
+    const payment=parseFloat(document.getElementById('ccPayment').value)||0;
+    const newCharges=parseFloat(document.getElementById('ccNew').value)||0;
+    const warn=document.getElementById('ccWarning');
+    const res=document.getElementById('ccResult');
+    const bd=document.getElementById('ccBreakdown');
+    if(!bal||!payment){res.style.display='none';bd.style.display='none';warn.style.display='none';return;}
+    const mRate=apr/100/12;
+    const firstInt=bal*mRate;
+    if(payment<=firstInt+newCharges&&apr>0){warn.style.display='block';warn.textContent=`⚠️ Your payment of ${fmt(payment)} doesn't cover the interest (${fmt(firstInt)}) plus new charges (${fmt(newCharges)}). Your balance will keep growing.`;res.style.display='none';bd.style.display='none';return;}
+    warn.style.display='none';
+    let balance=bal,months=0,totalPaid=0,totalInt=0;
+    while(balance>0&&months<600){
+      balance+=newCharges;
+      const interest=balance*mRate;
+      const pay=Math.min(payment,balance+interest);
+      balance=balance+interest-pay;
+      totalPaid+=pay;totalInt+=interest;months++;
+      if(balance<0.01)break;
+    }
+    res.style.display='block';bd.style.display='grid';
+    document.getElementById('ccBig').textContent=fmt(totalInt);
+    document.getElementById('ccSub').textContent=`Paid off in ${months} months with ${fmt(payment)}/month`;
+    document.getElementById('ccMonths').textContent=months;
+    document.getElementById('ccTotalPaid').textContent=fmt(totalPaid);
+    document.getElementById('ccMonthlyInt').textContent=fmt(firstInt);
+    document.getElementById('ccEffective').textContent=(apr/12).toFixed(3)+'%';
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

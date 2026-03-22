@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redirect Checker — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a;--green-bg:#edf7f1;--red:#b03030;--red-bg:#fdf0f0;--orange:#c47a00;--orange-bg:#fffbee}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:760px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .search-row{display:flex;gap:.5rem;margin-bottom:1.5rem}
+    .url-input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--ink);outline:none;transition:border-color .2s}
+    .url-input:focus{border-color:var(--ink)}
+    .url-input::placeholder{color:var(--muted)}
+    .check-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:.8rem 1.4rem;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+    .check-btn:hover{opacity:.8}
+    .check-btn:disabled{opacity:.35;cursor:not-allowed}
+    .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:.4rem}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    /* Results */
+    .summary-bar{border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1rem;display:none}
+    .summary-bar.ok{background:var(--green-bg);border:1px solid #b2dfc6}
+    .summary-bar.warn{background:var(--orange-bg);border:1px solid #e8d98a}
+    .summary-bar.err{background:var(--red-bg);border:1px solid #f5c1c1}
+    .sum-title{font-weight:500;font-size:.95rem;margin-bottom:.3rem}
+    .sum-sub{font-size:.82rem;color:var(--muted)}
+    /* Chain */
+    .chain{display:flex;flex-direction:column;gap:0;margin-bottom:1rem}
+    .hop{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;margin-bottom:.4rem;position:relative}
+    .hop-num{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem}
+    .hop-url{font-size:.82rem;color:var(--ink);word-break:break-all;font-family:monospace;margin-bottom:.4rem}
+    .hop-badge{display:inline-block;border-radius:99px;padding:.15rem .7rem;font-size:.72rem;font-weight:500;margin-right:.4rem}
+    .badge-2xx{background:#edf7f1;color:var(--green)}
+    .badge-3xx{background:#fffbee;color:var(--orange)}
+    .badge-4xx,.badge-5xx{background:#fdf0f0;color:var(--red)}
+    .hop-time{font-size:.72rem;color:var(--muted)}
+    .arrow{text-align:center;font-size:.85rem;color:var(--muted);margin:-2px 0;line-height:1.4}
+    .note{font-size:.78rem;color:var(--muted);line-height:1.6;padding:.75rem;background:var(--bg);border-radius:6px;border:1px solid var(--border)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.search-row{flex-direction:column}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🔗 Utility</p>
+  <h1>Redirect Checker</h1>
+  <p class="subtitle">Enter a URL to trace its full redirect chain — see every hop, status code, and final destination.</p>
+
+  <div class="search-row">
+    <input type="text" class="url-input" id="urlInput" placeholder="https://example.com" />
+    <button class="check-btn" id="checkBtn" onclick="check()">Check</button>
+  </div>
+
+  <div class="note" style="margin-bottom:1.5rem">📌 Redirects are traced using a CORS proxy (allorigins.win) since browsers cannot follow cross-origin redirects directly. The proxy fetches each URL and reports back the status code and location header.</div>
+
+  <div class="summary-bar" id="summaryBar">
+    <div class="sum-title" id="sumTitle"></div>
+    <div class="sum-sub" id="sumSub"></div>
+  </div>
+
+  <div class="chain" id="chain"></div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  document.getElementById('urlInput').addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+
+  async function check() {
+    let url = document.getElementById('urlInput').value.trim();
+    if (!url) return;
+    if (!url.startsWith('http')) url = 'https://' + url;
+
+    const btn = document.getElementById('checkBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Checking…';
+    document.getElementById('chain').innerHTML = '';
+    document.getElementById('summaryBar').style.display = 'none';
+
+    const hops = [];
+    let current = url;
+    let maxHops = 10;
+
+    while (maxHops-- > 0) {
+      const t0 = performance.now();
+      try {
+        const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(current);
+        const res = await fetch(proxyUrl, { redirect: 'follow' });
+        const elapsed = Math.round(performance.now() - t0);
+        const finalUrl = res.url.replace('https://api.allorigins.win/raw?url=', '').replace(/^https?%3A%2F%2F/, '');
+        const status = res.status;
+        hops.push({ url: current, status, elapsed });
+        // If no redirect (url didn't change) or 2xx — done
+        const decoded = decodeURIComponent(finalUrl);
+        if (decoded === current || status < 300) break;
+        current = decoded;
+      } catch (e) {
+        hops.push({ url: current, status: 0, elapsed: 0, error: e.message });
+        break;
+      }
+    }
+
+    renderChain(hops);
+    btn.disabled = false;
+    btn.textContent = 'Check';
+  }
+
+  function renderChain(hops) {
+    const chain = document.getElementById('chain');
+    const bar = document.getElementById('summaryBar');
+    if (!hops.length) return;
+
+    const redirects = hops.filter(h => h.status >= 300 && h.status < 400).length;
+    const last = hops[hops.length - 1];
+    const hasError = last.status >= 400 || last.status === 0;
+
+    bar.style.display = 'block';
+    if (hasError) {
+      bar.className = 'summary-bar err';
+      document.getElementById('sumTitle').textContent = '✗ Error — ' + (last.status || 'Connection failed');
+      document.getElementById('sumSub').textContent = 'The URL returned an error status.';
+    } else if (redirects > 0) {
+      bar.className = 'summary-bar warn';
+      document.getElementById('sumTitle').textContent = `↪ ${redirects} redirect${redirects > 1 ? 's' : ''} — final destination reached`;
+      document.getElementById('sumSub').textContent = last.url;
+    } else {
+      bar.className = 'summary-bar ok';
+      document.getElementById('sumTitle').textContent = '✓ No redirects — URL resolves directly';
+      document.getElementById('sumSub').textContent = last.url;
+    }
+
+    chain.innerHTML = '';
+    hops.forEach((hop, i) => {
+      if (i > 0) {
+        const arr = document.createElement('div');
+        arr.className = 'arrow';
+        arr.textContent = '↓';
+        chain.appendChild(arr);
+      }
+      const div = document.createElement('div');
+      div.className = 'hop';
+      const cls = hop.status >= 500 ? 'badge-5xx' : hop.status >= 400 ? 'badge-4xx' : hop.status >= 300 ? 'badge-3xx' : 'badge-2xx';
+      const label = hop.status === 0 ? 'Error' : hop.status;
+      const desc = { 200: 'OK', 201: 'Created', 301: 'Moved Permanently', 302: 'Found', 303: 'See Other', 307: 'Temp Redirect', 308: 'Perm Redirect', 400: 'Bad Request', 401: 'Unauthorized', 403: 'Forbidden', 404: 'Not Found', 500: 'Server Error', 503: 'Service Unavailable' }[hop.status] || '';
+      div.innerHTML = `<div class="hop-num">${i === 0 ? 'Start' : i === hops.length - 1 ? 'Final destination' : `Redirect ${i}`}</div>
+        <div class="hop-url">${hop.url}</div>
+        <span class="hop-badge ${cls}">${label}${desc ? ' ' + desc : ''}</span>
+        ${hop.elapsed ? `<span class="hop-time">${hop.elapsed} ms</span>` : ''}
+        ${hop.error ? `<span style="font-size:.78rem;color:var(--red)">${hop.error}</span>` : ''}`;
+      chain.appendChild(div);
+    });
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

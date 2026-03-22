@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snake — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:2rem 4rem 4rem;max-width:540px;margin:0 auto;width:100%;display:flex;flex-direction:column;align-items:center}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.25rem;text-align:center}
+    .hud{display:flex;gap:1rem;margin-bottom.1rem;width:100%;margin-bottom:1rem}
+    .hud-box{background:var(--ink);color:#fff;border-radius:8px;padding:.6rem 1rem;text-align:center;flex:1}
+    .hud-val{font-family:'DM Serif Display',serif;font-size:1.8rem;letter-spacing:-.02em}
+    .hud-label{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;opacity:.6}
+    canvas{border-radius:10px;background:#111;display:block;width:100%;aspect-ratio:1;image-rendering:pixelated;margin-bottom:1rem;touch-action:none}
+    .action-row{display:flex;gap:.5rem;width:100%;margin-bottom:.75rem}
+    .new-btn{flex:1;background:var(--ink);color:#fff;border:none;border-radius:8px;padding:.85rem;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:opacity .2s}
+    .new-btn:hover{opacity:.8}
+    .diff-row{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap}
+    .diff-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:99px;padding:.3rem .85rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .diff-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .diff-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .hint{font-size:.8rem;color:var(--muted);text-align:center;margin-top:.5rem}
+    /* D-pad for mobile */
+    .dpad{display:none;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:6px;width:160px;margin:.75rem auto 0}
+    .dp-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.9rem;text-align:center;font-size:1.2rem;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:background .1s}
+    .dp-btn:active{background:var(--ink);color:#fff}
+    .dp-up{grid-column:2}
+    .dp-left{grid-column:1;grid-row:2}
+    .dp-down{grid-column:2;grid-row:2}
+    .dp-right{grid-column:3;grid-row:2}
+    @media(max-width:600px){header,main,footer{padding-left:1rem;padding-right:1rem}h1{font-size:2rem}.dpad{display:grid}}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <h1>Snake 🐍</h1>
+  <div class="hud">
+    <div class="hud-box"><div class="hud-val" id="score">0</div><div class="hud-label">Score</div></div>
+    <div class="hud-box"><div class="hud-val" id="best">0</div><div class="hud-label">Best</div></div>
+    <div class="hud-box"><div class="hud-val" id="length">1</div><div class="hud-label">Length</div></div>
+  </div>
+  <canvas id="canvas" width="400" height="400"></canvas>
+  <div class="action-row"><button class="new-btn" onclick="newGame()">New Game</button></div>
+  <div class="diff-row" id="diffRow">
+    <button class="diff-btn" data-s="120">Easy</button>
+    <button class="diff-btn active" data-s="80">Normal</button>
+    <button class="diff-btn" data-s="50">Fast</button>
+    <button class="diff-btn" data-s="30">Insane</button>
+  </div>
+  <div class="dpad">
+    <button class="dp-btn dp-up" onpointerdown="setDir(0,-1)">▲</button>
+    <button class="dp-btn dp-left" onpointerdown="setDir(-1,0)">◀</button>
+    <button class="dp-btn dp-down" onpointerdown="setDir(0,1)">▼</button>
+    <button class="dp-btn dp-right" onpointerdown="setDir(1,0)">▶</button>
+  </div>
+  <p class="hint">Arrow keys to move · Space to pause</p>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  const COLS=20,ROWS=20,CELL=400/20;
+  const canvas=document.getElementById('canvas');
+  const ctx=canvas.getContext('2d');
+  let snake,dir,nextDir,food,score,best=parseInt(localStorage.getItem('snake-best')||'0'),speed=80,timer=null,paused=false,started=false;
+  document.getElementById('best').textContent=best;
+
+  document.querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('[data-s]').forEach(x=>x.classList.remove('active'));b.classList.add('active');speed=parseInt(b.dataset.s);if(started)newGame();
+  }));
+
+  function newGame(){
+    clearInterval(timer);
+    snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+    dir={x:1,y:0};nextDir={x:1,y:0};score=0;paused=false;started=true;
+    document.getElementById('score').textContent=0;document.getElementById('length').textContent=3;
+    placeFood();draw();
+    timer=setInterval(step,speed);
+  }
+
+  function placeFood(){
+    let f;
+    do{f={x:Math.floor(Math.random()*COLS),y:Math.floor(Math.random()*ROWS)};}
+    while(snake.some(s=>s.x===f.x&&s.y===f.y));
+    food=f;
+  }
+
+  function step(){
+    if(paused)return;
+    dir=nextDir;
+    const head={x:(snake[0].x+dir.x+COLS)%COLS,y:(snake[0].y+dir.y+ROWS)%ROWS};
+    if(snake.some(s=>s.x===head.x&&s.y===head.y)){gameOver();return;}
+    snake.unshift(head);
+    if(head.x===food.x&&head.y===food.y){
+      score+=10;document.getElementById('score').textContent=score;document.getElementById('length').textContent=snake.length;
+      if(score>best){best=score;localStorage.setItem('snake-best',best);document.getElementById('best').textContent=best;}
+      placeFood();
+    } else {snake.pop();}
+    draw();
+  }
+
+  function setDir(dx,dy){
+    if(dx!==0&&dir.x!==0)return;
+    if(dy!==0&&dir.y!==0)return;
+    nextDir={x:dx,y:dy};
+    if(!started)newGame();
+  }
+
+  function draw(){
+    ctx.fillStyle='#111';ctx.fillRect(0,0,400,400);
+    // Grid lines (subtle)
+    ctx.strokeStyle='rgba(255,255,255,.03)';ctx.lineWidth=1;
+    for(let i=0;i<=COLS;i++){ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,400);ctx.stroke();}
+    for(let i=0;i<=ROWS;i++){ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(400,i*CELL);ctx.stroke();}
+    // Snake
+    snake.forEach((s,i)=>{
+      const t=1-i/snake.length;
+      ctx.fillStyle=`hsl(130,${60+t*30}%,${35+t*20}%)`;
+      ctx.beginPath();ctx.roundRect(s.x*CELL+1,s.y*CELL+1,CELL-2,CELL-2,3);ctx.fill();
+    });
+    // Head eyes
+    const h=snake[0];
+    ctx.fillStyle='#fff';
+    const ex=dir.x===0?[4,CELL-6]:[CELL/2-2,CELL/2+2],ey=dir.y===0?[4,CELL-6]:[CELL/2-2,CELL/2+2];
+    ctx.beginPath();ctx.arc(h.x*CELL+ex[0],h.y*CELL+ey[0],2,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(h.x*CELL+ex[1],h.y*CELL+ey[1],2,0,Math.PI*2);ctx.fill();
+    // Food
+    ctx.fillStyle='#e24b4a';ctx.beginPath();ctx.arc(food.x*CELL+CELL/2,food.y*CELL+CELL/2,CELL/2-2,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#c8342e';ctx.beginPath();ctx.arc(food.x*CELL+CELL/2-1,food.y*CELL+CELL/2-1,CELL/2-5,0,Math.PI*2);ctx.fill();
+    // Overlay
+    if(!started){
+      ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(0,0,400,400);
+      ctx.fillStyle='#fff';ctx.font=`bold 24px 'DM Serif Display',serif`;ctx.textAlign='center';ctx.fillText('Press any arrow key',200,185);ctx.font=`16px 'DM Sans',sans-serif`;ctx.fillStyle='rgba(255,255,255,.6)';ctx.fillText('or tap the D-pad to start',200,215);
+    }
+    if(paused){
+      ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(0,0,400,400);
+      ctx.fillStyle='#fff';ctx.font=`bold 28px 'DM Serif Display',serif`;ctx.textAlign='center';ctx.fillText('Paused',200,200);
+    }
+  }
+
+  function gameOver(){
+    clearInterval(timer);started=false;
+    ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(0,0,400,400);
+    ctx.fillStyle='#fff';ctx.font=`bold 28px 'DM Serif Display',serif`;ctx.textAlign='center';
+    ctx.fillText('Game Over',200,170);
+    ctx.font=`18px 'DM Sans',sans-serif`;ctx.fillStyle='rgba(255,255,255,.7)';
+    ctx.fillText(`Score: ${score}`,200,205);
+    ctx.fillText('Press any key or New Game',200,235);
+  }
+
+  document.addEventListener('keydown',e=>{
+    const map={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
+    if(e.key===' '){e.preventDefault();if(started){paused=!paused;draw();}return;}
+    if(map[e.key]){e.preventDefault();const[dx,dy]=map[e.key];setDir(dx,dy);}
+  });
+
+  // Swipe
+  let tx=0,ty=0;
+  canvas.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+  canvas.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)<20&&Math.abs(dy)<20)return;
+    if(Math.abs(dx)>Math.abs(dy))setDir(dx>0?1:-1,0);else setDir(0,dy>0?1:-1);
+  });
+
+  draw();
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

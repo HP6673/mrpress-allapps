@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Random Facts — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:700px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    /* Category pills */
+    .cat-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.5rem}
+    .cat-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:99px;padding:.35rem .9rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .cat-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .cat-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    /* Fact card */
+    .fact-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:2.5rem;margin-bottom:1.2rem;min-height:180px;display:flex;flex-direction:column;justify-content:center;position:relative;transition:all .3s}
+    .fact-tag{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+    .fact-text{font-family:'DM Serif Display',serif;font-size:1.4rem;letter-spacing:-.01em;line-height:1.55;color:var(--ink)}
+    .fact-text.loading{color:var(--muted);font-style:italic;font-size:1.1rem;font-family:'DM Sans',sans-serif}
+    .fact-text.streaming::after{content:'▋';animation:blink .7s step-end infinite;color:var(--muted);font-family:sans-serif;font-size:.9rem}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    /* History */
+    .history{display:flex;flex-direction:column;gap:.5rem;max-height:320px;overflow-y:auto;margin-bottom:1rem}
+    .hist-fact{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.85rem 1rem;font-size:.88rem;line-height:1.5;color:var(--muted);cursor:pointer;transition:border-color .2s}
+    .hist-fact:hover{border-color:var(--ink);color:var(--ink)}
+    .hist-cat{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--border);display:block;margin-bottom:.25rem}
+    /* Actions */
+    .actions{display:flex;gap:.75rem;margin-bottom:1.5rem}
+    .fact-btn{flex:1;background:var(--ink);color:#fff;border:none;border-radius:8px;padding:1rem;font-family:'DM Serif Display',serif;font-size:1.1rem;cursor:pointer;transition:opacity .2s}
+    .fact-btn:hover{opacity:.8}
+    .fact-btn:disabled{opacity:.35;cursor:not-allowed}
+    .copy-btn{flex:0;padding:1rem 1.3rem;background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .copy-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .hist-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.fact-text{font-size:1.1rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🧠 Fun</p>
+  <h1>Random Facts</h1>
+  <p class="subtitle">Get a surprising, verified random fact. Choose a category or go fully random. Powered by AI.</p>
+
+  <div class="cat-row" id="catRow">
+    <button class="cat-btn active" data-c="random">🎲 Random</button>
+    <button class="cat-btn" data-c="science">🔬 Science</button>
+    <button class="cat-btn" data-c="history">📜 History</button>
+    <button class="cat-btn" data-c="animals">🐾 Animals</button>
+    <button class="cat-btn" data-c="space">🚀 Space</button>
+    <button class="cat-btn" data-c="food">🍕 Food</button>
+    <button class="cat-btn" data-c="geography">🌍 Geography</button>
+    <button class="cat-btn" data-c="human body">🫀 Human Body</button>
+    <button class="cat-btn" data-c="technology">💻 Technology</button>
+  </div>
+
+  <div class="fact-card" id="factCard">
+    <div class="fact-tag" id="factTag">—</div>
+    <div class="fact-text loading" id="factText">Press "New Fact" to get started</div>
+  </div>
+
+  <div class="actions">
+    <button class="fact-btn" id="factBtn" onclick="getFact()">🧠 New Fact</button>
+    <button class="copy-btn" onclick="copyFact()">Copy</button>
+  </div>
+
+  <div id="histSection" style="display:none">
+    <p class="hist-title">Recent facts</p>
+    <div class="history" id="histList"></div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let category = 'random', streaming = false, history = [], currentFact = '';
+
+  document.getElementById('catRow').addEventListener('click', e => {
+    const b = e.target.closest('.cat-btn'); if (!b) return;
+    document.querySelectorAll('.cat-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); category = b.dataset.c;
+  });
+
+  async function getFact() {
+    if (streaming) return;
+    streaming = true;
+    const btn = document.getElementById('factBtn');
+    const text = document.getElementById('factText');
+    const tag = document.getElementById('factTag');
+    btn.disabled = true; btn.textContent = '⏳ Loading…';
+    text.className = 'fact-text streaming'; text.textContent = '';
+    tag.textContent = category === 'random' ? 'Random fact' : category.charAt(0).toUpperCase() + category.slice(1);
+    currentFact = '';
+
+    const catPrompt = category === 'random'
+      ? 'any topic (science, history, animals, food, geography, technology, human body, space, etc.)'
+      : category;
+
+    const prompt = `Give me exactly one surprising, fascinating, and true random fact about ${catPrompt}. The fact should be:
+- Genuinely surprising or counterintuitive
+- Verifiable and accurate
+- 1-3 sentences long
+- Not starting with "Did you know" or "Fun fact:"
+- No preamble, just the fact itself`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 200,
+          stream: true,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const json = JSON.parse(data);
+            if (json.type === 'content_block_delta' && json.delta?.text) {
+              currentFact += json.delta.text;
+              text.textContent = currentFact;
+            }
+          } catch {}
+        }
+      }
+      text.className = 'fact-text';
+      if (currentFact.trim()) addToHistory(currentFact.trim(), category);
+    } catch (e) {
+      text.className = 'fact-text loading';
+      text.textContent = 'Something went wrong. Try again.';
+    }
+
+    streaming = false;
+    btn.disabled = false;
+    btn.textContent = '🧠 New Fact';
+  }
+
+  function addToHistory(fact, cat) {
+    history.unshift({ fact, cat }); if (history.length > 10) history.pop();
+    const hs = document.getElementById('histSection');
+    hs.style.display = 'block';
+    document.getElementById('histList').innerHTML = history.map((h, i) => `
+      <div class="hist-fact" onclick="showFact(${i})">
+        <span class="hist-cat">${h.cat === 'random' ? 'Random' : h.cat}</span>
+        ${h.fact.length > 120 ? h.fact.slice(0, 120) + '…' : h.fact}
+      </div>`).join('');
+  }
+
+  function showFact(i) {
+    currentFact = history[i].fact;
+    document.getElementById('factText').className = 'fact-text';
+    document.getElementById('factText').textContent = currentFact;
+    document.getElementById('factTag').textContent = history[i].cat === 'random' ? 'Random fact' : history[i].cat;
+  }
+
+  function copyFact() {
+    if (!currentFact) return;
+    navigator.clipboard.writeText(currentFact).then(() => {
+      const b = document.querySelector('.copy-btn');
+      b.textContent = '✓ Copied'; setTimeout(() => b.textContent = 'Copy', 1400);
+    });
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

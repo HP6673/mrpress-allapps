@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Commission Calculator — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a;--green-bg:#edf7f1}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:680px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+    .fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+    .field{display:flex;flex-direction:column;gap:.4rem}
+    .field label{font-size:.82rem;color:var(--muted)}
+    .fw{position:relative}
+    .pre,.suf{position:absolute;top:50%;transform:translateY(-50%);font-size:.9rem;color:var(--muted);pointer-events:none}
+    .pre{left:.9rem}.suf{right:.9rem}
+    input[type="number"]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.65rem 2.2rem .65rem 2rem;font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--ink);outline:none;transition:border-color .2s;text-align:center}
+    input.np{padding-left:1rem}
+    input.ns{padding-right:1rem}
+    input:focus{border-color:var(--ink)}
+    /* Mode tabs */
+    .mode-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.5rem}
+    .mode-tab{background:var(--card);padding:.8rem;text-align:center;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;color:var(--muted);transition:background .15s;line-height:1.3}
+    .mode-tab.active{background:var(--ink);color:#fff}
+    .section{display:none}.section.visible{display:block}
+    /* Result */
+    .result-hero{background:var(--ink);color:#fff;border-radius:10px;padding:2rem;text-align:center;margin-bottom:1rem}
+    .res-big{font-family:'DM Serif Display',serif;font-size:4.5rem;letter-spacing:-.03em;line-height:1}
+    .res-label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:.4rem}
+    .res-sub{font-size:.9rem;color:rgba(255,255,255,.7);margin-top:.5rem}
+    /* Breakdown */
+    .breakdown{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1rem}
+    .bk-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.9rem;text-align:center}
+    .bk-val{font-family:'DM Serif Display',serif;font-size:1.4rem;letter-spacing:-.02em}
+    .bk-label{font-size:.67rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+    /* Tiers */
+    .tier-table{width:100%;border-collapse:collapse;font-size:.85rem}
+    .tier-table th{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:.4rem .5rem;text-align:left;border-bottom:1px solid var(--border)}
+    .tier-table td{padding:.45rem .5rem;border-bottom:1px solid var(--border)}
+    .tier-table tr:last-child td{border-bottom:none}
+    .tier-table td:nth-child(2),.tier-table td:nth-child(3){font-family:monospace}
+    .tier-active{background:#f0f7ff}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.fields-grid{grid-template-columns:1fr}.breakdown{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">💰 Finance</p>
+  <h1>Commission Calculator</h1>
+  <p class="subtitle">Calculate flat, tiered, or split commissions. See your take-home after deductions.</p>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="setMode('flat')">Flat rate</button>
+    <button class="mode-tab" onclick="setMode('tiered')">Tiered</button>
+    <button class="mode-tab" onclick="setMode('split')">Split</button>
+  </div>
+
+  <!-- FLAT -->
+  <div class="section visible" id="secFlat">
+    <div class="card">
+      <p class="card-title">Sale details</p>
+      <div class="fields-grid">
+        <div class="field"><label>Sale amount</label><div class="fw"><span class="pre">$</span><input type="number" id="fSale" class="ns" placeholder="10000" min="0" step="0.01" oninput="calcFlat()" /></div></div>
+        <div class="field"><label>Commission rate</label><div class="fw"><input type="number" id="fRate" class="np ns" placeholder="5" min="0" max="100" step="0.01" oninput="calcFlat()" /><span class="suf">%</span></div></div>
+        <div class="field"><label>Base salary (optional)</label><div class="fw"><span class="pre">$</span><input type="number" id="fBase" class="ns" placeholder="0" min="0" step="0.01" oninput="calcFlat()" /></div></div>
+        <div class="field"><label>Tax rate (optional)</label><div class="fw"><input type="number" id="fTax" class="np ns" placeholder="0" min="0" max="100" step="0.01" oninput="calcFlat()" /><span class="suf">%</span></div></div>
+      </div>
+    </div>
+    <div class="result-hero" id="fResult" style="display:none">
+      <div class="res-big" id="fBig">$0</div>
+      <div class="res-label">Commission earned</div>
+      <div class="res-sub" id="fSub"></div>
+    </div>
+    <div class="breakdown" id="fBreakdown" style="display:none">
+      <div class="bk-item"><div class="bk-val" id="fGross">—</div><div class="bk-label">Gross commission</div></div>
+      <div class="bk-item"><div class="bk-val" id="fNet">—</div><div class="bk-label">After tax</div></div>
+      <div class="bk-item"><div class="bk-val" id="fTotal">—</div><div class="bk-label">Total earnings (with base)</div></div>
+      <div class="bk-item"><div class="bk-val" id="fPct">—</div><div class="bk-label">Effective rate</div></div>
+    </div>
+  </div>
+
+  <!-- TIERED -->
+  <div class="section" id="secTiered">
+    <div class="card">
+      <p class="card-title">Total sales amount</p>
+      <div class="fw" style="margin-bottom:1rem"><span class="pre">$</span><input type="number" id="tSale" class="ns" placeholder="75000" min="0" step="0.01" oninput="calcTiered()" /></div>
+      <p class="card-title">Commission tiers</p>
+      <table class="tier-table" id="tierTable">
+        <thead><tr><th>Up to ($)</th><th>Rate (%)</th><th>Commission</th><th></th></tr></thead>
+        <tbody id="tierBody"></tbody>
+      </table>
+      <button style="background:transparent;border:1px dashed var(--border);border-radius:6px;width:100%;padding:.5rem;font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--muted);cursor:pointer;margin-top:.5rem" onclick="addTier()">+ Add tier</button>
+    </div>
+    <div class="result-hero" id="tResult" style="display:none">
+      <div class="res-big" id="tBig">$0</div>
+      <div class="res-label">Total tiered commission</div>
+    </div>
+  </div>
+
+  <!-- SPLIT -->
+  <div class="section" id="secSplit">
+    <div class="card">
+      <p class="card-title">Deal details</p>
+      <div class="fields-grid">
+        <div class="field"><label>Total commission ($)</label><div class="fw"><span class="pre">$</span><input type="number" id="sSale" class="ns" placeholder="5000" min="0" oninput="calcSplit()" /></div></div>
+        <div class="field"><label>Your split</label><div class="fw"><input type="number" id="sSplit" class="np ns" placeholder="60" min="0" max="100" oninput="calcSplit()" /><span class="suf">%</span></div></div>
+      </div>
+    </div>
+    <div class="result-hero" id="sResult" style="display:none">
+      <div class="res-big" id="sBig">$0</div>
+      <div class="res-label">Your share</div>
+      <div class="res-sub" id="sSub"></div>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  function setMode(m){
+    document.querySelectorAll('.mode-tab').forEach((t,i)=>t.classList.toggle('active',['flat','tiered','split'][i]===m));
+    ['flat','tiered','split'].forEach(s=>document.getElementById('sec'+s.charAt(0).toUpperCase()+s.slice(1)).classList.toggle('visible',s===m));
+  }
+  function fmt(n){return'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+  // FLAT
+  function calcFlat(){
+    const sale=parseFloat(document.getElementById('fSale').value)||0;
+    const rate=parseFloat(document.getElementById('fRate').value)||0;
+    const base=parseFloat(document.getElementById('fBase').value)||0;
+    const tax=parseFloat(document.getElementById('fTax').value)||0;
+    const gross=sale*rate/100;
+    const net=gross*(1-tax/100);
+    const total=net+base;
+    document.getElementById('fResult').style.display='block';
+    document.getElementById('fBreakdown').style.display='grid';
+    document.getElementById('fBig').textContent=fmt(gross);
+    document.getElementById('fSub').textContent=`${rate}% of ${fmt(sale)}${tax?` · ${tax}% tax deducted`:''}`;
+    document.getElementById('fGross').textContent=fmt(gross);
+    document.getElementById('fNet').textContent=fmt(net);
+    document.getElementById('fTotal').textContent=fmt(total);
+    document.getElementById('fPct').textContent=sale?((gross/sale)*100).toFixed(2)+'%':'—';
+  }
+
+  // TIERED
+  let tiers=[{cap:25000,rate:3},{cap:50000,rate:5},{cap:Infinity,rate:8}];
+  function renderTiers(){
+    const tbody=document.getElementById('tierBody');tbody.innerHTML='';
+    const sale=parseFloat(document.getElementById('tSale').value)||0;
+    let prev=0,cumComm=0;
+    tiers.forEach((tier,i)=>{
+      const capInThisTier=Math.min(Math.max(0,sale-prev),tier.cap===Infinity?Infinity:tier.cap-prev);
+      const comm=capInThisTier*tier.rate/100;cumComm+=comm;
+      const active=sale>prev&&(tier.cap===Infinity||sale<=tier.cap);
+      const tr=document.createElement('tr');if(active)tr.className='tier-active';
+      tr.innerHTML=`<td><input style="width:90px;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:.3rem .5rem;font-size:.82rem;color:var(--ink);outline:none" type="number" value="${tier.cap===Infinity?'':tier.cap}" placeholder="∞" onchange="tiers[${i}].cap=this.value?parseFloat(this.value):Infinity;renderTiers()" /></td>
+        <td><input style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:.3rem .5rem;font-size:.82rem;color:var(--ink);outline:none" type="number" value="${tier.rate}" min="0" max="100" step="0.1" onchange="tiers[${i}].rate=parseFloat(this.value)||0;renderTiers()" /></td>
+        <td style="font-family:monospace;font-size:.8rem;color:var(--green)">${comm>0?fmt(comm):'—'}</td>
+        <td><button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem" onclick="tiers.splice(${i},1);renderTiers()">✕</button></td>`;
+      tbody.appendChild(tr);
+      prev=tier.cap===Infinity?Infinity:tier.cap;
+    });
+    document.getElementById('tResult').style.display='block';
+    document.getElementById('tBig').textContent=fmt(tiers.reduce((tot,tier,i)=>{
+      const low=i===0?0:tiers.slice(0,i).reduce((s,t)=>s+(t.cap===Infinity?0:t.cap),0);
+      const cap=tier.cap===Infinity?sale:Math.min(sale,tier.cap);
+      return tot+Math.max(0,cap-low)*tier.rate/100;
+    },0));
+  }
+  function addTier(){tiers.push({cap:Infinity,rate:10});renderTiers();}
+  function calcTiered(){renderTiers();}
+  renderTiers();
+
+  // SPLIT
+  function calcSplit(){
+    const total=parseFloat(document.getElementById('sSale').value)||0;
+    const split=parseFloat(document.getElementById('sSplit').value)||0;
+    const mine=total*split/100;
+    const theirs=total-mine;
+    document.getElementById('sResult').style.display='block';
+    document.getElementById('sBig').textContent=fmt(mine);
+    document.getElementById('sSub').textContent=`Other party receives ${fmt(theirs)} (${(100-split).toFixed(1)}%)`;
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

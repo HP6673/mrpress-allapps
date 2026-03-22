@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Whack-a-Mole — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:2rem 4rem 4rem;max-width:700px;margin:0 auto;width:100%;display:flex;flex-direction:column;align-items:center}
+    h1{font-family:'DM Serif Display',serif;font-size:2.5rem;letter-spacing:-.025em;margin-bottom:.25rem;text-align:center}
+    /* HUD */
+    .hud{display:flex;gap:2rem;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap}
+    .hud-item{text-align:center}
+    .hud-val{font-family:'DM Serif Display',serif;font-size:2rem;letter-spacing:-.02em}
+    .hud-label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+    /* Grid */
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;width:100%;max-width:420px}
+    .hole{aspect-ratio:1;background:#c8a96e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.8rem;cursor:pointer;position:relative;overflow:hidden;transition:transform .1s;box-shadow:inset 0 6px 14px rgba(0,0,0,.25);user-select:none;-webkit-tap-highlight-color:transparent}
+    .hole::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 110%,#8B6914 0%,#5a3e0a 60%,#2a1a00 100%);z-index:0}
+    .mole{position:absolute;bottom:-100%;font-size:2.2rem;transition:bottom .15s cubic-bezier(.34,1.56,.64,1);z-index:1;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+    .hole.active .mole{bottom:10%}
+    .hole.whacked .mole{bottom:10%;filter:grayscale(1) opacity(.5)}
+    .hole:active{transform:scale(.93)}
+    .hole.thud{animation:thud .15s ease}
+    @keyframes thud{0%{transform:scale(.93)}100%{transform:scale(1)}}
+    /* Score pop */
+    .pop{position:absolute;top:0;left:50%;transform:translateX(-50%);font-family:'DM Serif Display',serif;font-size:1.4rem;color:#fff;pointer-events:none;z-index:10;animation:popUp .6s ease forwards}
+    @keyframes popUp{0%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-40px)}}
+    /* Controls */
+    .diff-row{display:flex;gap:.4rem;justify-content:center;margin-bottom:1rem}
+    .diff-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:99px;padding:.35rem .9rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .diff-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .diff-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .start-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:.9rem 2.5rem;font-family:'DM Serif Display',serif;font-size:1.2rem;cursor:pointer;transition:opacity .2s;margin-bottom:.5rem}
+    .start-btn:hover{opacity:.8}
+    .state-msg{font-size:.9rem;color:var(--muted);text-align:center;min-height:1.4rem}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}h1{font-size:2rem}.grid{max-width:320px;gap:8px}.hole{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <h1>Whack-a-Mole 🔨</h1>
+  <div class="hud">
+    <div class="hud-item"><div class="hud-val" id="score">0</div><div class="hud-label">Score</div></div>
+    <div class="hud-item"><div class="hud-val" id="timer">30</div><div class="hud-label">Seconds</div></div>
+    <div class="hud-item"><div class="hud-val" id="combo">×1</div><div class="hud-label">Combo</div></div>
+    <div class="hud-item"><div class="hud-val" id="best">0</div><div class="hud-label">Best</div></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="diff-row" id="diffRow">
+    <button class="diff-btn" data-d="easy">Easy</button>
+    <button class="diff-btn active" data-d="normal">Normal</button>
+    <button class="diff-btn" data-d="hard">Hard</button>
+    <button class="diff-btn" data-d="insane">Insane</button>
+  </div>
+  <button class="start-btn" id="startBtn" onclick="startGame()">▶ Start</button>
+  <div class="state-msg" id="stateMsg">Choose difficulty and press Start</div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  const MOLES=['🐭','🐹','🐰','🦔'];
+  const BOMB='💣';
+  const DIFFS={easy:{interval:1100,show:1200,bombs:0},normal:{interval:800,show:900,bombs:5},hard:{interval:550,show:650,bombs:10},insane:{interval:350,show:450,bombs:15}};
+  let score=0,timeLeft=30,combo=1,best=parseInt(localStorage.getItem('wam-best')||'0'),diff='normal';
+  let gameTimer=null,moleTimer=null,running=false;
+  const holes=[];
+
+  // Build grid
+  const grid=document.getElementById('grid');
+  for(let i=0;i<9;i++){
+    const hole=document.createElement('div');hole.className='hole';
+    hole.innerHTML='<div class="mole" id="m'+i+'">🐭</div>';
+    hole.dataset.i=i;
+    hole.addEventListener('click',()=>whack(i));
+    grid.appendChild(hole);
+    holes.push({el:hole,moleEl:hole.querySelector('.mole'),active:false,bomb:false,timeout:null});
+  }
+
+  document.querySelectorAll('[data-d]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-d]').forEach(x=>x.classList.remove('active'));b.classList.add('active');diff=b.dataset.d;}));
+  document.getElementById('best').textContent=best;
+
+  function whack(i){
+    if(!running)return;
+    const h=holes[i];
+    if(!h.active)return;
+    if(h.bomb){score=Math.max(0,score-5);combo=1;document.getElementById('score').textContent=score;document.getElementById('combo').textContent='×'+combo;showPop(h.el,'💥 -5');hide(i);return;}
+    const pts=combo;score+=pts;combo=Math.min(10,combo+1);
+    document.getElementById('score').textContent=score;document.getElementById('combo').textContent='×'+combo;
+    showPop(h.el,'+'+pts);
+    h.el.classList.add('whacked');
+    setTimeout(()=>hide(i),150);
+  }
+
+  function showPop(el,text){
+    const p=document.createElement('div');p.className='pop';p.textContent=text;el.appendChild(p);setTimeout(()=>p.remove(),650);}
+
+  function hide(i){
+    const h=holes[i];clearTimeout(h.timeout);
+    h.el.classList.remove('active','whacked');h.active=false;h.bomb=false;
+  }
+
+  function showMole(){
+    const avail=holes.map((h,i)=>({h,i})).filter(x=>!x.h.active);
+    if(!avail.length)return;
+    const {h,i}=avail[Math.floor(Math.random()*avail.length)];
+    const cfg=DIFFS[diff];
+    const isBomb=Math.random()*100<cfg.bombs;
+    h.bomb=isBomb;h.moleEl.textContent=isBomb?BOMB:MOLES[Math.floor(Math.random()*MOLES.length)];
+    h.active=true;h.el.classList.add('active');h.el.classList.remove('whacked');
+    h.timeout=setTimeout(()=>{if(h.active){hide(i);if(!isBomb){combo=1;document.getElementById('combo').textContent='×'+combo;}}},cfg.show);
+  }
+
+  function startGame(){
+    clearInterval(gameTimer);clearInterval(moleTimer);
+    holes.forEach((_,i)=>hide(i));
+    score=0;timeLeft=30;combo=1;running=true;
+    document.getElementById('score').textContent=0;document.getElementById('timer').textContent=30;document.getElementById('combo').textContent='×1';
+    document.getElementById('startBtn').textContent='Restart';
+    document.getElementById('stateMsg').textContent='';
+    document.getElementById('diffRow').style.pointerEvents='none';
+    const cfg=DIFFS[diff];
+    moleTimer=setInterval(showMole,cfg.interval);
+    gameTimer=setInterval(()=>{
+      timeLeft--;document.getElementById('timer').textContent=timeLeft;
+      if(timeLeft<=0){
+        clearInterval(gameTimer);clearInterval(moleTimer);running=false;
+        holes.forEach((_,i)=>hide(i));
+        if(score>best){best=score;localStorage.setItem('wam-best',best);document.getElementById('best').textContent=best;}
+        document.getElementById('stateMsg').textContent=`Game over! Score: ${score}${score===best?' 🏆 New best!':''}`;
+        document.getElementById('startBtn').textContent='▶ Play Again';
+        document.getElementById('diffRow').style.pointerEvents='';
+      }
+    },1000);
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Encryptor — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff;--green:#1a7a4a;--green-bg:#edf7f1;--red:#b03030;--red-bg:#fdf0f0}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:780px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.5rem}
+    .mode-tab{background:var(--card);padding:.9rem;text-align:center;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;color:var(--muted);transition:background .15s}
+    .mode-tab.active{background:var(--ink);color:#fff}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.85rem}
+    textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:1rem;font-family:'DM Sans',monospace;font-size:.88rem;color:var(--ink);resize:vertical;outline:none;transition:border-color .2s;line-height:1.65}
+    textarea:focus{border-color:var(--ink)}
+    textarea::placeholder{color:var(--muted);font-family:'DM Sans',sans-serif}
+    .pw-wrap{position:relative}
+    .pw-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.7rem 3rem .7rem 1rem;font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--ink);outline:none;transition:border-color .2s}
+    .pw-input:focus{border-color:var(--ink)}
+    .pw-input::placeholder{color:var(--muted)}
+    .pw-toggle{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;color:var(--muted)}
+    .strength-bar{height:3px;border-radius:99px;margin-top:.5rem;transition:background .3s,width .3s;width:0%}
+    .strength-note{font-size:.72rem;color:var(--muted);margin-top:.25rem}
+    .action-row{display:flex;gap:.75rem;margin-bottom:1rem}
+    .btn{flex:1;padding:.9rem;border-radius:8px;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:all .2s;border:none;text-align:center}
+    .btn-primary{background:var(--ink);color:#fff}
+    .btn-primary:hover{opacity:.8}
+    .btn-sm{flex:0;padding:.9rem 1.3rem;background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .btn-sm:hover{border-color:var(--ink);color:var(--ink)}
+    .result-card{border-radius:10px;padding:1.4rem;margin-bottom:1rem;display:none}
+    .result-card.success{background:var(--green-bg);border:1px solid #b2dfc6}
+    .result-card.error{background:var(--red-bg);border:1px solid #f5c1c1}
+    .result-label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    .result-text{font-family:monospace;font-size:.82rem;word-break:break-all;line-height:1.65;color:var(--ink);white-space:pre-wrap}
+    .result-card.error .result-text{color:var(--red)}
+    .note{font-size:.78rem;color:var(--muted);line-height:1.6;padding:.75rem;background:var(--bg);border-radius:6px;border:1px solid var(--border)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🔒 Security</p>
+  <h1>Encryptor</h1>
+  <p class="subtitle">Encrypt any text with a password using AES-256-GCM. Share the result safely — only someone with the password can decrypt it.</p>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tabEnc" onclick="setMode('encrypt')">🔒 Encrypt</button>
+    <button class="mode-tab" id="tabDec" onclick="setMode('decrypt')">🔓 Decrypt</button>
+  </div>
+
+  <div class="card">
+    <p class="card-title" id="textLabel">Text to encrypt</p>
+    <textarea id="inputText" rows="5" placeholder="Enter the text you want to encrypt…"></textarea>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Password</p>
+    <div class="pw-wrap">
+      <input type="password" class="pw-input" id="password" placeholder="Enter a strong password…" oninput="checkStrength(this.value)" />
+      <button class="pw-toggle" onclick="togglePw()" tabindex="-1">👁</button>
+    </div>
+    <div class="strength-bar" id="strengthBar"></div>
+    <p class="strength-note" id="strengthNote"></p>
+  </div>
+
+  <div class="action-row">
+    <button class="btn btn-primary" id="actionBtn" onclick="doAction()">🔒 Encrypt</button>
+    <button class="btn-sm" onclick="clearAll()">Clear</button>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <p class="result-label" id="resultLabel">Encrypted text</p>
+    <div class="result-text" id="resultText"></div>
+    <div style="display:flex;gap:.5rem;margin-top:.85rem">
+      <button class="btn-sm" onclick="copyResult()">Copy result</button>
+      <button class="btn-sm" onclick="pasteToInput()">Paste to input ↑</button>
+    </div>
+  </div>
+
+  <div class="note">🔐 All encryption happens locally in your browser using the Web Crypto API (AES-256-GCM). Your text and password never leave your device. The encrypted output is Base64-encoded and can be safely shared over any channel.</div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let mode = 'encrypt';
+
+  function setMode(m) {
+    mode = m;
+    document.getElementById('tabEnc').classList.toggle('active', m === 'encrypt');
+    document.getElementById('tabDec').classList.toggle('active', m === 'decrypt');
+    document.getElementById('textLabel').textContent = m === 'encrypt' ? 'Text to encrypt' : 'Encrypted text to decrypt';
+    document.getElementById('inputText').placeholder = m === 'encrypt' ? 'Enter the text you want to encrypt…' : 'Paste the encrypted text here…';
+    document.getElementById('actionBtn').textContent = m === 'encrypt' ? '🔒 Encrypt' : '🔓 Decrypt';
+    document.getElementById('resultCard').style.display = 'none';
+  }
+
+  function togglePw() {
+    const inp = document.getElementById('password');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+
+  function checkStrength(pw) {
+    const bar = document.getElementById('strengthBar');
+    const note = document.getElementById('strengthNote');
+    if (!pw) { bar.style.width = '0'; note.textContent = ''; return; }
+    let score = 0;
+    if (pw.length >= 8) score++;
+    if (pw.length >= 14) score++;
+    if (/[A-Z]/.test(pw)) score++;
+    if (/[0-9]/.test(pw)) score++;
+    if (/[^a-zA-Z0-9]/.test(pw)) score++;
+    const levels = [{w:'20%',c:'#e24b4a',t:'Weak'},{w:'40%',c:'#f59e0b',t:'Fair'},{w:'60%',c:'#f59e0b',t:'Moderate'},{w:'80%',c:'#1d9e75',t:'Strong'},{w:'100%',c:'#1a7a4a',t:'Very strong'}];
+    const l = levels[Math.min(score, 4)];
+    bar.style.width = l.w; bar.style.background = l.c;
+    note.textContent = l.t + ' password';
+  }
+
+  async function deriveKey(password, salt) {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations: 250000, hash: 'SHA-256' },
+      keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+    );
+  }
+
+  function b64(buf) { return btoa(String.fromCharCode(...new Uint8Array(buf))); }
+  function unb64(s) { return Uint8Array.from(atob(s), c => c.charCodeAt(0)); }
+
+  async function doAction() {
+    const text = document.getElementById('inputText').value.trim();
+    const pw = document.getElementById('password').value;
+    const btn = document.getElementById('actionBtn');
+    const rc = document.getElementById('resultCard');
+
+    if (!text) { alert('Please enter some text.'); return; }
+    if (!pw) { alert('Please enter a password.'); return; }
+
+    btn.disabled = true; btn.textContent = 'Processing…';
+    rc.style.display = 'none';
+
+    try {
+      if (mode === 'encrypt') {
+        const salt = crypto.getRandomValues(new Uint8Array(16));
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const key = await deriveKey(pw, salt);
+        const enc = new TextEncoder();
+        const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(text));
+        // Pack: salt(16) + iv(12) + ciphertext
+        const combined = new Uint8Array(16 + 12 + ciphertext.byteLength);
+        combined.set(salt, 0); combined.set(iv, 16); combined.set(new Uint8Array(ciphertext), 28);
+        const result = b64(combined.buffer);
+        rc.className = 'result-card success'; rc.style.display = 'block';
+        document.getElementById('resultLabel').textContent = 'Encrypted text (share this)';
+        document.getElementById('resultText').textContent = result;
+      } else {
+        const combined = unb64(text.replace(/\s/g, ''));
+        const salt = combined.slice(0, 16);
+        const iv = combined.slice(16, 28);
+        const ciphertext = combined.slice(28);
+        const key = await deriveKey(pw, salt);
+        const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext);
+        const dec = new TextDecoder();
+        rc.className = 'result-card success'; rc.style.display = 'block';
+        document.getElementById('resultLabel').textContent = 'Decrypted text';
+        document.getElementById('resultText').textContent = dec.decode(decrypted);
+      }
+    } catch(e) {
+      rc.className = 'result-card error'; rc.style.display = 'block';
+      document.getElementById('resultLabel').textContent = 'Error';
+      document.getElementById('resultText').textContent = mode === 'decrypt' ? 'Decryption failed — wrong password or corrupted text.' : 'Encryption failed: ' + e.message;
+    }
+    btn.disabled = false; btn.textContent = mode === 'encrypt' ? '🔒 Encrypt' : '🔓 Decrypt';
+  }
+
+  function copyResult() {
+    navigator.clipboard.writeText(document.getElementById('resultText').textContent).then(() => {
+      const b = document.querySelector('.result-card .btn-sm');
+      b.textContent = '✓ Copied'; setTimeout(() => b.textContent = 'Copy result', 1400);
+    });
+  }
+
+  function pasteToInput() {
+    document.getElementById('inputText').value = document.getElementById('resultText').textContent;
+    if (mode === 'encrypt') setMode('decrypt'); else setMode('encrypt');
+  }
+
+  function clearAll() {
+    document.getElementById('inputText').value = '';
+    document.getElementById('password').value = '';
+    document.getElementById('strengthBar').style.width = '0';
+    document.getElementById('strengthNote').textContent = '';
+    document.getElementById('resultCard').style.display = 'none';
+  }
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>
