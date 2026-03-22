@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Name Wheel — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:800px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .layout{display:grid;grid-template-columns:auto 1fr;gap:1.5rem;align-items:start}
+    .wheel-wrap{display:flex;flex-direction:column;align-items:center;gap:.75rem}
+    canvas{border-radius:50%;display:block}
+    .spin-btn{background:var(--ink);color:#fff;border:none;border-radius:8px;padding:.8rem 2rem;font-family:'DM Serif Display',serif;font-size:1rem;cursor:pointer;transition:opacity .2s;width:100%}
+    .spin-btn:hover{opacity:.8}
+    .spin-btn:disabled{opacity:.35;cursor:not-allowed}
+    .winner{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;text-align:center;font-size:.9rem;color:var(--muted);min-height:44px;display:flex;align-items:center;justify-content:center;width:100%}
+    .winner.active{background:var(--ink);color:#fff;font-family:'DM Serif Display',serif;font-size:1.1rem;border-color:var(--ink)}
+    .names-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.3rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem}
+    .names-list{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.75rem;max-height:280px;overflow-y:auto}
+    .name-row{display:flex;gap:.4rem}
+    .name-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:.45rem .7rem;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--ink);outline:none}
+    .name-input:focus{border-color:var(--ink)}
+    .name-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:0 .3rem;transition:color .15s}
+    .name-del:hover{color:#e24b4a}
+    .add-btn{background:transparent;border:1px dashed var(--border);border-radius:5px;width:100%;padding:.5rem;font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--muted);cursor:pointer;transition:all .2s}
+    .add-btn:hover{border-color:var(--ink);color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.layout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🎡 Fun</p>
+  <h1>Name Wheel</h1>
+  <p class="subtitle">Add names, spin the wheel, and let fate decide the winner.</p>
+  <div class="layout">
+    <div class="wheel-wrap">
+      <canvas id="wheel" width="300" height="300"></canvas>
+      <button class="spin-btn" id="spinBtn" onclick="spin()">🎡 Spin</button>
+      <div class="winner" id="winner">Winner appears here</div>
+    </div>
+    <div class="names-card">
+      <p class="card-title">Names</p>
+      <div class="names-list" id="namesList"></div>
+      <button class="add-btn" onclick="addName()">+ Add name</button>
+    </div>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  const COLORS=['#378add','#1d9e75','#f59e0b','#e24b4a','#534ab7','#d85a30','#0f6e56','#993556','#639922','#ba7517'];
+  let names=['Alice','Bob','Carol','David','Eve','Frank'];
+  let angle=0, spinning=false;
+
+  function renderList(){
+    const list=document.getElementById('namesList');list.innerHTML='';
+    names.forEach((n,i)=>{
+      const row=document.createElement('div');row.className='name-row';
+      row.innerHTML=`<input class="name-input" value="${n}" oninput="names[${i}]=this.value;draw()" /><button class="name-del" onclick="removeName(${i})">✕</button>`;
+      list.appendChild(row);
+    });
+  }
+  function addName(){names.push('Name '+(names.length+1));renderList();draw();}
+  function removeName(i){if(names.length>2){names.splice(i,1);renderList();draw();}}
+
+  function draw(hi=-1){
+    const canvas=document.getElementById('wheel');
+    const ctx=canvas.getContext('2d');
+    const cx=canvas.width/2,cy=canvas.height/2,r=cx-8;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const valid=names.filter(n=>n.trim());
+    const n=valid.length||1;
+    const slice=2*Math.PI/n;
+    valid.forEach((name,i)=>{
+      const start=angle+i*slice-Math.PI/2;
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,start+slice);ctx.closePath();
+      ctx.fillStyle=COLORS[i%COLORS.length];ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+      ctx.save();ctx.translate(cx,cy);ctx.rotate(start+slice/2);
+      ctx.textAlign='right';ctx.fillStyle='#fff';
+      ctx.font=`500 ${Math.min(14,180/n)}px 'DM Sans',sans-serif`;
+      const label=name.length>14?name.slice(0,14)+'…':name;
+      ctx.fillText(label,r-10,4);ctx.restore();
+    });
+    ctx.beginPath();ctx.arc(cx,cy,14,0,2*Math.PI);ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle='#ddd';ctx.lineWidth=1;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx-10,4);ctx.lineTo(cx+10,4);ctx.lineTo(cx,22);ctx.closePath();ctx.fillStyle='#111';ctx.fill();
+  }
+
+  function spin(){
+    if(spinning)return;spinning=true;
+    document.getElementById('spinBtn').disabled=true;
+    document.getElementById('winner').className='winner';document.getElementById('winner').textContent='Spinning…';
+    const valid=names.filter(n=>n.trim());if(valid.length<2){spinning=false;document.getElementById('spinBtn').disabled=false;return;}
+    const n=valid.length;
+    const target=Math.floor(Math.random()*n);
+    const end=angle-(target/n*2*Math.PI)-(Math.PI*2*(5+Math.random()*3));
+    const start=angle,dur=4000,t0=performance.now();
+    function frame(now){
+      const t=Math.min(1,(now-t0)/dur);
+      angle=start+(end-start)*(1-Math.pow(1-t,4));
+      draw();
+      if(t<1)requestAnimationFrame(frame);
+      else{
+        spinning=false;document.getElementById('spinBtn').disabled=false;
+        const norm=(((-angle%(2*Math.PI))+(2*Math.PI))%(2*Math.PI));
+        const winner=Math.floor(norm/(2*Math.PI/n))%n;
+        const w=document.getElementById('winner');w.className='winner active';w.textContent='🎉 '+valid[winner];
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  renderList();draw();
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dice Roller — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:640px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1rem}
+    .card-title{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem}
+    .count-row{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+    .count-row label{font-size:.85rem;color:var(--muted)}
+    .qty-btn{background:var(--bg);border:1px solid var(--border);border-radius:6px;width:34px;height:34px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+    .qty-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+    .qty-val{font-weight:500;font-size:1rem;min-width:24px;text-align:center}
+    .type-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}
+    .type-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:.45rem .9rem;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .type-btn:hover{border-color:var(--ink);color:var(--ink)}
+    .type-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .dice-area{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;min-height:90px;align-items:center;padding:1.2rem 0}
+    .die{width:76px;height:76px;background:var(--card);border:2px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.9rem;box-shadow:0 3px 10px rgba(0,0,0,.09);transition:transform .15s}
+    .die.rolling{animation:dieRoll .4s ease-out}
+    @keyframes dieRoll{0%{transform:rotate(-15deg) scale(1.1)}50%{transform:rotate(10deg) scale(.95)}100%{transform:rotate(0) scale(1)}}
+    .total-row{text-align:center;font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--muted);margin-bottom:.25rem}
+    .total-row span{color:var(--ink);font-size:2.2rem}
+    .roll-btn{width:100%;background:var(--ink);color:#fff;border:none;border-radius:8px;padding:1rem;font-family:'DM Serif Display',serif;font-size:1.15rem;cursor:pointer;transition:opacity .2s;margin-top:.5rem}
+    .roll-btn:hover{opacity:.8}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🎲 Fun</p>
+  <h1>Dice Roller</h1>
+  <p class="subtitle">Roll any number of dice — D4, D6, D8, D10, D12, D20, or D100. Press Space to roll.</p>
+  <div class="card">
+    <p class="card-title">Dice type</p>
+    <div class="type-row" id="typeRow">
+      <button class="type-btn active" data-s="6">D6</button>
+      <button class="type-btn" data-s="4">D4</button>
+      <button class="type-btn" data-s="8">D8</button>
+      <button class="type-btn" data-s="10">D10</button>
+      <button class="type-btn" data-s="12">D12</button>
+      <button class="type-btn" data-s="20">D20</button>
+      <button class="type-btn" data-s="100">D100</button>
+    </div>
+    <div class="count-row">
+      <label>Number of dice</label>
+      <button class="qty-btn" onclick="changeCount(-1)">−</button>
+      <span class="qty-val" id="countVal">2</span>
+      <button class="qty-btn" onclick="changeCount(1)">+</button>
+    </div>
+    <div class="dice-area" id="diceArea"></div>
+    <div class="total-row" id="totalRow"></div>
+    <button class="roll-btn" onclick="roll()">🎲 Roll</button>
+  </div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let sides=6, count=2, rolling=false;
+  document.getElementById('typeRow').addEventListener('click',e=>{
+    const b=e.target.closest('.type-btn');if(!b)return;
+    document.querySelectorAll('.type-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');sides=parseInt(b.dataset.s);
+    document.getElementById('totalRow').textContent='';render([]);
+  });
+  function changeCount(d){count=Math.max(1,Math.min(12,count+d));document.getElementById('countVal').textContent=count;render([]);}
+  function render(vals){
+    const area=document.getElementById('diceArea');area.innerHTML='';
+    for(let i=0;i<count;i++){
+      const d=document.createElement('div');d.className='die'+(vals[i]?' rolling':'');
+      d.textContent=vals[i]||'';area.appendChild(d);
+    }
+  }
+  function roll(){
+    if(rolling)return;rolling=true;
+    render(Array(count).fill('?'));
+    setTimeout(()=>{
+      const vals=Array.from({length:count},()=>Math.floor(Math.random()*sides)+1);
+      render(vals);
+      const tot=vals.reduce((a,b)=>a+b,0);
+      document.getElementById('totalRow').innerHTML=count>1?'Total: <span>'+tot+'</span>':'';
+      rolling=false;
+    },420);
+  }
+  render([]);
+  document.addEventListener('keydown',e=>{if(e.key===' '&&e.target===document.body){e.preventDefault();roll();}});
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>

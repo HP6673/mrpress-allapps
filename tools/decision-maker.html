@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Decision Maker — All Apps by MrPress</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#f7f6f2;--ink:#111;--muted:#888;--border:#e5e3dc;--card:#fff}
+    body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'DM Serif Display',serif;font-size:1.3rem;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+    .logo span{color:var(--muted)}
+    .back-link{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--ink)}
+    main{flex:1;padding:3.5rem 4rem 5rem;max-width:560px;margin:0 auto;width:100%}
+    .eyebrow{font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+    h1{font-family:'DM Serif Display',serif;font-size:2.8rem;letter-spacing:-.025em;margin-bottom:.5rem}
+    .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:1.5rem;line-height:1.6}
+    .mode-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
+    .mpill{background:var(--bg);border:1.5px solid var(--border);border-radius:99px;padding:.35rem .9rem;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+    .mpill:hover{border-color:var(--ink);color:var(--ink)}
+    .mpill.active{background:var(--ink);border-color:var(--ink);color:#fff}
+    .arena{border-radius:14px;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:2rem;text-align:center;margin-bottom:1rem;user-select:none;transition:background .25s,color .25s;border:2px solid transparent}
+    .arena.idle{background:var(--card);border-color:var(--border);color:var(--ink)}
+    .arena.yes{background:#1d9e75;color:#fff;border-color:#1d9e75}
+    .arena.no{background:#e24b4a;color:#fff;border-color:#e24b4a}
+    .arena.maybe{background:#f59e0b;color:#fff;border-color:#f59e0b}
+    .arena.shaking{animation:shake .42s ease}
+    @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-4px)}100%{transform:translateX(0)}}
+    .ai{font-size:3.5rem;margin-bottom:.75rem}
+    .at{font-family:'DM Serif Display',serif;font-size:3.5rem;letter-spacing:-.02em;line-height:1;margin-bottom:.5rem}
+    .as{font-size:.9rem;opacity:.75}
+    .tally{display:flex;gap:1.5rem;justify-content:center;font-size:.85rem;color:var(--muted)}
+    .tally strong{color:var(--ink)}
+    footer{border-top:1px solid var(--border);padding:1.5rem 4rem;font-size:.8rem;color:var(--muted)}
+    @media(max-width:700px){header,main,footer{padding-left:1.5rem;padding-right:1.5rem}main{padding-top:2.5rem}h1{font-size:2rem}.at{font-size:2.5rem}}
+  </style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">All Apps <span>by MrPress</span></a><a class="back-link" href="../index.html">← All tools</a></header>
+<main>
+  <p class="eyebrow">🤔 Fun</p>
+  <h1>Decision Maker</h1>
+  <p class="subtitle">Think of a yes/no question, then click for your answer. Press Space to decide.</p>
+  <div class="mode-row" id="modeRow">
+    <button class="mpill active" data-m="yesno">Yes / No</button>
+    <button class="mpill" data-m="maybe">Yes / No / Maybe</button>
+    <button class="mpill" data-m="leanyes">Lean Yes (60/40)</button>
+    <button class="mpill" data-m="leanno">Lean No (40/60)</button>
+  </div>
+  <div class="arena idle" id="arena" onclick="decide()">
+    <div class="ai">🤔</div>
+    <div class="at" id="aText">Ask away</div>
+    <div class="as" id="aSub">Think of your question, then click</div>
+  </div>
+  <div class="tally">Yes: <strong id="tY">0</strong> &nbsp; No: <strong id="tN">0</strong> <span id="tMS" style="display:none">&nbsp; Maybe: <strong id="tM">0</strong></span></div>
+</main>
+<footer>All Apps by MrPress</footer>
+<script>
+  let mode='yesno',cY=0,cN=0,cM=0,going=false;
+  document.getElementById('modeRow').addEventListener('click',e=>{
+    const b=e.target.closest('.mpill');if(!b)return;
+    document.querySelectorAll('.mpill').forEach(x=>x.classList.remove('active'));b.classList.add('active');mode=b.dataset.m;
+    document.getElementById('tMS').style.display=mode==='maybe'?'inline':'none';
+  });
+  const OUTCOMES={
+    yes:{icon:'✅',text:'Yes!',sub:'Go for it. · Click to ask again',cls:'yes'},
+    no:{icon:'❌',text:'No.',sub:'Maybe another time. · Click to ask again',cls:'no'},
+    maybe:{icon:'🤷',text:'Maybe.',sub:'Unclear. Click to try again.',cls:'maybe'}
+  };
+  function decide(){
+    if(going)return;going=true;
+    const a=document.getElementById('arena');
+    a.className='arena shaking '+a.className.split(' ').slice(-1)[0];
+    document.getElementById('aText').textContent='...';document.getElementById('aSub').textContent='';
+    setTimeout(()=>{
+      const r=Math.random();
+      let out;
+      if(mode==='yesno')out=r<.5?'yes':'no';
+      else if(mode==='maybe')out=r<.33?'yes':r<.66?'no':'maybe';
+      else if(mode==='leanyes')out=r<.6?'yes':'no';
+      else out=r<.4?'yes':'no';
+      const c=OUTCOMES[out];
+      a.className='arena '+c.cls;
+      document.getElementById('aText').textContent=c.text;
+      document.getElementById('aSub').textContent=c.sub;
+      document.querySelector('.ai').textContent=c.icon;
+      if(out==='yes')cY++;else if(out==='no')cN++;else cM++;
+      document.getElementById('tY').textContent=cY;document.getElementById('tN').textContent=cN;document.getElementById('tM').textContent=cM;
+      going=false;
+    },440);
+  }
+  document.addEventListener('keydown',e=>{if(e.key===' '&&e.target===document.body){e.preventDefault();decide();}});
+</script>
+<script>try{var s=document.createElement('script');s.src='../ad.js';document.body.appendChild(s);}catch(e){}</script>
+</body>
+</html>
